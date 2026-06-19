@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory Portfolio Analysis — Talabat Central Sales</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{--or:#FF6300;--pale:#FFF0E6;--dk:#1A1A1A;--g9:#1E1E1E;--g1:#F5F5F5;--g2:#E8E8E8;--g6:#666;--wh:#fff;--gr:#2ECC71;--rd:#E74C3C;--bl:#3498DB;--yl:#F39C12;--pu:#8E44AD;--r:12px;--sh:0 2px 16px rgba(0,0,0,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g1);color:var(--dk);min-height:100vh}
+header{background:var(--g9);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--or)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:36px;height:36px;background:var(--or);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff}
+.logo-text{color:#fff;font-size:18px;font-weight:700}.logo-text span{color:var(--or)}
+.hdr-meta{color:#888;font-size:13px;text-align:right;line-height:1.5}
+.gfbar{background:var(--wh);border-bottom:1px solid var(--g2);padding:10px 32px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.gf-label{font-size:12px;font-weight:600;color:var(--g6);white-space:nowrap}
+select.gf-select{padding:7px 32px 7px 12px;border:1.5px solid var(--g2);border-radius:8px;font-size:13px;outline:none;background:var(--wh);cursor:pointer;transition:border .2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;min-width:180px}
+select.gf-select:focus{border-color:var(--or)}
+.gf-reset{padding:7px 14px;border:1.5px solid var(--g2);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;background:var(--g1);color:var(--g6);transition:all .2s}
+.gf-reset:hover{background:var(--or);border-color:var(--or);color:#fff}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--g2);background:var(--wh);color:var(--g6);transition:all .2s;user-select:none}
+.pill:hover,.pill.on{background:var(--or);border-color:var(--or);color:#fff}
+.nav{background:var(--wh);border-bottom:1px solid var(--g2);padding:0 32px;display:flex;gap:0;overflow-x:auto}
+.tab{padding:14px 20px;font-size:13px;font-weight:500;color:var(--g6);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;user-select:none}
+.tab:hover{color:var(--or)}.tab.active{color:var(--or);border-bottom-color:var(--or);font-weight:600}
+main{padding:28px 32px;max-width:1600px;margin:0 auto}
+.sec{display:none}.sec.active{display:block}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:var(--wh);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);border-left:4px solid var(--or);position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;right:0;width:50px;height:50px;background:var(--pale);border-radius:0 0 0 50px}
+.kpi.gr{border-left-color:var(--gr)}.kpi.gr::after{background:#E8F8F0}
+.kpi.rd{border-left-color:var(--rd)}.kpi.rd::after{background:#FCE8E6}
+.kpi.bl{border-left-color:var(--bl)}.kpi.bl::after{background:#E8F4FD}
+.kpi.yl{border-left-color:var(--yl)}.kpi.yl::after{background:#FEF9E7}
+.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--g6);margin-bottom:6px}
+.kpi-val{font-size:24px;font-weight:800;line-height:1;margin-bottom:3px}
+.kpi-sub{font-size:11px;color:var(--g6)}
+.row{display:grid;gap:20px;margin-bottom:20px}
+.c2{grid-template-columns:1fr 1fr}.c21{grid-template-columns:2fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}.c13{grid-template-columns:1fr 3fr}
+.card{background:var(--wh);border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
+.ct{font-size:14px;font-weight:700;margin-bottom:3px}
+.cs{font-size:12px;color:var(--g6);margin-bottom:16px}
+.ch-wrapper{position:relative;height:300px}
+.alert-list{display:flex;flex-direction:column;gap:10px}
+.alert{padding:12px 16px;border-radius:8px;display:flex;align-items:flex-start;gap:10px;font-size:13px}
+.alert.red{background:#FCE8E6;border-left:3px solid var(--rd)}
+.alert.yl{background:#FEF9E7;border-left:3px solid var(--yl)}
+.alert-icon{font-size:18px;line-height:1;flex-shrink:0}
+.alert-body{line-height:1.5}
+.alert-title{font-weight:700;margin-bottom:2px}
+.tbl-card{background:var(--wh);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px}
+.tbl-hdr{padding:16px 22px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.tbl-title{font-size:14px;font-weight:700}
+.tbl-sub{font-size:12px;color:var(--g6);margin-top:2px}
+input.srch{padding:7px 12px;border:1.5px solid var(--g2);border-radius:8px;font-size:13px;outline:none;transition:border .2s;width:220px}
+input.srch:focus{border-color:var(--or)}
+.tbl-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--g1);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--g6);cursor:pointer;user-select:none;white-space:nowrap;border-bottom:1px solid var(--g2)}
+thead th:hover{color:var(--or)}
+tbody tr{border-bottom:1px solid var(--g2);transition:background .15s}
+tbody tr:hover{background:var(--pale)}tbody tr:last-child{border-bottom:none}
+tbody td{padding:10px 14px;vertical-align:middle}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.b-aaa{background:#FFF3CD;color:#856404}
+.b-a{background:#D4EDDA;color:#155724}
+.b-b{background:#CCE5FF;color:#004085}
+.b-c{background:#E2E3E5;color:#383D41}
+.b-d{background:#FFF0E6;color:#7D3C00}
+.b-e{background:#FCE8E6;color:#721C24}
+.ng{color:var(--gr);font-weight:700}.nr{color:var(--rd);font-weight:700}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.mini-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:1px;margin-top:4px}
+.mini-seg{height:100%;transition:flex .3s}
+/* Scorecard grid */
+.sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-bottom:20px}
+.sc{background:var(--wh);border-radius:var(--r);padding:22px;box-shadow:var(--sh);border-top:4px solid var(--or)}
+.sc-name{font-size:18px;font-weight:800;margin-bottom:2px}
+.sc-role{font-size:12px;color:var(--g6);margin-bottom:16px}
+.sc-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.sc-stat{padding:10px;background:var(--g1);border-radius:8px}
+.sc-stat-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--g6);margin-bottom:3px}
+.sc-stat-val{font-size:16px;font-weight:800}
+.sc-tier-lbl{font-size:11px;font-weight:600;color:var(--g6);margin-bottom:6px}
+.sc-tier-bar{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:1px}
+.sc-tier-leg{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.sc-tier-dot{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--g6)}
+.dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+/* Nishu section */
+.nishu-highlight{background:linear-gradient(135deg,#FCE8E6 0%,#FFF0E6 100%);border:2px solid var(--rd);border-radius:12px;padding:20px;margin-bottom:20px}
+.nh-title{font-size:16px;font-weight:800;color:var(--rd);margin-bottom:12px}
+.nh-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.nh-stat{background:rgba(255,255,255,.8);border-radius:8px;padding:12px}
+.nh-stat-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--g6);margin-bottom:3px}
+.nh-stat-val{font-size:18px;font-weight:800}
+.nh-stat-val.red{color:var(--rd)}
+/* benchmark table */
+.bm-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--g2)}
+.bm-row:last-child{border-bottom:none}
+.bm-label{width:50px;font-size:12px;font-weight:600}
+.bm-bar-wrap{flex:1}
+.bm-bar{height:10px;background:var(--g2);border-radius:5px;overflow:hidden}
+.bm-fill{height:100%;border-radius:5px}
+.bm-val{width:80px;font-size:12px;font-variant-numeric:tabular-nums;text-align:right;color:var(--g6)}
+.pagination{display:flex;align-items:center;gap:8px;padding:14px 22px;border-top:1px solid var(--g2);justify-content:flex-end}
+.page-btn{padding:5px 11px;border:1.5px solid var(--g2);border-radius:6px;font-size:12px;cursor:pointer;background:var(--wh);transition:all .15s}
+.page-btn:hover,.page-btn.active{background:var(--or);border-color:var(--or);color:#fff}
+.page-info{font-size:12px;color:var(--g6)}
+@media(max-width:768px){main{padding:16px};.c2,.c21,.c3,.c13{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">t</div>
+    <div class="logo-text">talabat <span>|</span> Inventory Portfolio</div>
+  </div>
+  <div class="hdr-meta">Central Sales · UAE<br>Jan → May 2026</div>
+</header>
+
+<!-- GLOBAL FILTER BAR -->
+<div class="gfbar">
+  <span class="gf-label">City Head</span>
+  <select class="gf-select" id="gf-ch">
+    <option value="all">All City Heads</option>
+    <option value="Alex">Alex (Alexandr Vrubel)</option>
+    <option value="Aseel">Aseel Katbi</option>
+    <option value="Bashar">Bashar Sabri</option>
+    <option value="Nishu">Nishu Shaji</option>
+    <option value="Salma">Salma Soueif</option>
+  </select>
+  <span class="gf-label">Tier</span>
+  <div class="pills" id="tier-pills">
+    <div class="pill on" data-tier="AAA">AAA</div>
+    <div class="pill on" data-tier="A">A</div>
+    <div class="pill on" data-tier="B">B</div>
+    <div class="pill on" data-tier="C">C</div>
+    <div class="pill on" data-tier="D">D</div>
+    <div class="pill on" data-tier="E">E</div>
+  </div>
+  <button class="gf-reset" onclick="resetFilters()">Reset</button>
+  <span id="gf-count" style="font-size:12px;color:var(--g6);margin-left:auto"></span>
+</div>
+
+<!-- TAB NAV -->
+<div class="nav">
+  <div class="tab active" onclick="switchTab(0)">📊 Overview</div>
+  <div class="tab" onclick="switchTab(1)">⭐ A&amp;B Inventory</div>
+  <div class="tab" onclick="switchTab(2)">🔴 Nishu Deep Dive</div>
+  <div class="tab" onclick="switchTab(3)">👤 City Heads</div>
+  <div class="tab" onclick="switchTab(4)">📈 Performance</div>
+  <div class="tab" onclick="switchTab(5)">🗂 Raw Data</div>
+</div>
+
+<main>
+
+<!-- ===================== TAB 0: OVERVIEW ===================== -->
+<div class="sec active" id="sec-0">
+  <div class="kpi-grid" id="ov-kpis"></div>
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">City Head Inventory Comparison</div>
+      <div class="cs">Total vendor count — Jan vs May 2026</div>
+      <div style="position:relative;height:280px"><canvas id="ch-inv-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Portfolio Issues</div>
+      <div class="cs">Action required items</div>
+      <div class="alert-list">
+        <div class="alert red">
+          <div class="alert-icon">🔴</div>
+          <div class="alert-body">
+            <div class="alert-title">URGENT — Nishu Shaji: Vendors DECLINING -3.0%</div>
+            Portfolio shrinking from 6,227 → 6,042. Only 1.3% A&B tier (78 vendors). GMV/vendor 5.2K vs team avg 27.7K.
+          </div>
+        </div>
+        <div class="alert red">
+          <div class="alert-icon">🔴</div>
+          <div class="alert-body">
+            <div class="alert-title">URGENT — Jad Adada (Alex TL): Vendors DECLINING -2.0%</div>
+            Sub-team within Alex portfolio losing vendors. Requires immediate attention from City Head.
+          </div>
+        </div>
+        <div class="alert yl">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-body">
+            <div class="alert-title">WATCH — Bashar: Tier E growing +115.6% (quality risk)</div>
+            Low-quality vendor additions outpacing premium. A&B share may erode. Monitor next 30 days.
+          </div>
+        </div>
+        <div class="alert yl">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-body">
+            <div class="alert-title">WATCH — Aseel: Tier E growing +134.8% (quality risk)</div>
+            Fastest Tier E growth on the team. Overall portfolio +14.1% but quality mix deteriorating.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Tier Distribution by City Head — May 2026</div>
+      <div class="cs">Vendor count per tier</div>
+      <div style="position:relative;height:280px"><canvas id="tier-stacked-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">A&B Tier Share by City Head</div>
+      <div class="cs">Premium inventory concentration</div>
+      <div style="position:relative;height:280px"><canvas id="ab-share-chart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TAB 1: A&B INVENTORY ===================== -->
+<div class="sec" id="sec-1">
+  <div class="kpi-grid">
+    <div class="kpi gr">
+      <div class="kpi-lbl">Alex A&amp;B Vendors</div>
+      <div class="kpi-val">3,279</div>
+      <div class="kpi-sub">43.1% of portfolio (excl AAA)</div>
+    </div>
+    <div class="kpi gr">
+      <div class="kpi-lbl">Aseel A&amp;B Vendors</div>
+      <div class="kpi-val">2,126</div>
+      <div class="kpi-sub">53.3% of portfolio</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Bashar A&amp;B Vendors</div>
+      <div class="kpi-val">1,262</div>
+      <div class="kpi-sub">40.5% of portfolio</div>
+    </div>
+    <div class="kpi rd">
+      <div class="kpi-lbl">Nishu A&amp;B Vendors</div>
+      <div class="kpi-val">78</div>
+      <div class="kpi-sub" style="color:var(--rd);font-weight:700">Only 1.3% of portfolio ⚠️</div>
+    </div>
+  </div>
+
+  <div class="nishu-highlight">
+    <div class="nh-title">🔴 Critical: Nishu Portfolio Quality Gap</div>
+    <div class="nh-stats">
+      <div class="nh-stat"><div class="nh-stat-lbl">A&amp;B Share</div><div class="nh-stat-val red">1.3%</div></div>
+      <div class="nh-stat"><div class="nh-stat-lbl">D&amp;E Vendors</div><div class="nh-stat-val red">5,492 (90.9%)</div></div>
+      <div class="nh-stat"><div class="nh-stat-lbl">GMV/Vendor</div><div class="nh-stat-val red">5.2K</div></div>
+      <div class="nh-stat"><div class="nh-stat-lbl">Team Avg GMV/V</div><div class="nh-stat-val">27.7K</div></div>
+      <div class="nh-stat"><div class="nh-stat-lbl">GMV Gap vs Alex</div><div class="nh-stat-val red">5.3× lower</div></div>
+      <div class="nh-stat"><div class="nh-stat-lbl">Portfolio Trend</div><div class="nh-stat-val red">-3.0% ↓</div></div>
+    </div>
+  </div>
+
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">A&amp;B vs C/D/E — Stacked by City Head</div>
+      <div class="cs">Premium vs non-premium vendor count (May 2026)</div>
+      <div style="position:relative;height:300px"><canvas id="ab-stacked-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">A&amp;B % Share — Jan vs May Trend</div>
+      <div class="cs">Premium inventory share change over 5 months</div>
+      <div style="position:relative;height:300px"><canvas id="ab-trend-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="ct">Sweet Spot Analysis — A&amp;B Tier Benchmark</div>
+    <div class="cs">City Head target: ≥40% A&amp;B share | Nishu emerging brands: minimize D&amp;E below 30%</div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>City Head</th>
+            <th>Total Vendors</th>
+            <th>AAA</th>
+            <th>A</th>
+            <th>B</th>
+            <th>C</th>
+            <th>D</th>
+            <th>E</th>
+            <th>A&amp;B %</th>
+            <th>D&amp;E %</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Alex</strong></td>
+            <td class="num">7,611</td>
+            <td class="num">133</td>
+            <td class="num">1,921</td>
+            <td class="num">1,225</td>
+            <td class="num">1,582</td>
+            <td class="num">1,312</td>
+            <td class="num">1,438</td>
+            <td class="num">43.1%</td>
+            <td class="num">36.2%</td>
+            <td><span class="badge b-a">✓ On Target</span></td>
+          </tr>
+          <tr>
+            <td><strong>Aseel</strong></td>
+            <td class="num">3,991</td>
+            <td class="num">—</td>
+            <td class="num">1,392</td>
+            <td class="num">734</td>
+            <td class="num">997</td>
+            <td class="num">489</td>
+            <td class="num">378</td>
+            <td class="num">53.3%</td>
+            <td class="num">21.7%</td>
+            <td><span class="badge b-a">✓ Best in Class</span></td>
+          </tr>
+          <tr>
+            <td><strong>Bashar</strong></td>
+            <td class="num">3,116</td>
+            <td class="num">—</td>
+            <td class="num">796</td>
+            <td class="num">466</td>
+            <td class="num">795</td>
+            <td class="num">604</td>
+            <td class="num">455</td>
+            <td class="num">40.5%</td>
+            <td class="num">34.3%</td>
+            <td><span class="badge b-b">≈ At Threshold</span></td>
+          </tr>
+          <tr style="background:#FCE8E6">
+            <td><strong>Nishu</strong></td>
+            <td class="num">6,042</td>
+            <td class="num">3</td>
+            <td class="num">21</td>
+            <td class="num">57</td>
+            <td class="num">468</td>
+            <td class="num">1,818</td>
+            <td class="num">3,674</td>
+            <td class="num" style="color:var(--rd);font-weight:800">1.3%</td>
+            <td class="num" style="color:var(--rd);font-weight:800">90.9%</td>
+            <td><span class="badge b-e">🔴 Critical Gap</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TAB 2: NISHU DEEP DIVE ===================== -->
+<div class="sec" id="sec-2">
+  <div class="nishu-highlight">
+    <div class="nh-title">🔴 Nishu Shaji — Portfolio Quality Crisis</div>
+    <p style="font-size:13px;line-height:1.6;color:#555">
+      Nishu manages <strong>6,042 vendors</strong> (2nd largest portfolio) but 90.9% are D&amp;E tier — emerging/low-quality brands.
+      This results in a <strong>GMV/vendor of only 5.2K</strong> vs Alex's 27.7K (5.3× gap).
+      The portfolio is also <strong>declining -3%</strong> while all other City Heads are growing.
+      A strategic review of vendor quality standards and acquisition targets is needed.
+    </p>
+  </div>
+
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Nishu Portfolio Breakdown</div>
+      <div class="cs">Vendor count by tier (May 2026, total: 6,042)</div>
+      <div style="position:relative;height:300px"><canvas id="nishu-donut"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">GMV/Vendor vs Peers</div>
+      <div class="cs">Monthly GMV per vendor — May 2026</div>
+      <div style="position:relative;height:300px"><canvas id="gmv-vendor-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Nishu Orders by Tier — May 2026</div>
+      <div class="cs">Order volume per tier reveals D&amp;E dominance</div>
+      <div style="position:relative;height:280px"><canvas id="nishu-orders-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Nishu vs Alex — Tier Mix Comparison</div>
+      <div class="cs">Vendor count percentage by tier (May 2026)</div>
+      <div style="position:relative;height:280px"><canvas id="nishu-vs-alex-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi rd">
+      <div class="kpi-lbl">A&amp;B Vendors</div>
+      <div class="kpi-val">78</div>
+      <div class="kpi-sub">of 6,042 total (1.3%)</div>
+    </div>
+    <div class="kpi rd">
+      <div class="kpi-lbl">D&amp;E Vendors</div>
+      <div class="kpi-val">5,492</div>
+      <div class="kpi-sub">of 6,042 total (90.9%)</div>
+    </div>
+    <div class="kpi rd">
+      <div class="kpi-lbl">GMV / Vendor</div>
+      <div class="kpi-val">5.2K</div>
+      <div class="kpi-sub">vs Alex 27.7K (5.3× gap)</div>
+    </div>
+    <div class="kpi rd">
+      <div class="kpi-lbl">Portfolio Trend</div>
+      <div class="kpi-val">-3.0%</div>
+      <div class="kpi-sub">Jan 6,227 → May 6,042</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Total Orders</div>
+      <div class="kpi-val">438K</div>
+      <div class="kpi-sub">+15.6% growth (strong demand)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">GMV May</div>
+      <div class="kpi-val">31.4M</div>
+      <div class="kpi-sub">AED — lowest on team</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Wallet Share</div>
+      <div class="kpi-val">47.4%</div>
+      <div class="kpi-sub">Highest on team</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TAB 3: CITY HEADS ===================== -->
+<div class="sec" id="sec-3">
+  <div class="sc-grid" id="sc-grid"></div>
+</div>
+
+<!-- ===================== TAB 4: PERFORMANCE ===================== -->
+<div class="sec" id="sec-4">
+  <div class="kpi-grid">
+    <div class="kpi gr">
+      <div class="kpi-lbl">Total Orders (Team)</div>
+      <div class="kpi-val">7.2M</div>
+      <div class="kpi-sub">May 2026</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-lbl">Total GMV (Team)</div>
+      <div class="kpi-val">509.9M</div>
+      <div class="kpi-sub">AED — May 2026</div>
+    </div>
+    <div class="kpi bl">
+      <div class="kpi-lbl">Avg GMV/Vendor</div>
+      <div class="kpi-val">27.0K</div>
+      <div class="kpi-sub">Weighted team average</div>
+    </div>
+    <div class="kpi yl">
+      <div class="kpi-lbl">Best Growth</div>
+      <div class="kpi-val">Nishu</div>
+      <div class="kpi-sub">+15.6% orders (despite -3% vendors)</div>
+    </div>
+  </div>
+
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Orders by City Head — May 2026</div>
+      <div class="cs">Total monthly orders with growth rate</div>
+      <div style="position:relative;height:280px"><canvas id="orders-ch-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">GMV by City Head — May 2026</div>
+      <div class="cs">AED millions</div>
+      <div style="position:relative;height:280px"><canvas id="gmv-ch-chart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">UAE Benchmark — Orders/Vendor by Tier</div>
+      <div class="cs">Industry standard: orders per vendor per month by tier</div>
+      <div id="bm-orders" style="padding-top:8px"></div>
+    </div>
+    <div class="card">
+      <div class="ct">UAE Benchmark — Cancellation Rate by Tier</div>
+      <div class="cs">Higher tier = lower cancellation (better quality)</div>
+      <div id="bm-cancel" style="padding-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Order Volume by Tier — All City Heads</div>
+      <div class="cs">May 2026 orders per tier across portfolio</div>
+      <div style="position:relative;height:300px"><canvas id="tier-orders-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Wallet Share vs GMV/Vendor</div>
+      <div class="cs">Higher wallet share doesn't mean higher GMV/vendor</div>
+      <div style="position:relative;height:300px"><canvas id="wallet-scatter-chart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TAB 5: RAW DATA ===================== -->
+<div class="sec" id="sec-5">
+  <div class="tbl-card">
+    <div class="tbl-hdr">
+      <div>
+        <div class="tbl-title">Vendor Raw Data</div>
+        <div class="tbl-sub" id="raw-count">Showing all vendors</div>
+      </div>
+      <div class="tbl-filters">
+        <select class="gf-select" id="raw-ch" onchange="renderRaw()" style="min-width:160px">
+          <option value="all">All City Heads</option>
+          <option value="Alexandr Vrubel">Alex (Alexandr Vrubel)</option>
+          <option value="Aseel Katbi">Aseel Katbi</option>
+          <option value="Bashar Sabri">Bashar Sabri</option>
+          <option value="Nishu Shaji">Nishu Shaji</option>
+          <option value="Salma Soueif">Salma Soueif</option>
+        </select>
+        <select class="gf-select" id="raw-tier" onchange="renderRaw()" style="min-width:120px">
+          <option value="all">All Tiers</option>
+          <option value="AAA">AAA</option>
+          <option value="Tier A">Tier A</option>
+          <option value="Tier B">Tier B</option>
+          <option value="Tier C">Tier C</option>
+          <option value="Tier D">Tier D</option>
+          <option value="Tier E">Tier E</option>
+        </select>
+        <input class="srch" id="raw-srch" placeholder="Search vendor..." oninput="renderRaw()">
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Vendor Name</th>
+            <th>Tier</th>
+            <th>City Head</th>
+            <th>Team Lead</th>
+            <th>AM</th>
+            <th>Jan Orders</th>
+            <th>May Orders</th>
+            <th>Jan GMV</th>
+            <th>May GMV</th>
+            <th>Ad Rev (May)</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody id="raw-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="raw-pagination"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+Chart.register(ChartDataLabels);
+
+// ===================== DATA =====================
+const CH_DATA = {
+  Alex:   {full:'Alexandr Vrubel',jan:7206,may:7611,growth:5.6,aaa:133,a:1921,b:1225,c:1582,d:1312,e:1438,orders:2967589,ordersGrowth:7.7,gmv:210.75,gmvVendor:27.7,wallet:41.5},
+  Aseel:  {full:'Aseel Katbi',    jan:3497,may:3991,growth:14.1,aaa:0,  a:1392,b:734, c:997, d:489, e:378, orders:2057417,ordersGrowth:6.9,gmv:154.00,gmvVendor:38.6,wallet:39.1},
+  Bashar: {full:'Bashar Sabri',   jan:2857,may:3116,growth:9.1, aaa:0,  a:796, b:466, c:795, d:604, e:455, orders:1702039,ordersGrowth:10.5,gmv:113.74,gmvVendor:36.5,wallet:43.1},
+  Nishu:  {full:'Nishu Shaji',    jan:6227,may:6042,growth:-3.0,aaa:3,  a:21,  b:57,  c:468, d:1818,e:3674,orders:438099, ordersGrowth:15.6,gmv:31.38, gmvVendor:5.2, wallet:47.4},
+  Salma:  {full:'Salma Soueif',   jan:null,may:null,growth:null,aaa:0,  a:0,   b:0,   c:0,   d:0,   e:0,  orders:null,  ordersGrowth:null,gmv:null,   gmvVendor:null,wallet:null}
+};
+
+const TIER_ORDERS = {
+  Alex:   {aaa:70188,a:1790456,b:588939,c:364019,d:115804,e:38183},
+  Aseel:  {aaa:0,    a:1370980,b:339090,c:246408,d:78016, e:22431},
+  Bashar: {aaa:0,    a:919286, b:329982,c:303532,d:121116,e:28123},
+  Nishu:  {aaa:75,   a:6226,   b:17521, c:111588,d:192913,e:109703}
+};
+
+const UAE_BENCH = [
+  {tier:'AAA',ordVend:1792,gmvVend:0.12,cancel:22.9,color:'#856404'},
+  {tier:'A',  ordVend:1000,gmvVend:0.07,cancel:37.4,color:'#155724'},
+  {tier:'B',  ordVend:470, gmvVend:0.04,cancel:42.8,color:'#004085'},
+  {tier:'C',  ordVend:232, gmvVend:0.02,cancel:45.5,color:'#383D41'},
+  {tier:'D',  ordVend:101, gmvVend:0.01,cancel:48.7,color:'#7D3C00'},
+  {tier:'E',  ordVend:32,  gmvVend:0.00,cancel:54.0,color:'#721C24'}
+];
+
+const VENDORS = [
+ {id:536, name:'Noon & Kabab, Al Manara',             tier:'Tier A',am:'Ahmed Kholosy',   tl:'Elda George',    ch:'Alexandr Vrubel', orders:[519,389,373,389,441], gmv:[55921,39442,40703,44999,53763],  adrev:[4659,4623,5841,4885,4660]},
+ {id:606, name:'Thai Wok Restaurant, Al Barsha',       tier:'Tier E',am:'Nishu Shaji',     tl:'Shaimaa Hassan', ch:'Nishu Shaji',     orders:[8,1,0,3,19],         gmv:[921,56,0,221,1657],             adrev:[15,1,0,30,1266]},
+ {id:1327,name:'Burger King, Al Rigga',                tier:'AAA',   am:'Serge Dibeh',     tl:'Salma Soueif',   ch:'Salma Soueif',    orders:[170,119,170,168,200], gmv:[9447,6911,10293,9809,11263],    adrev:[359,666,1743,2124,1923]},
+ {id:1335,name:'Burger King, Jebel Ali Freezone',      tier:'AAA',   am:'Serge Dibeh',     tl:'Salma Soueif',   ch:'Salma Soueif',    orders:[748,501,318,551,638], gmv:[45358,29608,18628,35488,44906], adrev:[724,864,1749,2124,1921]},
+ {id:1350,name:'Marrybrown, Deira',                    tier:'Tier A',am:'Belal Tonbol',    tl:'Jad Adada',      ch:'Alexandr Vrubel', orders:[971,584,601,742,884], gmv:[41326,27062,28878,30800,36377], adrev:[1499,2498,298,666,1526]},
+ {id:1394,name:'ChicKing, Al Nahda 2',                 tier:'Tier B',am:'Pranav Ramanan',  tl:'Tejasvi Mohan',  ch:'Alexandr Vrubel', orders:[836,731,942,1063,1260],gmv:[33407,30036,38264,45290,51015], adrev:[1999,3370,3028,3780,4914]},
+ {id:1673,name:'Pizza Di Rocco, Al Dafrah',            tier:'Tier A',am:'Kavya R',         tl:'Sravani Chandra',ch:'Aseel Katbi',     orders:[3045,2449,2234,2820,3219],gmv:[314152,255765,234437,286623,311698],adrev:[14841,16577,14856,18752,20195]},
+ {id:876, name:'Kababi Restaurant, Al Barsha South',   tier:'Tier C',am:'Nishu Shaji',     tl:'Shaimaa Hassan', ch:'Nishu Shaji',     orders:[141,105,98,95,133],   gmv:[14550,9872,12158,11168,16905],  adrev:[2245,2148,2145,2149,2612]},
+ {id:1527,name:'Cultures, Sheikh Zayed Road',          tier:'Tier D',am:'Nishu Shaji',     tl:'Shaimaa Hassan', ch:'Nishu Shaji',     orders:[14,15,3,0,0],         gmv:[605,687,73,0,0],               adrev:[62,161,0,0,0]},
+ {id:2105,name:'Subway, Jebel Ali Freezone',           tier:'AAA',   am:'Patricia BORGES', tl:'TL-X',           ch:'Salma Soueif',    orders:[788,720,203,618,649], gmv:[39009,38253,8721,32349,34347],  adrev:[0,0,0,0,0]},
+ {id:1804,name:"Hot'n Spicy Restaurant, TECOM",        tier:'Tier A',am:'Yawar Mueen',     tl:'Tejasvi Mohan',  ch:'Alexandr Vrubel', orders:[1124,887,915,1295,1252],gmv:[76119,59426,64274,77120,84345], adrev:[2099,2099,2095,2098,2099]},
+ {id:2193,name:'IL Forno Restaurant, Al Khalidiyah',   tier:'Tier A',am:'Kavya R',         tl:'Sravani Chandra',ch:'Aseel Katbi',     orders:[1021,746,770,813,1004],gmv:[103853,76690,83840,82216,103032],adrev:[9999,9999,9996,9996,9998]},
+ {id:1783,name:'Masgouf London Restaurant',            tier:'Tier B',am:'Rim Nassar',      tl:'Jad Adada',      ch:'Alexandr Vrubel', orders:[297,292,331,408,397], gmv:[41750,38031,38510,49460,56772],  adrev:[4533,5515,6585,7757,5253]},
+ {id:1396,name:'ChicKing, Madinat Zayed',              tier:'Tier B',am:'Pranav Ramanan',  tl:'Tejasvi Mohan',  ch:'Alexandr Vrubel', orders:[1236,1038,1703,2081,2211],gmv:[55879,49182,71733,89035,94060], adrev:[999,3071,3405,3743,4694]},
+ {id:1400,name:'ChicKing, Al Nuaimia 1',               tier:'Tier B',am:'Pranav Ramanan',  tl:'Tejasvi Mohan',  ch:'Alexandr Vrubel', orders:[1265,971,1491,1826,2156],gmv:[53573,43170,62752,74770,90591],  adrev:[1999,3449,5803,6216,7108]},
+];
+
+// ===================== COLORS =====================
+const TIER_COLORS = {aaa:'#856404',a:'#155724',b:'#004085',c:'#6C757D',d:'#E67E22',e:'#C0392B'};
+const CH_COLORS   = {Alex:'#FF6300',Aseel:'#3498DB',Bashar:'#2ECC71',Nishu:'#E74C3C',Salma:'#8E44AD'};
+
+// ===================== STATE =====================
+let gfCH='all', gfTiers=['AAA','A','B','C','D','E'];
+let rawPage=1, rawPageSize=10, rawFiltered=[];
+
+// ===================== HELPERS =====================
+const fmt=n=>n==null?'—':n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':n.toString();
+const fmtN=n=>n==null?'—':n.toLocaleString();
+const fmtG=v=>v>0?`<span class="ng">+${v}%</span>`:`<span class="nr">${v}%</span>`;
+const tierBadge=t=>{const m={AAA:'b-aaa','Tier A':'b-a','Tier B':'b-b','Tier C':'b-c','Tier D':'b-d','Tier E':'b-e'};return`<span class="badge ${m[t]||'bgy'}">${t}</span>`};
+
+function resetFilters(){
+  document.getElementById('gf-ch').value='all';
+  gfCH='all';
+  gfTiers=['AAA','A','B','C','D','E'];
+  document.querySelectorAll('.pill[data-tier]').forEach(p=>p.classList.add('on'));
+  updateGfCount();
+  renderRaw();
+}
+
+function updateGfCount(){
+  const total=VENDORS.length;
+  const visible=VENDORS.filter(v=>{
+    const chMatch=gfCH==='all'||v.ch.includes(gfCH.split('(')[0].trim())||gfCH===v.ch;
+    const tierMatch=gfTiers.some(t=>v.tier===t||v.tier==='Tier '+t);
+    return chMatch&&tierMatch;
+  }).length;
+  document.getElementById('gf-count').textContent=`${visible} / ${total} sample vendors`;
+}
+
+// ===================== TAB SWITCH =====================
+let charts={};
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i));
+  document.querySelectorAll('.sec').forEach((s,j)=>s.classList.toggle('active',j===i));
+  if(i===0)initOverview();
+  if(i===1)initAB();
+  if(i===2)initNishu();
+  if(i===3)initCityHeads();
+  if(i===4)initPerformance();
+  if(i===5){renderRaw();}
+}
+
+// ===================== CHART HELPERS =====================
+function makeChart(id,config){
+  if(charts[id])charts[id].destroy();
+  const ctx=document.getElementById(id);
+  if(!ctx)return;
+  charts[id]=new Chart(ctx,config);
+  return charts[id];
+}
+
+// ===================== TAB 0: OVERVIEW =====================
+function initOverview(){
+  // KPI cards
+  const kpiEl=document.getElementById('ov-kpis');
+  if(kpiEl.innerHTML===''){
+    const kpis=[
+      {lbl:'Total Vendors (May)',val:'20,760',sub:'Alex+Aseel+Bashar+Nishu',cls:''},
+      {lbl:'Total Orders (May)',val:'7.2M',sub:'+8.9% avg growth',cls:'gr'},
+      {lbl:'Total GMV (May)',val:'509.9M',sub:'AED — combined team',cls:''},
+      {lbl:'Nishu A&B Share',val:'1.3%',sub:'78 of 6,042 vendors ⚠️',cls:'rd'},
+      {lbl:'GMV Gap (Nishu vs Alex)',val:'5.3×',sub:'5.2K vs 27.7K per vendor',cls:'rd'},
+      {lbl:'Tier E Explosion',val:'+115-135%',sub:'Bashar & Aseel — quality risk',cls:'yl'},
+    ];
+    kpiEl.innerHTML=kpis.map(k=>`<div class="kpi ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  }
+
+  // CH Inventory bar
+  makeChart('ch-inv-chart',{
+    type:'bar',
+    data:{
+      labels:['Alex','Aseel','Bashar','Nishu'],
+      datasets:[
+        {label:'Jan 2026',data:[7206,3497,2857,6227],backgroundColor:'rgba(255,99,0,0.3)',borderColor:'#FF6300',borderWidth:2,borderRadius:4},
+        {label:'May 2026',data:[7611,3991,3116,6042],backgroundColor:'rgba(255,99,0,0.7)',borderColor:'#FF6300',borderWidth:2,borderRadius:4}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},datalabels:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#f0f0f0'}}}}
+  });
+
+  // Tier stacked
+  makeChart('tier-stacked-chart',{
+    type:'bar',
+    data:{
+      labels:['Alex','Aseel','Bashar','Nishu'],
+      datasets:[
+        {label:'AAA',data:[133,0,0,3],backgroundColor:'#FFC107',borderRadius:2},
+        {label:'A',  data:[1921,1392,796,21],backgroundColor:'#28A745',borderRadius:2},
+        {label:'B',  data:[1225,734,466,57],backgroundColor:'#007BFF',borderRadius:2},
+        {label:'C',  data:[1582,997,795,468],backgroundColor:'#6C757D',borderRadius:2},
+        {label:'D',  data:[1312,489,604,1818],backgroundColor:'#E67E22',borderRadius:2},
+        {label:'E',  data:[1438,378,455,3674],backgroundColor:'#DC3545',borderRadius:2},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},datalabels:{display:false}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,grid:{color:'#f0f0f0'}}}}
+  });
+
+  // A&B share bar
+  const abPct=[
+    (133+1921+1225)/7611*100,
+    (1392+734)/3991*100,
+    (796+466)/3116*100,
+    (3+21+57)/6042*100
+  ];
+  makeChart('ab-share-chart',{
+    type:'bar',
+    data:{
+      labels:['Alex','Aseel','Bashar','Nishu'],
+      datasets:[{
+        label:'A&B Share %',
+        data:abPct.map(v=>+v.toFixed(1)),
+        backgroundColor:['#FF6300','#3498DB','#2ECC71','#E74C3C'],
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        datalabels:{anchor:'end',align:'top',formatter:v=>v.toFixed(1)+'%',font:{weight:'bold',size:12}}
+      },
+      scales:{y:{beginAtZero:true,max:65,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}}
+    }
+  });
+}
+
+// ===================== TAB 1: A&B INVENTORY =====================
+function initAB(){
+  // Stacked bar A&B vs CDE
+  makeChart('ab-stacked-chart',{
+    type:'bar',
+    data:{
+      labels:['Alex','Aseel','Bashar','Nishu'],
+      datasets:[
+        {label:'A&B Vendors',data:[3279,2126,1262,78],backgroundColor:'#2ECC71',borderRadius:4},
+        {label:'C Vendors',  data:[1582,997,795,468], backgroundColor:'#ADB5BD',borderRadius:4},
+        {label:'D&E Vendors',data:[2750,867,1059,5492],backgroundColor:'#E74C3C',borderRadius:4}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},datalabels:{display:false}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,grid:{color:'#f0f0f0'}}}}
+  });
+
+  // A&B trend (approximate Jan vs May)
+  makeChart('ab-trend-chart',{
+    type:'line',
+    data:{
+      labels:['Jan 2026','May 2026'],
+      datasets:[
+        {label:'Alex A&B%',data:[41.5,43.1],borderColor:'#FF6300',backgroundColor:'rgba(255,99,0,.1)',tension:0.4,fill:true},
+        {label:'Aseel A&B%',data:[50.2,53.3],borderColor:'#3498DB',backgroundColor:'rgba(52,152,219,.1)',tension:0.4,fill:false},
+        {label:'Bashar A&B%',data:[39.1,40.5],borderColor:'#2ECC71',backgroundColor:'rgba(46,204,113,.1)',tension:0.4,fill:false},
+        {label:'Nishu A&B%',data:[1.8,1.3],borderColor:'#E74C3C',backgroundColor:'rgba(231,76,60,.1)',tension:0.4,fill:true,borderDash:[5,5]},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},datalabels:{display:false}},
+      scales:{y:{ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'},min:0,max:60}}
+    }
+  });
+}
+
+// ===================== TAB 2: NISHU DEEP DIVE =====================
+function initNishu(){
+  // Donut
+  makeChart('nishu-donut',{
+    type:'doughnut',
+    data:{
+      labels:['AAA (3)','A (21)','B (57)','C (468)','D (1,818)','E (3,674)'],
+      datasets:[{
+        data:[3,21,57,468,1818,3674],
+        backgroundColor:['#FFC107','#28A745','#007BFF','#6C757D','#E67E22','#DC3545'],
+        borderWidth:2,borderColor:'#fff'
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'right',labels:{font:{size:11}}},
+        datalabels:{
+          formatter:(v,ctx)=>{const tot=6042;const pct=(v/tot*100).toFixed(1);return pct>2?pct+'%':''},
+          color:'#fff',font:{weight:'bold',size:11}
+        }
+      }
+    }
+  });
+
+  // GMV/Vendor bar
+  makeChart('gmv-vendor-chart',{
+    type:'bar',
+    data:{
+      labels:['Alex','Aseel','Bashar','Nishu'],
+      datasets:[{
+        label:'GMV / Vendor (AED K)',
+        data:[27.7,38.6,36.5,5.2],
+        backgroundColor:['#FF6300','#3498DB','#2ECC71','#E74C3C'],
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        datalabels:{anchor:'end',align:'top',formatter:v=>v+'K',font:{weight:'bold',size:12}}
+      },
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'K'},grid:{color:'#f0f0f0'}}}
+    }
+  });
+
+  // Nishu orders by tier
+  const tN=TIER_ORDERS.Nishu;
+  makeChart('nishu-orders-chart',{
+    type:'bar',
+    data:{
+      labels:['AAA','A','B','C','D','E'],
+      datasets:[{
+        label:'Orders',
+        data:[tN.aaa,tN.a,tN.b,tN.c,tN.d,tN.e],
+        backgroundColor:['#FFC107','#28A745','#007BFF','#6C757D','#E67E22','#DC3545'],
+        borderRadius:4
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},datalabels:{anchor:'end',align:'top',formatter:v=>v>=1000?(v/1000).toFixed(0)+'K':v,font:{weight:'bold',size:10}}},
+      scales:{y:{beginAtZero:true,grid:{color:'#f0f0f0'}}}
+    }
+  });
+
+  // Nishu vs Alex tier pct
+  const aV=CH_DATA.Alex, nV=CH_DATA.Nishu;
+  const aTotal=aV.may, nTotal=nV.may;
+  makeChart('nishu-vs-alex-chart',{
+    type:'bar',
+    data:{
+      labels:['AAA','A','B','C','D','E'],
+      datasets:[
+        {label:'Alex %',data:[(aV.aaa/aTotal*100).toFixed(1),(aV.a/aTotal*100).toFixed(1),(aV.b/aTotal*100).toFixed(1),(aV.c/aTotal*100).toFixed(1),(aV.d/aTotal*100).toFixed(1),(aV.e/aTotal*100).toFixed(1)],backgroundColor:'rgba(255,99,0,0.7)',borderRadius:4},
+        {label:'Nishu %',data:[(nV.aaa/nTotal*100).toFixed(1),(nV.a/nTotal*100).toFixed(1),(nV.b/nTotal*100).toFixed(1),(nV.c/nTotal*100).toFixed(1),(nV.d/nTotal*100).toFixed(1),(nV.e/nTotal*100).toFixed(1)],backgroundColor:'rgba(231,76,60,0.7)',borderRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},datalabels:{display:false}},
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'#f0f0f0'}}}
+    }
+  });
+}
+
+// ===================== TAB 3: CITY HEADS =====================
+function initCityHeads(){
+  const grid=document.getElementById('sc-grid');
+  if(grid.innerHTML!=='')return;
+  const chs=['Alex','Aseel','Bashar','Nishu'];
+  grid.innerHTML=chs.map(k=>{
+    const d=CH_DATA[k];
+    const total=d.may||0;
+    const ab=d.aaa+d.a+d.b;
+    const de=d.d+d.e;
+    const abPct=total?(ab/total*100).toFixed(1):'—';
+    const dePct=total?(de/total*100).toFixed(1):'—';
+    const gClass=d.growth>0?'ng':'nr';
+    const tiers=[d.aaa,d.a,d.b,d.c,d.d,d.e];
+    const tierColors=['#FFC107','#28A745','#007BFF','#6C757D','#E67E22','#DC3545'];
+    const tierLabels=['AAA','A','B','C','D','E'];
+    const bars=tiers.map((v,i)=>`<div class="mini-seg" style="flex:${v||0};background:${tierColors[i]}" title="${tierLabels[i]}: ${v.toLocaleString()}"></div>`).join('');
+    return `<div class="sc">
+      <div class="sc-name">${k}</div>
+      <div class="sc-role">${d.full} · City Head</div>
+      <div class="sc-stats">
+        <div class="sc-stat"><div class="sc-stat-lbl">Vendors (May)</div><div class="sc-stat-val">${fmtN(d.may)}</div></div>
+        <div class="sc-stat"><div class="sc-stat-lbl">Growth Jan→May</div><div class="sc-stat-val ${gClass}">${d.growth!=null?d.growth+'%':'—'}</div></div>
+        <div class="sc-stat"><div class="sc-stat-lbl">Orders (May)</div><div class="sc-stat-val">${fmt(d.orders)}</div></div>
+        <div class="sc-stat"><div class="sc-stat-lbl">GMV/Vendor</div><div class="sc-stat-val">${d.gmvVendor?d.gmvVendor+'K':'—'}</div></div>
+        <div class="sc-stat"><div class="sc-stat-lbl">A&amp;B Share</div><div class="sc-stat-val ${k==='Nishu'?'nr':''}">${abPct}%</div></div>
+        <div class="sc-stat"><div class="sc-stat-lbl">D&amp;E Share</div><div class="sc-stat-val ${k==='Nishu'?'nr':''}">${dePct}%</div></div>
+        <div class="sc-stat"><div class="sc-stat-lbl">GMV (May)</div><div class="sc-stat-val">${d.gmv?d.gmv+'M':'—'}</div></div>
+        <div class="sc-stat"><div class="sc-stat-lbl">Wallet Share</div><div class="sc-stat-val">${d.wallet?d.wallet+'%':'—'}</div></div>
+      </div>
+      <div class="sc-tier-lbl">Tier Distribution</div>
+      <div class="sc-tier-bar" style="height:14px">${bars}</div>
+      <div class="sc-tier-leg">
+        ${tierLabels.map((l,i)=>`<div class="sc-tier-dot"><div class="dot" style="background:${tierColors[i]}"></div>${l}: ${tiers[i].toLocaleString()}</div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===================== TAB 4: PERFORMANCE =====================
+function initPerformance(){
+  // Orders by CH
+  makeChart('orders-ch-chart',{
+    type:'bar',
+    data:{
+      labels:['Alex','Aseel','Bashar','Nishu'],
+      datasets:[{
+        label:'Orders (May)',
+        data:[2967589,2057417,1702039,438099],
+        backgroundColor:['#FF6300','#3498DB','#2ECC71','#E74C3C'],
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},datalabels:{anchor:'end',align:'top',formatter:v=>(v/1e6).toFixed(2)+'M',font:{weight:'bold',size:11}}},
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':v},grid:{color:'#f0f0f0'}}}
+    }
+  });
+
+  // GMV by CH
+  makeChart('gmv-ch-chart',{
+    type:'bar',
+    data:{
+      labels:['Alex','Aseel','Bashar','Nishu'],
+      datasets:[{
+        label:'GMV (AED M)',
+        data:[210.75,154.00,113.74,31.38],
+        backgroundColor:['#FF6300','#3498DB','#2ECC71','#E74C3C'],
+        borderRadius:6
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},datalabels:{anchor:'end',align:'top',formatter:v=>v+'M',font:{weight:'bold',size:11}}},
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'M'},grid:{color:'#f0f0f0'}}}
+    }
+  });
+
+  // Benchmarks
+  const bmOrdersEl=document.getElementById('bm-orders');
+  const bmCancelEl=document.getElementById('bm-cancel');
+  if(bmOrdersEl&&!bmOrdersEl.innerHTML){
+    const maxOrd=1792,maxCancel=54;
+    bmOrdersEl.innerHTML=UAE_BENCH.map(b=>`
+      <div class="bm-row">
+        <div class="bm-label" style="color:${b.color}">${b.tier}</div>
+        <div class="bm-bar-wrap"><div class="bm-bar"><div class="bm-fill" style="width:${b.ordVend/maxOrd*100}%;background:${b.color}"></div></div></div>
+        <div class="bm-val">${b.ordVend.toLocaleString()} ord/v</div>
+      </div>`).join('');
+    bmCancelEl.innerHTML=UAE_BENCH.map(b=>`
+      <div class="bm-row">
+        <div class="bm-label" style="color:${b.color}">${b.tier}</div>
+        <div class="bm-bar-wrap"><div class="bm-bar"><div class="bm-fill" style="width:${b.cancel/maxCancel*100}%;background:${b.color}"></div></div></div>
+        <div class="bm-val">${b.cancel}% cancel</div>
+      </div>`).join('');
+  }
+
+  // Orders by tier grouped
+  const tiers=['AAA','A','B','C','D','E'];
+  const tierKeys=['aaa','a','b','c','d','e'];
+  makeChart('tier-orders-chart',{
+    type:'bar',
+    data:{
+      labels:tiers,
+      datasets:[
+        {label:'Alex',  data:tierKeys.map(k=>TIER_ORDERS.Alex[k]),  backgroundColor:'rgba(255,99,0,0.8)',borderRadius:3},
+        {label:'Aseel', data:tierKeys.map(k=>TIER_ORDERS.Aseel[k]), backgroundColor:'rgba(52,152,219,0.8)',borderRadius:3},
+        {label:'Bashar',data:tierKeys.map(k=>TIER_ORDERS.Bashar[k]),backgroundColor:'rgba(46,204,113,0.8)',borderRadius:3},
+        {label:'Nishu', data:tierKeys.map(k=>TIER_ORDERS.Nishu[k]), backgroundColor:'rgba(231,76,60,0.8)',borderRadius:3},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},datalabels:{display:false}},
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v},grid:{color:'#f0f0f0'}}}
+    }
+  });
+
+  // Wallet vs GMV scatter
+  makeChart('wallet-scatter-chart',{
+    type:'scatter',
+    data:{
+      datasets:[
+        {label:'Alex',   data:[{x:41.5,y:27.7}],backgroundColor:'#FF6300',pointRadius:12,pointHoverRadius:14},
+        {label:'Aseel',  data:[{x:39.1,y:38.6}],backgroundColor:'#3498DB',pointRadius:12,pointHoverRadius:14},
+        {label:'Bashar', data:[{x:43.1,y:36.5}],backgroundColor:'#2ECC71',pointRadius:12,pointHoverRadius:14},
+        {label:'Nishu',  data:[{x:47.4,y:5.2}], backgroundColor:'#E74C3C',pointRadius:12,pointHoverRadius:14},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top'},
+        datalabels:{
+          formatter:(v,ctx)=>ctx.dataset.label,
+          color:'#fff',font:{weight:'bold',size:10},
+          textAlign:'center'
+        },
+        tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: Wallet ${ctx.raw.x}% | GMV/V ${ctx.raw.y}K`}}
+      },
+      scales:{
+        x:{title:{display:true,text:'Wallet Share (%)'},min:35,max:52,grid:{color:'#f0f0f0'}},
+        y:{title:{display:true,text:'GMV/Vendor (K AED)'},beginAtZero:true,grid:{color:'#f0f0f0'}}
+      }
+    }
+  });
+}
+
+// ===================== TAB 5: RAW DATA =====================
+function renderRaw(){
+  const chF=document.getElementById('raw-ch').value;
+  const tierF=document.getElementById('raw-tier').value;
+  const srch=(document.getElementById('raw-srch').value||'').toLowerCase();
+
+  rawFiltered=VENDORS.filter(v=>{
+    if(chF!=='all'&&v.ch!==chF)return false;
+    if(tierF!=='all'&&v.tier!==tierF)return false;
+    if(srch&&!v.name.toLowerCase().includes(srch)&&!v.am.toLowerCase().includes(srch))return false;
+    return true;
+  });
+
+  document.getElementById('raw-count').textContent=`Showing ${rawFiltered.length} of ${VENDORS.length} sample vendors`;
+  rawPage=1;
+  renderRawPage();
+}
+
+function renderRawPage(){
+  const start=(rawPage-1)*rawPageSize;
+  const page=rawFiltered.slice(start,start+rawPageSize);
+  const months=['Jan','Feb','Mar','Apr','May'];
+
+  document.getElementById('raw-tbody').innerHTML=page.map(v=>{
+    const janOrd=v.orders[0],mayOrd=v.orders[4];
+    const janGmv=v.gmv[0],mayGmv=v.gmv[4];
+    const trend=janOrd>0?((mayOrd-janOrd)/janOrd*100).toFixed(1):null;
+    const tClass=trend!=null&&trend>=0?'ng':'nr';
+    return `<tr>
+      <td class="num">${v.id}</td>
+      <td style="font-weight:600;max-width:220px">${v.name}</td>
+      <td>${tierBadge(v.tier)}</td>
+      <td>${v.ch.split(' ')[0]}</td>
+      <td style="color:var(--g6);font-size:12px">${v.tl}</td>
+      <td style="color:var(--g6);font-size:12px">${v.am}</td>
+      <td class="num">${janOrd.toLocaleString()}</td>
+      <td class="num">${mayOrd.toLocaleString()}</td>
+      <td class="num">${janGmv.toLocaleString()}</td>
+      <td class="num">${mayGmv.toLocaleString()}</td>
+      <td class="num">${(v.adrev[4]||0).toLocaleString()}</td>
+      <td><span class="${tClass}">${trend!=null?trend+'%':'—'}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Pagination
+  const totalPages=Math.ceil(rawFiltered.length/rawPageSize);
+  const pagEl=document.getElementById('raw-pagination');
+  pagEl.innerHTML=`<span class="page-info">Page ${rawPage} of ${totalPages} (${rawFiltered.length} records)</span>`;
+  if(rawPage>1)pagEl.innerHTML+=`<button class="page-btn" onclick="rawPage--;renderRawPage()">← Prev</button>`;
+  if(rawPage<totalPages)pagEl.innerHTML+=`<button class="page-btn" onclick="rawPage++;renderRawPage()">Next →</button>`;
+}
+
+// ===================== GLOBAL FILTER EVENTS =====================
+document.getElementById('gf-ch').addEventListener('change',function(){
+  gfCH=this.value;
+  updateGfCount();
+});
+document.querySelectorAll('.pill[data-tier]').forEach(p=>{
+  p.addEventListener('click',function(){
+    this.classList.toggle('on');
+    gfTiers=Array.from(document.querySelectorAll('.pill[data-tier].on')).map(el=>el.dataset.tier);
+    updateGfCount();
+  });
+});
+
+// ===================== INIT =====================
+initOverview();
+updateGfCount();
+renderRaw();
+</script>
+</body>
+</html>
