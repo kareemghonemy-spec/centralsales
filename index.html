@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaign CPiO + Growth — Talabat</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{--or:#FF6300;--or2:#FF8533;--pale:#FFF0E6;--dk:#1A1A1A;--g9:#1E1E1E;--g8:#2A2A2A;--g1:#F5F5F5;--g2:#E8E8E8;--g6:#666;--wh:#fff;--gr:#2ECC71;--rd:#E74C3C;--bl:#3498DB;--r:12px;--sh:0 2px 16px rgba(0,0,0,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g1);color:var(--dk);min-height:100vh}
+header{background:var(--g9);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--or)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:36px;height:36px;background:var(--or);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff}
+.logo-text{color:#fff;font-size:18px;font-weight:700}.logo-text span{color:var(--or)}
+.hdr-meta{color:#888;font-size:13px;text-align:right;line-height:1.5}
+.nav{background:var(--wh);border-bottom:1px solid var(--g2);padding:0 32px;display:flex;gap:0;overflow-x:auto}
+.tab{padding:14px 20px;font-size:13px;font-weight:500;color:var(--g6);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;user-select:none}
+.tab:hover{color:var(--or)}.tab.active{color:var(--or);border-bottom-color:var(--or);font-weight:600}
+main{padding:28px 32px;max-width:1440px;margin:0 auto}
+.sec{display:none}.sec.active{display:block}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:var(--wh);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);border-left:4px solid var(--or);position:relative;overflow:hidden}
+.kpi::after{content:'';position:absolute;top:0;right:0;width:50px;height:50px;background:var(--pale);border-radius:0 0 0 50px}
+.kpi.gr{border-left-color:var(--gr)}.kpi.gr::after{background:#E8F8F0}
+.kpi.rd{border-left-color:var(--rd)}.kpi.rd::after{background:#FCE8E6}
+.kpi.bl{border-left-color:var(--bl)}.kpi.bl::after{background:#E8F4FD}
+.kpi-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--g6);margin-bottom:6px}
+.kpi-val{font-size:26px;font-weight:800;line-height:1;margin-bottom:3px}
+.kpi-sub{font-size:11px;color:var(--g6)}
+.row{display:grid;gap:20px;margin-bottom:20px}
+.c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:1fr 1fr 1fr}
+.c12{grid-template-columns:1fr 2fr}.c21{grid-template-columns:2fr 1fr}.c13{grid-template-columns:1fr 3fr}
+.card{background:var(--wh);border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
+.ct{font-size:14px;font-weight:700;margin-bottom:3px}
+.cs{font-size:12px;color:var(--g6);margin-bottom:18px}
+.ch{position:relative}
+.tbl-card{background:var(--wh);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px}
+.tbl-hdr{padding:18px 22px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.tbl-title{font-size:14px;font-weight:700}
+.tbl-sub{font-size:12px;color:var(--g6);margin-top:2px}
+input.srch{padding:7px 12px;border:1.5px solid var(--g2);border-radius:8px;font-size:13px;outline:none;transition:border .2s;width:200px}
+input.srch:focus{border-color:var(--or)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--g1);padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--g6);cursor:pointer;user-select:none;white-space:nowrap;border-bottom:1px solid var(--g2)}
+thead th:hover{color:var(--or)}.sorted{color:var(--or)}.sorted::after{content:' ↓'}.sorted.asc::after{content:' ↑'}
+tbody tr{border-bottom:1px solid var(--g2);transition:background .15s}
+tbody tr:hover{background:var(--pale)}tbody tr:last-child{border-bottom:none}
+tbody td{padding:10px 14px;vertical-align:middle}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:#E8F8F0;color:#27AE60}.br{background:#FCE8E6;color:#C0392B}
+.bo{background:var(--pale);color:var(--or)}.bgy{background:var(--g2);color:var(--g6)}
+.bbl{background:#E8F4FD;color:#2980B9}.bpu{background:#F4E6FF;color:#8E44AD}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.ng{color:var(--gr);font-weight:700}.nr{color:var(--rd);font-weight:700}
+.pbar{display:flex;align-items:center;gap:7px}
+.pb{flex:1;height:6px;background:var(--g2);border-radius:3px;overflow:hidden;max-width:70px}
+.pbf{height:100%;background:var(--gr);border-radius:3px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.pill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--g2);background:var(--wh);color:var(--g6);transition:all .2s;user-select:none}
+.pill:hover,.pill.on{background:var(--or);border-color:var(--or);color:#fff}
+/* Quadrant labels */
+.quad-wrap{position:relative}
+.quad-label{position:absolute;font-size:10px;font-weight:700;opacity:.5;pointer-events:none}
+footer{text-align:center;padding:20px;font-size:12px;color:#aaa;border-top:1px solid var(--g2);background:var(--wh);margin-top:40px}
+@media(max-width:900px){main{padding:16px}.c2,.c3,.c12,.c21,.c13{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <div class="logo-mark">t</div>
+    <div class="logo-text">talabat <span>analytics</span></div>
+  </div>
+  <div class="hdr-meta">Campaign CPiO + Growth · Mar–May 2026<br>v2 — includes orders & baseline comparison</div>
+</header>
+
+<div class="nav">
+  <div class="tab active" onclick="show('overview',this)">Overview</div>
+  <div class="tab" onclick="show('growth',this)">CPiO vs Growth ✦</div>
+  <div class="tab" onclick="show('campaigns',this)">Campaigns</div>
+  <div class="tab" onclick="show('monthly',this)">Monthly</div>
+  <div class="tab" onclick="show('types',this)">Types</div>
+  <div class="tab" onclick="show('brands',this)">Brands</div>
+  <div class="tab" onclick="show('raw',this)">Raw Data</div>
+</div>
+
+<main>
+<!-- OVERVIEW -->
+<div class="sec active" id="overview">
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-lbl">Total Entries</div><div class="kpi-val">339</div><div class="kpi-sub">Mar–May 2026</div></div>
+    <div class="kpi bl"><div class="kpi-lbl">Campaigns</div><div class="kpi-val">18</div><div class="kpi-sub">Across 3 months</div></div>
+    <div class="kpi gr"><div class="kpi-lbl">Total Incr. Orders</div><div class="kpi-val" id="kpi-total-orders">—</div><div class="kpi-sub">Net positive incremental</div></div>
+    <div class="kpi gr"><div class="kpi-lbl">Median CPiO</div><div class="kpi-val">33.7</div><div class="kpi-sub">Overall (lower = better)</div></div>
+    <div class="kpi gr"><div class="kpi-lbl">% Positive</div><div class="kpi-val">88.5%</div><div class="kpi-sub">300 of 339 entries</div></div>
+    <div class="kpi rd"><div class="kpi-lbl">Negative Runs</div><div class="kpi-val">39</div><div class="kpi-sub">Lost vs baseline</div></div>
+    <div class="kpi"><div class="kpi-lbl">Best CPiO (brand)</div><div class="kpi-val">2.1</div><div class="kpi-sub">Subway · Flash Sale Apr</div></div>
+    <div class="kpi"><div class="kpi-lbl">Brands Tracked</div><div class="kpi-val">130+</div><div class="kpi-sub">Unique chains</div></div>
+  </div>
+  <div class="row c21">
+    <div class="card">
+      <div class="ct">Total Incremental Orders by Campaign</div>
+      <div class="cs">Sum of absolute incremental orders · sorted by volume</div>
+      <div class="ch" style="height:400px"><canvas id="ordersBar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Monthly % Positive</div>
+      <div class="cs">Significant improvement Mar→May</div>
+      <div class="ch" style="height:180px"><canvas id="posLine"></canvas></div>
+      <div class="ct" style="margin-top:20px">Negative Runs by Month</div>
+      <div class="cs">Dropping sharply — campaigns improving</div>
+      <div class="ch" style="height:140px"><canvas id="negBar2"></canvas></div>
+    </div>
+  </div>
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Campaign Efficiency — Median CPiO Ranked</div>
+      <div class="cs">Lower = more efficient · green &lt;30 · orange 30–45 · red &gt;45</div>
+      <div class="ch" style="height:340px"><canvas id="cpioBar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Campaign Type — Median CPiO vs % Positive</div>
+      <div class="cs">Bubble size = number of entries</div>
+      <div class="ch" style="height:340px"><canvas id="typeBubble"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- CPiO vs GROWTH -->
+<div class="sec" id="growth">
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi gr"><div class="kpi-lbl">Sweet Spot Entries</div><div class="kpi-val" id="kpi-ss">—</div><div class="kpi-sub">Low CPiO + Positive growth</div></div>
+    <div class="kpi rd"><div class="kpi-lbl">Needs Review</div><div class="kpi-val" id="kpi-neg">—</div><div class="kpi-sub">Negative growth vs baseline</div></div>
+    <div class="kpi"><div class="kpi-lbl">Avg Growth (pos)</div><div class="kpi-val" id="kpi-avgGr">—</div><div class="kpi-sub">Vs daily baseline</div></div>
+    <div class="kpi bl"><div class="kpi-lbl">Brands with Baseline</div><div class="kpi-val" id="kpi-withBase">—</div><div class="kpi-sub">Matched to baseline data</div></div>
+  </div>
+  <div class="row">
+    <div class="card">
+      <div class="ct">CPiO vs Incremental Growth % — by Brand-Campaign Entry</div>
+      <div class="cs">Each dot = one brand in one campaign · x = CPiO efficiency · y = % growth vs daily baseline · size = campaign orders · color = campaign type · quadrant lines at CPiO=0 and Growth=0%</div>
+      <div class="ch" style="height:500px"><canvas id="scatterMain"></canvas></div>
+    </div>
+  </div>
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Top 20 Growth % Entries (vs baseline)</div>
+      <div class="cs">Ranked by incremental orders / baseline period</div>
+      <div class="ch" style="height:340px"><canvas id="topGrowthBar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Worst Growth % Entries (negative vs baseline)</div>
+      <div class="cs">Brands that performed below baseline during campaign</div>
+      <div class="ch" style="height:340px"><canvas id="botGrowthBar"></canvas></div>
+    </div>
+  </div>
+  <div class="tbl-card">
+    <div class="tbl-hdr">
+      <div><div class="tbl-title">CPiO vs Growth — Detail Table</div><div class="tbl-sub">Entries with baseline data · click headers to sort</div></div>
+      <input class="srch" placeholder="Search brand…" oninput="filterT(this,'growthTbl')">
+    </div>
+    <div style="overflow-x:auto">
+      <table id="growthTbl">
+        <thead><tr>
+          <th onclick="sortT('growthTbl',0)">Brand</th>
+          <th onclick="sortT('growthTbl',1)">Campaign</th>
+          <th onclick="sortT('growthTbl',2)">Type</th>
+          <th onclick="sortT('growthTbl',3)">CPiO</th>
+          <th onclick="sortT('growthTbl',4)">Incr. Orders</th>
+          <th onclick="sortT('growthTbl',5)" class="sorted">Growth %</th>
+          <th onclick="sortT('growthTbl',6)">Baseline/day</th>
+          <th onclick="sortT('growthTbl',7)">Quadrant</th>
+        </tr></thead>
+        <tbody id="growthTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- CAMPAIGNS -->
+<div class="sec" id="campaigns">
+  <div class="pills" id="campPills">
+    <div class="pill on" onclick="filterCamp(this,'all')">All</div>
+    <div class="pill" onclick="filterCamp(this,'Mar')">Mar</div>
+    <div class="pill" onclick="filterCamp(this,'Apr')">Apr</div>
+    <div class="pill" onclick="filterCamp(this,'May')">May</div>
+  </div>
+  <div class="tbl-card">
+    <div class="tbl-hdr">
+      <div><div class="tbl-title">Campaign Performance</div><div class="tbl-sub">Click headers to sort · includes orders data</div></div>
+      <input class="srch" placeholder="Search…" oninput="filterT(this,'campTbl')">
+    </div>
+    <div style="overflow-x:auto">
+      <table id="campTbl">
+        <thead><tr>
+          <th onclick="sortT('campTbl',0)">Campaign</th>
+          <th onclick="sortT('campTbl',1)">Month</th>
+          <th onclick="sortT('campTbl',2)">Type</th>
+          <th onclick="sortT('campTbl',3)">Brands</th>
+          <th onclick="sortT('campTbl',4)">Total Orders</th>
+          <th onclick="sortT('campTbl',5)" class="sorted">Median CPiO</th>
+          <th onclick="sortT('campTbl',6)">Avg CPiO</th>
+          <th onclick="sortT('campTbl',7)"># Neg</th>
+          <th onclick="sortT('campTbl',8)">% Positive</th>
+        </tr></thead>
+        <tbody id="campTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MONTHLY -->
+<div class="sec" id="monthly">
+  <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi"><div class="kpi-lbl">March</div><div class="kpi-val">30.2</div><div class="kpi-sub">Median CPiO · 98 entries · 76.5% pos</div></div>
+    <div class="kpi gr"><div class="kpi-lbl">April</div><div class="kpi-val">32.9</div><div class="kpi-sub">Median CPiO · 107 entries · 88.8% pos</div></div>
+    <div class="kpi gr"><div class="kpi-lbl">May</div><div class="kpi-val">35.1</div><div class="kpi-sub">Median CPiO · 134 entries · 97.0% pos</div></div>
+    <div class="kpi bl"><div class="kpi-lbl">Total Orders</div><div class="kpi-val" id="totalOrdMonthly">—</div><div class="kpi-sub">Sum of all incremental</div></div>
+  </div>
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Orders by Month</div><div class="cs">Total incremental orders per month</div>
+      <div class="ch" style="height:260px"><canvas id="mOrdBar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">CPiO Trend (Median vs Avg)</div><div class="cs">Median more stable; avg skewed by outliers</div>
+      <div class="ch" style="height:260px"><canvas id="mCpioLine"></canvas></div>
+    </div>
+  </div>
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">% Positive by Month</div><div class="cs">Strong improvement 76.5% → 97%</div>
+      <div class="ch" style="height:220px"><canvas id="mPosLine"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Negative Runs by Month</div><div class="cs">23 → 12 → 4 — declining sharply</div>
+      <div class="ch" style="height:220px"><canvas id="mNegBar"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TYPES -->
+<div class="sec" id="types">
+  <div class="row c2">
+    <div class="card">
+      <div class="ct">Median CPiO by Type</div><div class="cs">Lower = more efficient · all types</div>
+      <div class="ch" style="height:320px"><canvas id="typeBar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">% Positive by Type</div><div class="cs">DHK Flash Sale & Kitopi: 100% positive</div>
+      <div class="ch" style="height:320px"><canvas id="typePosBar"></canvas></div>
+    </div>
+  </div>
+  <div class="tbl-card">
+    <div class="tbl-hdr"><div><div class="tbl-title">Campaign Type Summary</div><div class="tbl-sub">All types ranked by Median CPiO</div></div></div>
+    <div style="overflow-x:auto">
+      <table id="typeTbl">
+        <thead><tr>
+          <th onclick="sortT('typeTbl',0)">Type</th>
+          <th onclick="sortT('typeTbl',1)">Entries</th>
+          <th onclick="sortT('typeTbl',2)">Total Orders</th>
+          <th onclick="sortT('typeTbl',3)">Avg CPiO</th>
+          <th onclick="sortT('typeTbl',4)" class="sorted">Median CPiO</th>
+          <th onclick="sortT('typeTbl',5)"># Negative</th>
+          <th onclick="sortT('typeTbl',6)">% Positive</th>
+        </tr></thead>
+        <tbody id="typeTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- BRANDS -->
+<div class="sec" id="brands">
+  <div class="row">
+    <div class="card">
+      <div class="ct">Brand CPiO vs Total Orders — Efficiency vs Volume</div>
+      <div class="cs">x = avg CPiO across all campaigns · y = total incremental orders · size = baseline daily orders · color = status · only brands with 2+ campaigns</div>
+      <div class="ch" style="height:420px"><canvas id="brandScatter"></canvas></div>
+    </div>
+  </div>
+  <div class="tbl-card">
+    <div class="tbl-hdr">
+      <div><div class="tbl-title">Brand Summary — All Campaigns</div><div class="tbl-sub">Aggregated across all campaigns</div></div>
+      <input class="srch" placeholder="Search brands…" oninput="filterT(this,'brandTbl')">
+    </div>
+    <div style="overflow-x:auto">
+      <table id="brandTbl">
+        <thead><tr>
+          <th onclick="sortT('brandTbl',0)">Brand</th>
+          <th onclick="sortT('brandTbl',1)">Campaigns</th>
+          <th onclick="sortT('brandTbl',2)">Total Orders</th>
+          <th onclick="sortT('brandTbl',3)" class="sorted">Avg CPiO</th>
+          <th onclick="sortT('brandTbl',4)">Best CPiO</th>
+          <th onclick="sortT('brandTbl',5)">Baseline/day</th>
+          <th onclick="sortT('brandTbl',6)"># Neg</th>
+          <th onclick="sortT('brandTbl',7)">Status</th>
+        </tr></thead>
+        <tbody id="brandTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- RAW DATA -->
+<div class="sec" id="raw">
+  <div class="tbl-card">
+    <div class="tbl-hdr">
+      <div><div class="tbl-title">Raw Data — All Entries</div><div class="tbl-sub">339 entries · with orders & growth where baseline available</div></div>
+      <input class="srch" placeholder="Search brand or campaign…" oninput="filterT(this,'rawTbl')">
+    </div>
+    <div class="pills" style="padding:0 22px 14px">
+      <div class="pill on" onclick="filterRaw(this,'all')">All</div>
+      <div class="pill" onclick="filterRaw(this,'Pos')">Positive</div>
+      <div class="pill" onclick="filterRaw(this,'Neg')">Negative</div>
+      <div class="pill" onclick="filterRaw(this,'Mar')">Mar</div>
+      <div class="pill" onclick="filterRaw(this,'Apr')">Apr</div>
+      <div class="pill" onclick="filterRaw(this,'May')">May</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="rawTbl">
+        <thead><tr>
+          <th onclick="sortT('rawTbl',0)">Campaign</th>
+          <th onclick="sortT('rawTbl',1)">Brand</th>
+          <th onclick="sortT('rawTbl',2)" class="sorted">CPiO</th>
+          <th onclick="sortT('rawTbl',3)">Orders</th>
+          <th onclick="sortT('rawTbl',4)">Growth %</th>
+          <th onclick="sortT('rawTbl',5)">Month</th>
+          <th onclick="sortT('rawTbl',6)">Type</th>
+          <th onclick="sortT('rawTbl',7)">Sign</th>
+        </tr></thead>
+        <tbody id="rawTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</main>
+<footer>Campaign CPiO + Growth Analysis · talabat · Mar–May 2026 · v2</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+const BASELINE={
+  'ALBAIK':5417,'Subway':4717,'Burger King':5914,'Pizza Hut':5622,
+  'Farooj Abu Al Abed':2406,'Papa Johns Pizza':2959,'Texas Chicken':2419,
+  'WingStop':1602,'Popeyes':1410,'Laffah':1865,'Aseer Time':1879,
+  'Dunkin':1813,'Blaban':2991,'Baskin Robbins':1857,'Low Calories':1265,
+  'Be Healthy':1827,'Gazebo':1943,'Manoushe Street':808,'Gulf Pastry':1797,
+  'Seashell':1555,"Mama'esh":1474,'Allo Beirut':1469,"Wendy's":742,
+  'Diet Point':578,'Right Bite':769,'SushiDo':802,"Domino's Pizza":2068,
+  'Tim Hortons':964,'Halla Shawarma':883,'Shake Shack':698,'Pinkberry':639,
+  'Al Mahashi Restaurant':521,'Al Aumdah Restaurant':482,'Bikanervala':478,
+  'Kamat Vegetarian':461,'Zaatar w Zeit':459,'Zaatar W Zeit':2320,
+  'Costa Coffee':455,'Healthy Grams':442,'Everyday Roastery Coffee':1351,
+  'JJ Chicken':525,'Kcal':609,'kcal':609,'Laffat Wrq Enb':620,
+  'Malak Al Tawouk':1259,'Kabab Al Bastakiah':1236,
+  'VOX EATS Cinema Classics  Popcorn, Nachos & Snacks':1139,
+  'Chowking':782,'Shawarma Juha':495,'Jollibee':2700,
+  'PAUL Bakery & Restaurant':561,'Il Forno Restaurant':842,
+  'Diet Lab Restaurant':200,'Barbar':427,'Pinkberry':639,
+  "Dave's Hot Chicken":400,'Bubee Drinks':300,'Tim Hortons':964,
+  'Burger28':180,'Buffalo Wild Wings':340
+};
+
+const DAYS={
+  'Pro FS 24 Mar':1,'Eid 2026 (18-23 Mar)':6,'Flash Sale March (25-27 Mar)':3,
+  'KPP 28-30 March':3,'T100 3-5 Apr':3,'KPP April 10-12':3,'Pro FS 21 Apr':1,
+  'Flash Sale 22-24 Apr':3,'T100 25-27 Apr':3,'HIC 28 Apr-3 May':6,
+  'DHK FS 6-7 May':2,'KPP 8-10 May':3,'Kitopi 11-17 May':7,
+  'T100 15-17 May':3,'Pro FS 19 May':1,'Flash Sale 20-22 May':3,
+  'Pizza 23-24 May':2,'Eid Al Adha 25-31 May':7
+};
+
+const TYPE_CLR={
+  'Flash Sale':'#FF6300','KPP':'#3498DB','T100':'#2ECC71','Eid':'#9B59B6',
+  'Pro Flash Sale':'#E67E22','HIC':'#1ABC9C','DHK Flash Sale':'#E74C3C',
+  'Kitopi':'#F39C12','Pizza':'#E91E63'
+};
+
+// ── RAW (339 entries) ──────────────────────────────────────────────────
+const R=[
+// Pro FS 24 Mar (1d)
+['Pro FS 24 Mar','ALBAIK',-520.9,'Mar','Pro Flash Sale','Neg',1627],
+['Pro FS 24 Mar','Subway',38.4,'Mar','Pro Flash Sale','Pos',2715],
+['Pro FS 24 Mar','Dunkin',52.5,'Mar','Pro Flash Sale','Pos',753],
+['Pro FS 24 Mar','Diet Point',-27.3,'Mar','Pro Flash Sale','Neg',294],
+['Pro FS 24 Mar','Sharqy',113.5,'Mar','Pro Flash Sale','Pos',65],
+['Pro FS 24 Mar','Gorat Qahwah Cafe',20.2,'Mar','Pro Flash Sale','Pos',102],
+['Pro FS 24 Mar','Low Calories',224.4,'Mar','Pro Flash Sale','Pos',1111],
+['Pro FS 24 Mar','Donaza',130.0,'Mar','Pro Flash Sale','Pos',143],
+['Pro FS 24 Mar','Keema Wala On The Go',24.6,'Mar','Pro Flash Sale','Pos',19],
+['Pro FS 24 Mar','Il Caffe Di Roma',47.8,'Mar','Pro Flash Sale','Pos',111],
+["Pro FS 24 Mar","Let's Zinger",285.1,'Mar','Pro Flash Sale','Pos',96],
+['Pro FS 24 Mar','Keema Wala Restaurant',35.1,'Mar','Pro Flash Sale','Pos',172],
+['Pro FS 24 Mar','Manakish Abu Salim',49.5,'Mar','Pro Flash Sale','Pos',139],
+['Pro FS 24 Mar','German Doner Kebab',-33.4,'Mar','Pro Flash Sale','Neg',66],
+['Pro FS 24 Mar','Puzatic',-134.9,'Mar','Pro Flash Sale','Neg',110],
+['Pro FS 24 Mar','Bait Al Mansaf',-39.1,'Mar','Pro Flash Sale','Neg',60],
+['Pro FS 24 Mar','Odesa MA Ukrainian Delicacies',28.5,'Mar','Pro Flash Sale','Pos',26],
+['Pro FS 24 Mar','Dacha',24.6,'Mar','Pro Flash Sale','Pos',10],
+// Eid 2026 (6d)
+['Eid 2026 (18-23 Mar)','Popeyes',22.0,'Mar','Eid','Pos',1182],
+['Eid 2026 (18-23 Mar)','Farooj Abu Al Abed',24.0,'Mar','Eid','Pos',2173],
+['Eid 2026 (18-23 Mar)','Subway',10.0,'Mar','Eid','Pos',1851],
+['Eid 2026 (18-23 Mar)','Laffah',25.0,'Mar','Eid','Pos',1598],
+['Eid 2026 (18-23 Mar)','Papa Johns Pizza',14.0,'Mar','Eid','Pos',1103],
+['Eid 2026 (18-23 Mar)','WingStop',26.0,'Mar','Eid','Pos',1993],
+['Eid 2026 (18-23 Mar)','Halla Shawarma',11.0,'Mar','Eid','Pos',532],
+['Eid 2026 (18-23 Mar)','Aseer Time',45.0,'Mar','Eid','Pos',1717],
+['Eid 2026 (18-23 Mar)','Seashell',19.0,'Mar','Eid','Pos',578],
+['Eid 2026 (18-23 Mar)','Baskin Robbins',23.0,'Mar','Eid','Pos',513],
+['Eid 2026 (18-23 Mar)','Manoushe Street',38.0,'Mar','Eid','Pos',656],
+['Eid 2026 (18-23 Mar)','Layali Al Sham Restaurant',26.0,'Mar','Eid','Pos',333],
+['Eid 2026 (18-23 Mar)','Layali Al Sham',29.0,'Mar','Eid','Pos',289],
+['Eid 2026 (18-23 Mar)','Allo Beirut',50.0,'Mar','Eid','Pos',1080],
+['Eid 2026 (18-23 Mar)','Kabab Al Bastakiah',38.0,'Mar','Eid','Pos',541],
+['Eid 2026 (18-23 Mar)','Kuwaiti Cuisine',71.0,'Mar','Eid','Pos',151],
+["Eid 2026 (18-23 Mar)","Suja's Kitchen",38.0,'Mar','Eid','Pos',337],
+['Eid 2026 (18-23 Mar)','Sultan Al Arab',65.0,'Mar','Eid','Pos',268],
+['Eid 2026 (18-23 Mar)','Burger King',84.0,'Mar','Eid','Pos',1613],
+['Eid 2026 (18-23 Mar)','SHAWARMARY RESTAURANT',29.0,'Mar','Eid','Pos',57],
+['Eid 2026 (18-23 Mar)','Flame And Bake Restaurant',32.0,'Mar','Eid','Pos',127],
+['Eid 2026 (18-23 Mar)','Tashah',91.0,'Mar','Eid','Pos',285],
+['Eid 2026 (18-23 Mar)','SHAWARMARY, JVC',31.0,'Mar','Eid','Pos',79],
+['Eid 2026 (18-23 Mar)','Rashed Ali Cafeteria',20.0,'Mar','Eid','Pos',33],
+['Eid 2026 (18-23 Mar)','Keema Wala Restaurant',7.0,'Mar','Eid','Pos',36],
+['Eid 2026 (18-23 Mar)','Maestro Shawarma',26.0,'Mar','Eid','Pos',60],
+['Eid 2026 (18-23 Mar)','SHAWARMARY',34.0,'Mar','Eid','Pos',50],
+['Eid 2026 (18-23 Mar)','SHAWARMARY, Dubai Marina',26.0,'Mar','Eid','Pos',27],
+['Eid 2026 (18-23 Mar)','Costa Coffee',765.0,'Mar','Eid','Pos',197],
+['Eid 2026 (18-23 Mar)','Messy Burger',-14.0,'Mar','Eid','Neg',34],
+['Eid 2026 (18-23 Mar)','Rqaq House',-40.0,'Mar','Eid','Neg',63],
+['Eid 2026 (18-23 Mar)','Scarlets Bakery and Patisserie',-6.0,'Mar','Eid','Neg',21],
+['Eid 2026 (18-23 Mar)','Gnd Rask',-35.0,'Mar','Eid','Neg',198],
+['Eid 2026 (18-23 Mar)','Chowking',-2.0,'Mar','Eid','Neg',662],
+['Eid 2026 (18-23 Mar)','FREEJ SWAILEH',-6.0,'Mar','Eid','Neg',24],
+['Eid 2026 (18-23 Mar)','Be Healthy',-45.0,'Mar','Eid','Neg',565],
+['Eid 2026 (18-23 Mar)','Papa Kanafa',-10.0,'Mar','Eid','Neg',165],
+// Flash Sale March (25-27 Mar) (3d)
+['Flash Sale March (25-27 Mar)','Burger King',52.2,'Mar','Flash Sale','Pos',6363],
+['Flash Sale March (25-27 Mar)','Popeyes',40.8,'Mar','Flash Sale','Pos',1559],
+['Flash Sale March (25-27 Mar)','Dunkin',36.8,'Mar','Flash Sale','Pos',1134],
+['Flash Sale March (25-27 Mar)','Texas Chicken',55.9,'Mar','Flash Sale','Pos',2463],
+['Flash Sale March (25-27 Mar)','Manoushe Street',35.6,'Mar','Flash Sale','Pos',852],
+['Flash Sale March (25-27 Mar)','Laffah',152.0,'Mar','Flash Sale','Pos',1648],
+['Flash Sale March (25-27 Mar)','Chicking',44.6,'Mar','Flash Sale','Pos',610],
+['Flash Sale March (25-27 Mar)','Gorat Qahwah Cafe',29.4,'Mar','Flash Sale','Pos',316],
+['Flash Sale March (25-27 Mar)','Barbar',58.2,'Mar','Flash Sale','Pos',560],
+['Flash Sale March (25-27 Mar)','Koshary and Halawani',37.9,'Mar','Flash Sale','Pos',226],
+['Flash Sale March (25-27 Mar)','Uncle Shawerma',44.7,'Mar','Flash Sale','Pos',333],
+["Flash Sale March (25-27 Mar)","Wendy's",115.9,'Mar','Flash Sale','Pos',970],
+['Flash Sale March (25-27 Mar)','Donaza',56.0,'Mar','Flash Sale','Pos',254],
+['Flash Sale March (25-27 Mar)','Manakish Abu Salim',53.8,'Mar','Flash Sale','Pos',103],
+['Flash Sale March (25-27 Mar)','Sharqy',54.5,'Mar','Flash Sale','Pos',191],
+['Flash Sale March (25-27 Mar)','Koshary Elsayd Hanfy',120.8,'Mar','Flash Sale','Pos',274],
+['Flash Sale March (25-27 Mar)','Il Caffe Di Roma',65.4,'Mar','Flash Sale','Pos',118],
+['Flash Sale March (25-27 Mar)','FLARE',70.8,'Mar','Flash Sale','Pos',170],
+['Flash Sale March (25-27 Mar)','Bait Al Mansaf',93.6,'Mar','Flash Sale','Pos',115],
+['Flash Sale March (25-27 Mar)','El Malki',82.9,'Mar','Flash Sale','Pos',138],
+['Flash Sale March (25-27 Mar)','Odesa MA Ukrainian Delicacies',40.4,'Mar','Flash Sale','Pos',64],
+['Flash Sale March (25-27 Mar)','Puzatic',245.9,'Mar','Flash Sale','Pos',260],
+['Flash Sale March (25-27 Mar)','Dacha',18.6,'Mar','Flash Sale','Pos',25],
+['Flash Sale March (25-27 Mar)','Keema Wala Restaurant',293.4,'Mar','Flash Sale','Pos',170],
+['Flash Sale March (25-27 Mar)','German Doner Kebab',384.5,'Mar','Flash Sale','Pos',103],
+['Flash Sale March (25-27 Mar)','Keema Wala On The Go Restaurant',727.5,'Mar','Flash Sale','Pos',17],
+['Flash Sale March (25-27 Mar)','Dunia al sham cafeteria',-62.9,'Mar','Flash Sale','Neg',81],
+['Flash Sale March (25-27 Mar)','Al Aumdah Restaurant',-113.6,'Mar','Flash Sale','Neg',393],
+['Flash Sale March (25-27 Mar)','Laffat Wrq Enb',-15.1,'Mar','Flash Sale','Neg',203],
+['Flash Sale March (25-27 Mar)','Karachi Darbar',-31.1,'Mar','Flash Sale','Neg',250],
+["Flash Sale March (25-27 Mar)","Let's Zinger",-16.5,'Mar','Flash Sale','Neg',117],
+['Flash Sale March (25-27 Mar)','Diet Point',-6.9,'Mar','Flash Sale','Neg',160],
+['Flash Sale March (25-27 Mar)','Low Calories',-112.2,'Mar','Flash Sale','Neg',940],
+['Flash Sale March (25-27 Mar)','Papa Johns Pizza',-85.5,'Mar','Flash Sale','Neg',1383],
+['Flash Sale March (25-27 Mar)','Subway',-75.7,'Mar','Flash Sale','Neg',2399],
+['Flash Sale March (25-27 Mar)','Al Farooj Al Shami',-8.4,'Mar','Flash Sale','Neg',259],
+// KPP 28-30 March (3d)
+['KPP 28-30 March','ALBAIK',40.8,'Mar','KPP','Pos',6949],
+['KPP 28-30 March','Farooj Abu Al Abed',33.4,'Mar','KPP','Pos',3165],
+['KPP 28-30 March','Aseer Time',101.0,'Mar','KPP','Pos',1831],
+['KPP 28-30 March','Tamashah Ice Cream',15.3,'Mar','KPP','Pos',344],
+['KPP 28-30 March','Antar',24.6,'Mar','KPP','Pos',479],
+['KPP 28-30 March','Flafel Abu Neaim',15.4,'Mar','KPP','Pos',177],
+['KPP 28-30 March','B60 burgers',20.3,'Mar','KPP','Pos',132],
+// T100 3-5 Apr (3d)
+['T100 3-5 Apr','ALBAIK',38.5,'Apr','T100','Pos',7683],
+['T100 3-5 Apr','Baskin Robbins',15.8,'Apr','T100','Pos',1265],
+['T100 3-5 Apr','Popeyes',32.3,'Apr','T100','Pos',1980],
+['T100 3-5 Apr','Laffah',51.5,'Apr','T100','Pos',2578],
+['T100 3-5 Apr','Halla Shawarma',28.7,'Apr','T100','Pos',1254],
+['T100 3-5 Apr','Subway',81.1,'Apr','T100','Pos',4922],
+["T100 3-5 Apr","Mama'esh",104.8,'Apr','T100','Pos',1233],
+['T100 3-5 Apr','Koshary and Halawani',24.8,'Apr','T100','Pos',370],
+['T100 3-5 Apr','Sharqy',32.6,'Apr','T100','Pos',258],
+['T100 3-5 Apr','Tashah',53.6,'Apr','T100','Pos',278],
+['T100 3-5 Apr','SHAWARMARY RESTAURANT',19.8,'Apr','T100','Pos',69],
+['T100 3-5 Apr','Allo Beirut',218.0,'Apr','T100','Pos',1448],
+['T100 3-5 Apr','Barbar',58.7,'Apr','T100','Pos',326],
+['T100 3-5 Apr','Al Mahashi Restaurant',136.5,'Apr','T100','Pos',553],
+['T100 3-5 Apr','SHAWARMARY, JVC',43.0,'Apr','T100','Pos',119],
+['T100 3-5 Apr','SHAWARMARY',36.1,'Apr','T100','Pos',59],
+['T100 3-5 Apr','Be Healthy',1046.8,'Apr','T100','Pos',1701],
+['T100 3-5 Apr','SHAWARMARY, Dubai Marina',38.8,'Apr','T100','Pos',36],
+['T100 3-5 Apr','Light & Fit Healthy Food',-98.9,'Apr','T100','Neg',69],
+// KPP April 10-12 (3d)
+['KPP April 10-12','ALBAIK',21.8,'Apr','KPP','Pos',7665],
+['KPP April 10-12','Farooj Abu Al Abed',36.4,'Apr','KPP','Pos',3482],
+['KPP April 10-12','Subway',36.0,'Apr','KPP','Pos',5594],
+['KPP April 10-12','Blaban',39.8,'Apr','KPP','Pos',3871],
+['KPP April 10-12','Aseer Time',45.2,'Apr','KPP','Pos',1676],
+['KPP April 10-12','Masmat Baha Restaurant',36.9,'Apr','KPP','Pos',604],
+['KPP April 10-12','Knot Bakehouse',26.6,'Apr','KPP','Pos',844],
+["KPP April 10-12","Mama'esh",58.3,'Apr','KPP','Pos',1684],
+['KPP April 10-12','Papa Kanafa',85.1,'Apr','KPP','Pos',528],
+['KPP April 10-12','Sushi Art',103.4,'Apr','KPP','Pos',315],
+['KPP April 10-12','Al Mahashi Restaurant',130.6,'Apr','KPP','Pos',551],
+['KPP April 10-12','Mashrou3 Tabkha',58.3,'Apr','KPP','Pos',221],
+['KPP April 10-12','Gnd Rask',137.2,'Apr','KPP','Pos',331],
+['KPP April 10-12','Cibo Diet',87.1,'Apr','KPP','Pos',125],
+['KPP April 10-12','Be Healthy',-1221.4,'Apr','KPP','Neg',1626],
+['KPP April 10-12','Seashell',-1217.9,'Apr','KPP','Neg',1156],
+['KPP April 10-12','Corniche Automatic Bakeries',-90.6,'Apr','KPP','Neg',243],
+['KPP April 10-12','Everyday Roastery Coffee',-276.5,'Apr','KPP','Neg',701],
+['KPP April 10-12','Mamaesh',26.6,'Apr','KPP','Pos',1684],
+// HIC 28 Apr-3 May (6d)
+['HIC 28 Apr-3 May','Blaban',25.4,'Apr','HIC','Pos',3088],
+['HIC 28 Apr-3 May','Laffah',37.3,'Apr','HIC','Pos',2161],
+['HIC 28 Apr-3 May','Popeyes',37.2,'Apr','HIC','Pos',1626],
+['HIC 28 Apr-3 May','Tim Hortons',26.2,'Apr','HIC','Pos',2652],
+['HIC 28 Apr-3 May','WingStop',23.9,'Apr','HIC','Pos',2155],
+['HIC 28 Apr-3 May','Farooj Abu Al Abed',36.7,'Apr','HIC','Pos',1437],
+['HIC 28 Apr-3 May','Burger King',105.5,'Apr','HIC','Pos',1413],
+['HIC 28 Apr-3 May','Manoushe Street',23.6,'Apr','HIC','Pos',587],
+['HIC 28 Apr-3 May','ALBAIK',61.4,'Apr','HIC','Pos',1337],
+['HIC 28 Apr-3 May','Koshary Elsayd Hanfy',33.4,'Apr','HIC','Pos',287],
+['HIC 28 Apr-3 May','Zaatar w Zeit',42.2,'Apr','HIC','Pos',305],
+['HIC 28 Apr-3 May','Sharqy',27.4,'Apr','HIC','Pos',185],
+['HIC 28 Apr-3 May','Acai Berry The Amazon Boost',28.8,'Apr','HIC','Pos',271],
+['HIC 28 Apr-3 May','Texas Chicken',394.0,'Apr','HIC','Pos',502],
+['HIC 28 Apr-3 May','Bikanervala',-31.6,'Apr','HIC','Neg',66],
+['HIC 28 Apr-3 May','kcal',-4.5,'Apr','HIC','Neg',25],
+// Flash Sale 22-24 Apr (3d)
+['Flash Sale 22-24 Apr','Burger King',18.8,'Apr','Flash Sale','Pos',8587],
+['Flash Sale 22-24 Apr','Dunkin',23.1,'Apr','Flash Sale','Pos',4150],
+['Flash Sale 22-24 Apr','Popeyes',32.9,'Apr','Flash Sale','Pos',3019],
+['Flash Sale 22-24 Apr','Subway',2.1,'Apr','Flash Sale','Pos',3277],
+['Flash Sale 22-24 Apr','Texas Chicken',16.3,'Apr','Flash Sale','Pos',3693],
+['Flash Sale 22-24 Apr','Laffah',42.9,'Apr','Flash Sale','Pos',3072],
+['Flash Sale 22-24 Apr','WingStop',30.5,'Apr','Flash Sale','Pos',2303],
+["Flash Sale 22-24 Apr","Wendy's",11.7,'Apr','Flash Sale','Pos',1563],
+['Flash Sale 22-24 Apr','Barbar',28.6,'Apr','Flash Sale','Pos',1042],
+['Flash Sale 22-24 Apr','Manoushe Street',44.5,'Apr','Flash Sale','Pos',1374],
+['Flash Sale 22-24 Apr','Al Farooj Al Shami',57.2,'Apr','Flash Sale','Pos',1304],
+['Flash Sale 22-24 Apr','Koshary Elsayd Hanfy',30.3,'Apr','Flash Sale','Pos',670],
+['Flash Sale 22-24 Apr','Diet Point',37.7,'Apr','Flash Sale','Pos',1097],
+['Flash Sale 22-24 Apr','FLARE',29.3,'Apr','Flash Sale','Pos',478],
+['Flash Sale 22-24 Apr','Off The Hook',30.6,'Apr','Flash Sale','Pos',472],
+['Flash Sale 22-24 Apr','Laffat Wrq Enb',51.2,'Apr','Flash Sale','Pos',828],
+['Flash Sale 22-24 Apr','Pinkberry',30.2,'Apr','Flash Sale','Pos',786],
+['Flash Sale 22-24 Apr','Karachi Darbar',35.1,'Apr','Flash Sale','Pos',585],
+['Flash Sale 22-24 Apr','Papa Johns Pizza',183.0,'Apr','Flash Sale','Pos',2295],
+['Flash Sale 22-24 Apr','Kuwaiti Cuisine',31.5,'Apr','Flash Sale','Pos',480],
+['Flash Sale 22-24 Apr','Shot Specialty Cafe',30.0,'Apr','Flash Sale','Pos',414],
+['Flash Sale 22-24 Apr','Shawarma Juha',17.5,'Apr','Flash Sale','Pos',422],
+['Flash Sale 22-24 Apr','Gorat Qahwah Cafe',17.3,'Apr','Flash Sale','Pos',361],
+["Flash Sale 22-24 Apr","Dave's Hot Chicken",32.9,'Apr','Flash Sale','Pos',541],
+['Flash Sale 22-24 Apr','Pasta Della Nonna',54.8,'Apr','Flash Sale','Pos',575],
+["Flash Sale 22-24 Apr","Let's Zinger",36.8,'Apr','Flash Sale','Pos',423],
+['Flash Sale 22-24 Apr','Harr & Hloo Restaurant',34.1,'Apr','Flash Sale','Pos',332],
+['Flash Sale 22-24 Apr','Uncle Shawerma',34.7,'Apr','Flash Sale','Pos',313],
+['Flash Sale 22-24 Apr','Donaza',45.9,'Apr','Flash Sale','Pos',279],
+['Flash Sale 22-24 Apr','Flame And Bake Restaurant',27.3,'Apr','Flash Sale','Pos',265],
+['Flash Sale 22-24 Apr','Antar',41.2,'Apr','Flash Sale','Pos',258],
+['Flash Sale 22-24 Apr','Bikanervala',100.9,'Apr','Flash Sale','Pos',557],
+['Flash Sale 22-24 Apr','Bait Al Mansaf',45.7,'Apr','Flash Sale','Pos',210],
+['Flash Sale 22-24 Apr','Maestro Shawarma',26.4,'Apr','Flash Sale','Pos',54],
+['Flash Sale 22-24 Apr','Shawarma Street',-38.6,'Apr','Flash Sale','Neg',125],
+// T100 25-27 Apr (3d)
+['T100 25-27 Apr','Kamat Vegetarian',107.0,'Apr','T100','Pos',385],
+['T100 25-27 Apr','ALBAIK',95.4,'Apr','T100','Pos',4021],
+['T100 25-27 Apr','Il Forno Restaurant',89.0,'Apr','T100','Pos',1184],
+['T100 25-27 Apr','Mashrou3 Tabkha',60.3,'Apr','T100','Pos',183],
+['T100 25-27 Apr','Gazebo',45.4,'Apr','T100','Pos',2181],
+['T100 25-27 Apr','WingStop',31.7,'Apr','T100','Pos',1735],
+['T100 25-27 Apr','Chicken King',29.3,'Apr','T100','Pos',695],
+['T100 25-27 Apr','Kcal',27.5,'Apr','T100','Pos',324],
+['T100 25-27 Apr','Tortilla',23.0,'Apr','T100','Pos',183],
+['T100 25-27 Apr','Pinkberry',21.5,'Apr','T100','Pos',737],
+['T100 25-27 Apr','M14 Cafe',18.2,'Apr','T100','Pos',88],
+['T100 25-27 Apr','Dunkin',13.7,'Apr','T100','Pos',1528],
+['T100 25-27 Apr','Everyday Roastery Coffee',-52.2,'Apr','T100','Neg',989],
+['T100 25-27 Apr','Allo Beirut',-64.2,'Apr','T100','Neg',592],
+// Pro FS 21 Apr (1d)
+['Pro FS 21 Apr','Subway',22.7,'Apr','Pro Flash Sale','Pos',5050],
+['Pro FS 21 Apr','ALBAIK',538.5,'Apr','Pro Flash Sale','Pos',1956],
+['Pro FS 21 Apr','Popeyes',-57.7,'Apr','Pro Flash Sale','Neg',42],
+['Pro FS 21 Apr','Karachi Darbar',-11.3,'Apr','Pro Flash Sale','Neg',33],
+// DHK FS 6-7 May (2d)
+['DHK FS 6-7 May','WingStop',14.6,'May','DHK Flash Sale','Pos',774],
+['DHK FS 6-7 May','Diet Point',33.1,'May','DHK Flash Sale','Pos',517],
+['DHK FS 6-7 May','The Grove Cafe',27.6,'May','DHK Flash Sale','Pos',248],
+['DHK FS 6-7 May','Blaban',40.0,'May','DHK Flash Sale','Pos',997],
+['DHK FS 6-7 May','Farooj Abu Al Abed',25.0,'May','DHK Flash Sale','Pos',235],
+["DHK FS 6-7 May","Wendy's",28.3,'May','DHK Flash Sale','Pos',147],
+['DHK FS 6-7 May','Shake Shack',43.1,'May','DHK Flash Sale','Pos',123],
+['DHK FS 6-7 May','Right Bite',35.2,'May','DHK Flash Sale','Pos',152],
+['DHK FS 6-7 May','Papa Johns Pizza',74.1,'May','DHK Flash Sale','Pos',345],
+['DHK FS 6-7 May','Texas Chicken',35.4,'May','DHK Flash Sale','Pos',93],
+['DHK FS 6-7 May','Aseer Time',37.3,'May','DHK Flash Sale','Pos',83],
+["DHK FS 6-7 May","Mama'esh",26.3,'May','DHK Flash Sale','Pos',163],
+['DHK FS 6-7 May','Low Calories',96.1,'May','DHK Flash Sale','Pos',88],
+// KPP 8-10 May (3d)
+['KPP 8-10 May','ALBAIK',36.0,'May','KPP','Pos',8388],
+['KPP 8-10 May','Subway',22.3,'May','KPP','Pos',6647],
+['KPP 8-10 May','Gulf Pastry',43.1,'May','KPP','Pos',2565],
+['KPP 8-10 May','Aseer Time',48.5,'May','KPP','Pos',2023],
+['KPP 8-10 May','Healthy Grams',33.7,'May','KPP','Pos',700],
+['KPP 8-10 May','Seashell',93.7,'May','KPP','Pos',1482],
+['KPP 8-10 May','Shawerma Al Farooj',25.6,'May','KPP','Pos',425],
+['KPP 8-10 May','Sharqy',16.8,'May','KPP','Pos',337],
+['KPP 8-10 May','SMK',31.2,'May','KPP','Pos',215],
+['KPP 8-10 May','Lumee Restaurant',29.8,'May','KPP','Pos',306],
+['KPP 8-10 May','Donaza',47.5,'May','KPP','Pos',271],
+['KPP 8-10 May','Odesa MA Ukrainian Delicacies',31.9,'May','KPP','Pos',102],
+['KPP 8-10 May','Lazy Cat',22.5,'May','KPP','Pos',87],
+['KPP 8-10 May','Dunia al sham cafeteria',44.5,'May','KPP','Pos',166],
+['KPP 8-10 May','Parka Bakehouse',33.8,'May','KPP','Pos',67],
+['KPP 8-10 May','Dacha',27.5,'May','KPP','Pos',45],
+// Kitopi 11-17 May (7d)
+['Kitopi 11-17 May','Right Bite',27.5,'May','Kitopi','Pos',1986],
+['Kitopi 11-17 May','SushiDo',40.7,'May','Kitopi','Pos',1148],
+['Kitopi 11-17 May','Biryani Pot',28.0,'May','Kitopi','Pos',668],
+// T100 15-17 May (3d)
+['T100 15-17 May','Baskin Robbins',14.5,'May','T100','Pos',546],
+['T100 15-17 May','Farooj Abu Al Abed',38.0,'May','T100','Pos',2007],
+['T100 15-17 May','Popeyes',35.1,'May','T100','Pos',1839],
+["T100 15-17 May","Domino's Pizza",58.2,'May','T100','Pos',3111],
+['T100 15-17 May','Subway',24.2,'May','T100','Pos',5474],
+['T100 15-17 May','ALBAIK',67.0,'May','T100','Pos',6430],
+['T100 15-17 May','Halla Shawarma',31.4,'May','T100','Pos',1081],
+['T100 15-17 May','Low Calories',74.5,'May','T100','Pos',1407],
+['T100 15-17 May','WingStop',32.0,'May','T100','Pos',1907],
+['T100 15-17 May','Bubee Drinks',19.4,'May','T100','Pos',632],
+['T100 15-17 May','Koshary and Halawani',26.3,'May','T100','Pos',254],
+['T100 15-17 May','Krush Burger',43.3,'May','T100','Pos',297],
+['T100 15-17 May','Antar',36.1,'May','T100','Pos',298],
+['T100 15-17 May','Farooj Al Abdalla Restaurant',31.7,'May','T100','Pos',446],
+['T100 15-17 May','German Doner Kebab',25.2,'May','T100','Pos',108],
+['T100 15-17 May','Feras Restaurant',10.1,'May','T100','Pos',234],
+['T100 15-17 May','Allo Beirut',221.3,'May','T100','Pos',947],
+['T100 15-17 May','Tortilla',27.7,'May','T100','Pos',45],
+['T100 15-17 May','Cibo Diet',45.1,'May','T100','Pos',240],
+['T100 15-17 May','Puzatic',-42.9,'May','T100','Neg',141],
+['T100 15-17 May','Texas Chicken',-62.4,'May','T100','Neg',482],
+['T100 15-17 May','Burger King',-131.4,'May','T100','Neg',1360],
+// Pro FS 19 May (1d)
+['Pro FS 19 May','WingStop',53.3,'May','Pro Flash Sale','Pos',1669],
+['Pro FS 19 May','ALBAIK',164.9,'May','Pro Flash Sale','Pos',3620],
+['Pro FS 19 May','Goat',28.1,'May','Pro Flash Sale','Pos',286],
+["Pro FS 19 May","Wendy's",31.8,'May','Pro Flash Sale','Pos',633],
+['Pro FS 19 May','Russell Dave Bakery',63.6,'May','Pro Flash Sale','Pos',91],
+// Flash Sale 20-22 May (3d)
+['Flash Sale 20-22 May','Burger King',47.7,'May','Flash Sale','Pos',9354],
+['Flash Sale 20-22 May','Laffah',36.9,'May','Flash Sale','Pos',3546],
+['Flash Sale 20-22 May','WingStop',39.0,'May','Flash Sale','Pos',2172],
+['Flash Sale 20-22 May','Texas Chicken',54.8,'May','Flash Sale','Pos',3610],
+['Flash Sale 20-22 May','Pinkberry',27.2,'May','Flash Sale','Pos',1594],
+["Flash Sale 20-22 May","Dave's Hot Chicken",29.8,'May','Flash Sale','Pos',1472],
+['Flash Sale 20-22 May','Barbar',28.0,'May','Flash Sale','Pos',1093],
+['Flash Sale 20-22 May','La Brioche',34.3,'May','Flash Sale','Pos',492],
+['Flash Sale 20-22 May','PAUL Bakery & Restaurant',41.9,'May','Flash Sale','Pos',1116],
+['Flash Sale 20-22 May','Diet Point',40.7,'May','Flash Sale','Pos',1065],
+['Flash Sale 20-22 May','Asparagus for healthy food',27.0,'May','Flash Sale','Pos',556],
+['Flash Sale 20-22 May','FLARE',29.7,'May','Flash Sale','Pos',463],
+['Flash Sale 20-22 May','Potato & Pasta',23.8,'May','Flash Sale','Pos',530],
+['Flash Sale 20-22 May','Lapaz Batchoy Restaurant',28.7,'May','Flash Sale','Pos',281],
+['Flash Sale 20-22 May','Uncle Shawerma',34.0,'May','Flash Sale','Pos',219],
+['Flash Sale 20-22 May','Diet Lab Restaurant',8.1,'May','Flash Sale','Pos',89],
+['Flash Sale 20-22 May','Gorat Qahwah Cafe',26.7,'May','Flash Sale','Pos',336],
+['Flash Sale 20-22 May','Bait Al Mansaf',39.2,'May','Flash Sale','Pos',173],
+["Flash Sale 20-22 May","Suja's Kitchen",40.2,'May','Flash Sale','Pos',430],
+['Flash Sale 20-22 May','Sharqy',30.9,'May','Flash Sale','Pos',299],
+['Flash Sale 20-22 May','Burger28',28.5,'May','Flash Sale','Pos',258],
+['Flash Sale 20-22 May','Pizza Di Rocco',56.0,'May','Flash Sale','Pos',459],
+['Flash Sale 20-22 May','RUSSELL DAVE BAKERY',35.9,'May','Flash Sale','Pos',302],
+['Flash Sale 20-22 May','Why Not',13.0,'May','Flash Sale','Pos',73],
+['Flash Sale 20-22 May','Around The Block',24.9,'May','Flash Sale','Pos',194],
+['Flash Sale 20-22 May','Buffalo Wild Wings',40.7,'May','Flash Sale','Pos',311],
+['Flash Sale 20-22 May','Firefly Burger, Reem Island',20.2,'May','Flash Sale','Pos',147],
+['Flash Sale 20-22 May','Il Caffe Di Roma',29.7,'May','Flash Sale','Pos',200],
+['Flash Sale 20-22 May','Manakish Abu Salim',38.5,'May','Flash Sale','Pos',209],
+['Flash Sale 20-22 May','VOX EATS Cinema Classics',209.9,'May','Flash Sale','Pos',391],
+['Flash Sale 20-22 May','ATYAB SHAWRMA Charcoal',27.3,'May','Flash Sale','Pos',105],
+['Flash Sale 20-22 May','Napoli Pasta',49.9,'May','Flash Sale','Pos',148],
+['Flash Sale 20-22 May','Gnd Rask',131.6,'May','Flash Sale','Pos',379],
+['Flash Sale 20-22 May','Qedreh W Mansaf',20.6,'May','Flash Sale','Pos',55],
+['Flash Sale 20-22 May','Ravi Restaurant',29.2,'May','Flash Sale','Pos',66],
+['Flash Sale 20-22 May','Al Mandi & Al Madhbi House',46.0,'May','Flash Sale','Pos',107],
+['Flash Sale 20-22 May','Eataly',39.0,'May','Flash Sale','Pos',73],
+['Flash Sale 20-22 May','Donaza',136.5,'May','Flash Sale','Pos',174],
+['Flash Sale 20-22 May','Firefly Burger',85.5,'May','Flash Sale','Pos',100],
+['Flash Sale 20-22 May','Faala',35.3,'May','Flash Sale','Pos',25],
+['Flash Sale 20-22 May','Curryfit',22.3,'May','Flash Sale','Pos',12],
+['Flash Sale 20-22 May','KHODMOONI SPECIAL KABAB',182.9,'May','Flash Sale','Pos',70],
+// Pizza 23-24 May (2d)
+['Pizza 23-24 May','Papa Johns Pizza',37.0,'May','Pizza','Pos',4541],
+['Pizza 23-24 May','ANTONIA Trattoria',50.0,'May','Pizza','Pos',42],
+['Pizza 23-24 May','Antonia',31.0,'May','Pizza','Pos',24],
+['Pizza 23-24 May','ANTONIA, Alsaadiyat',35.0,'May','Pizza','Pos',26],
+['Pizza 23-24 May','Antonia Chic',37.0,'May','Pizza','Pos',23],
+// Eid Al Adha 25-31 May (7d)
+['Eid Al Adha 25-31 May','Burger King',37.8,'May','Eid','Pos',7995],
+['Eid Al Adha 25-31 May','ALBAIK',29.8,'May','Eid','Pos',8051],
+['Eid Al Adha 25-31 May','Farooj Abu Al Abed',29.8,'May','Eid','Pos',5179],
+['Eid Al Adha 25-31 May','Popeyes',29.2,'May','Eid','Pos',2584],
+['Eid Al Adha 25-31 May','Subway',31.8,'May','Eid','Pos',7525],
+['Eid Al Adha 25-31 May','Chowking',8.9,'May','Eid','Pos',1391],
+['Eid Al Adha 25-31 May','Texas Chicken',45.9,'May','Eid','Pos',3136],
+['Eid Al Adha 25-31 May','Knot Bakehouse',24.8,'May','Eid','Pos',865],
+['Eid Al Adha 25-31 May','Aseer Time',33.6,'May','Eid','Pos',1692],
+['Eid Al Adha 25-31 May','Tim Hortons',26.2,'May','Eid','Pos',1555],
+['Eid Al Adha 25-31 May','Healthy Grams',75.4,'May','Eid','Pos',622],
+['Eid Al Adha 25-31 May','Bubee Drinks',21.7,'May','Eid','Pos',702],
+['Eid Al Adha 25-31 May','Papa Kanafa',55.4,'May','Eid','Pos',525],
+['Eid Al Adha 25-31 May','Kcal',64.7,'May','Eid','Pos',602],
+['Eid Al Adha 25-31 May','Lgymat & Rgag',45.9,'May','Eid','Pos',336],
+['Eid Al Adha 25-31 May','Sharqy',41.6,'May','Eid','Pos',234],
+['Eid Al Adha 25-31 May','Barbar',28.6,'May','Eid','Pos',690],
+['Eid Al Adha 25-31 May','Allo Beirut',76.6,'May','Eid','Pos',643],
+['Eid Al Adha 25-31 May','Buffalo Wild Wings',49.6,'May','Eid','Pos',223],
+['Eid Al Adha 25-31 May','Sadaf Restaurant',45.8,'May','Eid','Pos',121],
+['Eid Al Adha 25-31 May','Tashah',60.6,'May','Eid','Pos',73],
+['Eid Al Adha 25-31 May','Crema',35.7,'May','Eid','Pos',154],
+['Eid Al Adha 25-31 May','Kuwaiti Cuisine',86.6,'May','Eid','Pos',56],
+['Eid Al Adha 25-31 May','Rqaq House',105.4,'May','Eid','Pos',302],
+["Eid Al Adha 25-31 May","Mama'esh",176.9,'May','Eid','Pos',349],
+['Eid Al Adha 25-31 May','Al Mandi & Al Madhbi House',58.2,'May','Eid','Pos',69],
+['Eid Al Adha 25-31 May','Puzatic',-43.2,'May','Eid','Neg',151],
+];
+// field index: 0=campaign,1=brand,2=cpio,3=month,4=type,5=sign,6=orders
+
+// ── COMPUTED ENRICHED DATA ─────────────────────────────────────────────
+const ENRICHED = R.map(r=>{
+  const [camp,brand,cpio,month,type,sign,orders] = r;
+  const baseline = BASELINE[brand]||null;
+  const days = DAYS[camp]||1;
+  const signed_orders = sign==='Pos' ? orders : -orders;
+  let growth = null;
+  if(baseline){
+    const base_period = baseline * days;
+    growth = +(signed_orders / base_period * 100).toFixed(1);
+  }
+  return {camp,brand,cpio,month,type,sign,orders,baseline,days,signed_orders,growth};
+});
+
+// ── CAMPAIGN AGGREGATES ────────────────────────────────────────────────
+const CAMP_DATA = [
+  {c:'Pro FS 21 Apr',m:'Apr',t:'Pro Flash Sale',n:4,med:5.7,avg:123.1,neg:2,pos:0.50},
+  {c:'KPP 28-30 March',m:'Mar',t:'KPP',n:7,med:24.6,avg:35.8,neg:0,pos:1.00},
+  {c:'Eid 2026 (18-23 Mar)',m:'Mar',t:'Eid',n:37,med:26.0,avg:42.2,neg:8,pos:0.784},
+  {c:'Kitopi 11-17 May',m:'May',t:'Kitopi',n:3,med:28.0,avg:32.1,neg:0,pos:1.00},
+  {c:'T100 25-27 Apr',m:'Apr',t:'T100',n:14,med:28.4,avg:31.8,neg:2,pos:0.857},
+  {c:'HIC 28 Apr-3 May',m:'Apr',t:'HIC',n:16,med:31.1,avg:54.2,neg:2,pos:0.875},
+  {c:'Flash Sale 22-24 Apr',m:'Apr',t:'Flash Sale',n:35,med:31.5,avg:36.4,neg:1,pos:0.971},
+  {c:'T100 15-17 May',m:'May',t:'T100',n:22,med:31.6,avg:28.4,neg:3,pos:0.864},
+  {c:'Pro FS 24 Mar',m:'Mar',t:'Pro Flash Sale',n:18,med:31.8,avg:17.7,neg:5,pos:0.722},
+  {c:'KPP 8-10 May',m:'May',t:'KPP',n:16,med:32.8,avg:36.8,neg:0,pos:1.00},
+  {c:'Flash Sale 20-22 May',m:'May',t:'Flash Sale',n:42,med:34.8,avg:47.0,neg:0,pos:1.00},
+  {c:'DHK FS 6-7 May',m:'May',t:'DHK Flash Sale',n:13,med:35.2,avg:39.7,neg:0,pos:1.00},
+  {c:'KPP April 10-12',m:'Apr',t:'KPP',n:19,med:36.9,avg:-97.1,neg:4,pos:0.789},
+  {c:'Pizza 23-24 May',m:'May',t:'Pizza',n:5,med:37.0,avg:38.0,neg:0,pos:1.00},
+  {c:'T100 3-5 Apr',m:'Apr',t:'T100',n:19,med:38.8,avg:103.3,neg:1,pos:0.947},
+  {c:'Eid Al Adha 25-31 May',m:'May',t:'Eid',n:27,med:41.6,avg:47.5,neg:1,pos:0.963},
+  {c:'Flash Sale March (25-27 Mar)',m:'Mar',t:'Flash Sale',n:36,med:44.6,avg:40.4,neg:10,pos:0.722},
+  {c:'Pro FS 19 May',m:'May',t:'Pro Flash Sale',n:5,med:53.3,avg:68.3,neg:0,pos:1.00},
+];
+
+// Compute total orders per campaign from raw
+const campOrdMap = {};
+R.forEach(r=>{
+  if(!campOrdMap[r[0]])campOrdMap[r[0]]=0;
+  campOrdMap[r[0]]+=r[6];
+});
+CAMP_DATA.forEach(c=>{ c.total_orders = campOrdMap[c.c]||0; });
+
+// TYPE AGGREGATES
+const TYPE_DATA=[
+  {t:'Kitopi',n:3,avg:32.1,med:28.0,neg:0,pos:1.00},
+  {t:'Eid',n:64,avg:44.4,med:29.8,neg:9,pos:0.859},
+  {t:'HIC',n:16,avg:54.2,med:31.1,neg:2,pos:0.875},
+  {t:'Pro Flash Sale',n:27,avg:42.7,med:31.8,neg:7,pos:0.741},
+  {t:'T100',n:55,avg:55.1,med:32.3,neg:6,pos:0.891},
+  {t:'KPP',n:42,avg:-24.0,med:33.8,neg:4,pos:0.905},
+  {t:'DHK Flash Sale',n:13,avg:39.7,med:35.2,neg:0,pos:1.00},
+  {t:'Flash Sale',n:113,avg:44.3,med:35.3,neg:11,pos:0.903},
+  {t:'Pizza',n:5,avg:38.0,med:37.0,neg:0,pos:1.00},
+];
+// type total orders from raw
+const typeOrdMap={};
+R.forEach(r=>{
+  if(!typeOrdMap[r[4]])typeOrdMap[r[4]]=0;
+  typeOrdMap[r[4]]+=r[6];
+});
+TYPE_DATA.forEach(t=>{ t.total_orders=typeOrdMap[t.t]||0; });
+
+// BRAND AGGREGATES from raw
+const brandMap={};
+R.forEach(r=>{
+  const [c,b,cpio,m,t,sign,ord]=r;
+  if(!brandMap[b]) brandMap[b]={brand:b,camps:new Set(),totalOrd:0,cpios:[],negRuns:0,posRuns:0};
+  brandMap[b].camps.add(c);
+  brandMap[b].totalOrd+=ord;
+  brandMap[b].cpios.push(cpio);
+  if(sign==='Neg') brandMap[b].negRuns++;
+  else brandMap[b].posRuns++;
+});
+const BRANDS = Object.values(brandMap).map(b=>{
+  const cpios = b.cpios.filter(c=>c>-300&&c<500);
+  const avg = cpios.length ? +(cpios.reduce((a,x)=>a+x,0)/cpios.length).toFixed(1) : 0;
+  const best = b.cpios.filter(c=>c>0).length ? +Math.min(...b.cpios.filter(c=>c>0)).toFixed(1) : null;
+  return {
+    brand:b.brand, campaigns:b.camps.size, totalOrd:b.totalOrd,
+    avgCpio:avg, bestCpio:best, negRuns:b.negRuns,
+    baseline:BASELINE[b.brand]||null,
+    flag: b.negRuns===0?'Consistent ✓': b.cpios.every(c=>c<0)?'Review ⚠':'Mixed ⚠'
+  };
+}).sort((a,b)=>b.totalOrd-a.totalOrd);
+
+// ── GROWTH ENTRIES ─────────────────────────────────────────────────────
+const GRW = ENRICHED.filter(e=>e.growth!==null&&Math.abs(e.growth)<600);
+
+// ── COLORS & HELPERS ──────────────────────────────────────────────────
+const OR='#FF6300',GR='#2ECC71',RD='#E74C3C',BL='#3498DB';
+const monthClr={Mar:OR,Apr:BL,May:GR};
+const fmt1=v=>typeof v==='number'?v.toFixed(1):v;
+const pct=v=>(v*100).toFixed(1)+'%';
+
+function cpioClr(v){ return v<0?'nr':v<20?'ng':'num'; }
+function growthClr(v){ return v===null?'num':v>0?'ng':'nr'; }
+
+// ── NAV ───────────────────────────────────────────────────────────────
+function show(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── SORT/FILTER ───────────────────────────────────────────────────────
+const _sort={};
+function sortT(id,col){
+  const tb=document.querySelector('#'+id+' tbody');
+  const rows=[...tb.querySelectorAll('tr')];
+  const asc=_sort[id]!==col||!_sort[id+'_asc'];
+  _sort[id]=col; _sort[id+'_asc']=asc;
+  rows.sort((a,b)=>{
+    const av=a.cells[col].textContent.trim().replace('%','').replace(',','');
+    const bv=b.cells[col].textContent.trim().replace('%','').replace(',','');
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn)) return asc?an-bn:bn-an;
+    return asc?av.localeCompare(bv):bv.localeCompare(av);
+  });
+  rows.forEach(r=>tb.appendChild(r));
+  document.querySelectorAll('#'+id+' thead th').forEach((th,i)=>{
+    th.classList.toggle('sorted',i===col);
+    th.classList.toggle('asc',i===col&&asc);
+  });
+}
+function filterT(inp,id){
+  const q=inp.value.toLowerCase();
+  document.querySelectorAll('#'+id+' tbody tr').forEach(tr=>{
+    tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none';
+  });
+}
+
+// ── RAW FILTER ────────────────────────────────────────────────────────
+let rawF={sign:'all',month:'all'};
+function filterRaw(pill,val){
+  document.querySelectorAll('#raw .pill').forEach(p=>p.classList.remove('on'));
+  pill.classList.add('on');
+  if(val==='all'){rawF={sign:'all',month:'all'};}
+  else if(['Pos','Neg'].includes(val)){rawF.sign=val;rawF.month='all';}
+  else{rawF.month=val;rawF.sign='all';}
+  document.querySelectorAll('#rawTbody tr').forEach(tr=>{
+    const s=tr.dataset.sign,m=tr.dataset.month;
+    const ok=(rawF.sign==='all'||s===rawF.sign)&&(rawF.month==='all'||m===rawF.month);
+    tr.style.display=ok?'':'none';
+  });
+}
+
+// ── CAMP FILTER ───────────────────────────────────────────────────────
+function filterCamp(pill,val){
+  document.querySelectorAll('#campPills .pill').forEach(p=>p.classList.remove('on'));
+  pill.classList.add('on');
+  document.querySelectorAll('#campTbody tr').forEach(tr=>{
+    tr.style.display=(val==='all'||tr.dataset.month===val)?'':'none';
+  });
+}
+
+// ── BUILD TABLES ──────────────────────────────────────────────────────
+function buildCampTable(){
+  const sorted=[...CAMP_DATA].sort((a,b)=>a.med-b.med);
+  document.getElementById('campTbody').innerHTML=sorted.map(r=>`
+    <tr data-month="${r.m}">
+      <td><strong>${r.c}</strong></td>
+      <td><span class="badge b${r.m==='Mar'?'o':r.m==='Apr'?'bl':'gr'}">${r.m}</span></td>
+      <td><span class="badge bgy">${r.t}</span></td>
+      <td class="num">${r.n}</td>
+      <td class="num">${r.total_orders.toLocaleString()}</td>
+      <td class="num ${r.med<30?'ng':''}">${r.med}</td>
+      <td class="num ${r.avg<0?'nr':''}">${r.avg.toFixed(1)}</td>
+      <td class="num ${r.neg>0?'nr':'ng'}">${r.neg}</td>
+      <td><div class="pbar"><div class="pb"><div class="pbf" style="width:${r.pos*100}%"></div></div><span>${pct(r.pos)}</span></div></td>
+    </tr>`).join('');
+}
+
+function buildTypeTable(){
+  const sorted=[...TYPE_DATA].sort((a,b)=>a.med-b.med);
+  document.getElementById('typeTbody').innerHTML=sorted.map(r=>`<tr>
+    <td><strong>${r.t}</strong></td>
+    <td class="num">${r.n}</td>
+    <td class="num">${r.total_orders.toLocaleString()}</td>
+    <td class="num ${r.avg<0?'nr':''}">${r.avg.toFixed(1)}</td>
+    <td class="num ${r.med<30?'ng':''}">${r.med}</td>
+    <td class="num ${r.neg>0?'nr':'ng'}">${r.neg}</td>
+    <td><div class="pbar"><div class="pb"><div class="pbf" style="width:${r.pos*100}%"></div></div><span>${pct(r.pos)}</span></div></td>
+  </tr>`).join('');
+}
+
+function buildGrowthTable(){
+  const sorted=[...GRW].sort((a,b)=>b.growth-a.growth);
+  const quad=e=>{
+    if(e.cpio>0&&e.growth>0) return '<span class="badge bg">Sweet Spot ✦</span>';
+    if(e.cpio>0&&e.growth<=0) return '<span class="badge br">Low Return</span>';
+    if(e.cpio<0&&e.growth<0) return '<span class="badge br">Below Baseline</span>';
+    return '<span class="badge bgy">—</span>';
+  };
+  document.getElementById('growthTbody').innerHTML=sorted.map(e=>`<tr>
+    <td><strong>${e.brand}</strong></td>
+    <td>${e.camp}</td>
+    <td><span class="badge bgy">${e.type}</span></td>
+    <td class="num ${e.cpio<0?'nr':'num'}">${e.cpio.toFixed(1)}</td>
+    <td class="num">${e.signed_orders.toLocaleString()}</td>
+    <td class="num ${e.growth>0?'ng':'nr'}">${e.growth>0?'+':''}${e.growth}%</td>
+    <td class="num">${e.baseline.toLocaleString()}</td>
+    <td>${quad(e)}</td>
+  </tr>`).join('');
+
+  // KPIs
+  const ss=GRW.filter(e=>e.cpio>0&&e.growth>0).length;
+  const neg=GRW.filter(e=>e.growth<0).length;
+  const posGr=GRW.filter(e=>e.growth>0);
+  const avgG=posGr.length?+(posGr.reduce((a,e)=>a+e.growth,0)/posGr.length).toFixed(0):0;
+  document.getElementById('kpi-ss').textContent=ss;
+  document.getElementById('kpi-neg').textContent=neg;
+  document.getElementById('kpi-avgGr').textContent=avgG+'%';
+  document.getElementById('kpi-withBase').textContent=GRW.length;
+}
+
+function buildBrandTable(){
+  const rows=BRANDS.filter(b=>b.totalOrd>50);
+  document.getElementById('brandTbody').innerHTML=rows.map(b=>`<tr>
+    <td><strong>${b.brand}</strong></td>
+    <td class="num">${b.campaigns}</td>
+    <td class="num">${b.totalOrd.toLocaleString()}</td>
+    <td class="num ${b.avgCpio<0?'nr':b.avgCpio<30?'ng':'num'}">${b.avgCpio}</td>
+    <td class="num ${b.bestCpio?'ng':'nr'}">${b.bestCpio??'—'}</td>
+    <td class="num">${b.baseline?b.baseline.toLocaleString():'—'}</td>
+    <td class="num ${b.negRuns>0?'nr':'ng'}">${b.negRuns}</td>
+    <td><span class="badge ${b.negRuns===0?'bg':b.flag.includes('Review')?'br':'bo'}">${b.flag}</span></td>
+  </tr>`).join('');
+}
+
+function buildRawTable(){
+  document.getElementById('rawTbody').innerHTML=ENRICHED.map(e=>`
+    <tr data-sign="${e.sign}" data-month="${e.month}">
+      <td>${e.camp}</td>
+      <td><strong>${e.brand}</strong></td>
+      <td class="num ${e.cpio<0?'nr':e.cpio<20?'ng':'num'}">${e.cpio}</td>
+      <td class="num">${e.orders.toLocaleString()}</td>
+      <td class="num ${e.growth===null?'':e.growth>0?'ng':'nr'}">${e.growth!==null?(e.growth>0?'+':'')+e.growth+'%':'—'}</td>
+      <td><span class="badge b${e.month==='Mar'?'o':e.month==='Apr'?'bl':'gr'}">${e.month}</span></td>
+      <td><span class="badge bgy">${e.type}</span></td>
+      <td><span class="badge ${e.sign==='Pos'?'bg':'br'}">${e.sign}</span></td>
+    </tr>`).join('');
+}
+
+// ── CHARTS ────────────────────────────────────────────────────────────
+Chart.register(ChartDataLabels);
+const noLabel={plugins:{datalabels:{display:false}}};
+
+// Total orders KPIs
+const totalOrders=R.reduce((a,r)=>a+r[6],0);
+document.getElementById('kpi-total-orders').textContent=(totalOrders/1000).toFixed(0)+'k';
+document.getElementById('totalOrdMonthly').textContent=(totalOrders/1000).toFixed(0)+'k';
+
+// Campaign orders bar (overview)
+const campSortedOrd=[...CAMP_DATA].sort((a,b)=>b.total_orders-a.total_orders);
+new Chart(document.getElementById('ordersBar'),{
+  type:'bar',
+  data:{
+    labels:campSortedOrd.map(c=>c.c),
+    datasets:[{
+      label:'Total Incremental Orders',
+      data:campSortedOrd.map(c=>c.total_orders),
+      backgroundColor:campSortedOrd.map(c=>TYPE_CLR[c.t]+'CC'||OR+'CC'),
+      borderRadius:6,borderSkipped:false
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#555',font:{size:10,weight:'600'},formatter:v=>v>=1000?(v/1000).toFixed(1)+'k':v}},
+    scales:{x:{grid:{color:'#f5f5f5'},ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v}},y:{grid:{display:false},ticks:{font:{size:11}}}}
+  }
+});
+
+// % Positive line (overview)
+new Chart(document.getElementById('posLine'),{
+  type:'line',
+  data:{labels:['Mar','Apr','May'],datasets:[{label:'% Positive',data:[76.5,88.8,97.0],borderColor:GR,backgroundColor:GR+'20',fill:true,tension:.4,pointRadius:6,pointBackgroundColor:GR,borderWidth:3}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:'top',align:'top',color:GR,font:{size:13,weight:'800'},formatter:v=>v+'%'}},
+    scales:{y:{min:60,max:100,display:false},x:{grid:{display:false}}}}
+});
+
+// Negative bar (overview)
+new Chart(document.getElementById('negBar2'),{
+  type:'bar',
+  data:{labels:['Mar','Apr','May'],datasets:[{data:[23,12,4],backgroundColor:[RD+'99',RD+'66',RD+'33'],borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:RD,font:{size:13,weight:'800'},formatter:v=>v}},
+    scales:{y:{display:false},x:{grid:{display:false}}}}
+});
+
+// CPiO bar (overview)
+const cpioSorted=[...CAMP_DATA].sort((a,b)=>a.med-b.med);
+new Chart(document.getElementById('cpioBar'),{
+  type:'bar',
+  data:{labels:cpioSorted.map(c=>c.c),datasets:[{data:cpioSorted.map(c=>c.med),backgroundColor:cpioSorted.map(c=>c.med<30?GR+'CC':c.med<45?OR+'CC':RD+'99'),borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#555',font:{size:10,weight:'600'},formatter:v=>v.toFixed(1)}},
+    scales:{x:{grid:{color:'#f5f5f5'}},y:{grid:{display:false},ticks:{font:{size:10}}}}}
+});
+
+// Type bubble (overview) — median CPiO vs % positive, size = entries
+new Chart(document.getElementById('typeBubble'),{
+  type:'bubble',
+  data:{datasets:TYPE_DATA.map(t=>({
+    label:t.t,
+    data:[{x:t.med,y:+(t.pos*100).toFixed(1),r:Math.sqrt(t.n)*3}],
+    backgroundColor:(TYPE_CLR[t.t]||OR)+'99',
+    borderColor:TYPE_CLR[t.t]||OR
+  }))},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:12}},
+      datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:(v,ctx)=>ctx.dataset.label}},
+    scales:{
+      x:{title:{display:true,text:'Median CPiO'},grid:{color:'#f5f5f5'}},
+      y:{title:{display:true,text:'% Positive'},min:70,max:105,ticks:{callback:v=>v+'%'}}
+    }}
+});
+
+// ── GROWTH SCATTER ────────────────────────────────────────────────────
+const TYPES_UNIQ=[...new Set(GRW.map(e=>e.type))];
+const scatterDatasets=TYPES_UNIQ.map(t=>{
+  const pts=GRW.filter(e=>e.type===t&&e.cpio>-300&&e.cpio<400&&e.growth>-300&&e.growth<400);
+  return{
+    label:t,
+    data:pts.map(e=>({x:+e.cpio.toFixed(1),y:e.growth,r:Math.max(4,Math.min(20,Math.sqrt(Math.abs(e.signed_orders))*0.25)),brand:e.brand,camp:e.camp,ord:e.signed_orders})),
+    backgroundColor:(TYPE_CLR[t]||OR)+'99',
+    borderColor:TYPE_CLR[t]||OR,
+    pointStyle:'circle'
+  };
+});
+
+new Chart(document.getElementById('scatterMain'),{
+  type:'bubble',
+  data:{datasets:scatterDatasets},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}},
+      datalabels:{display:false},
+      tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;return[`${d.brand} · ${d.camp}`,`CPiO: ${d.x} · Growth: ${d.y>0?'+':''}${d.y}%`,`Orders: ${d.ord.toLocaleString()}`];}}}
+    },
+    scales:{
+      x:{title:{display:true,text:'CPiO (lower = more efficient, negative = below baseline)'},
+        grid:{color:ctx=>ctx.tick.value===0?'#333':'#f5f5f5'},
+        ticks:{font:{size:11}}},
+      y:{title:{display:true,text:'Growth % vs Daily Baseline'},
+        grid:{color:ctx=>ctx.tick.value===0?'#333':'#f5f5f5'},
+        ticks:{callback:v=>v+'%',font:{size:11}}}
+    }
+  }
+});
+
+// Top growth bar
+const topG=[...GRW].filter(e=>e.growth>0&&e.cpio>0).sort((a,b)=>b.growth-a.growth).slice(0,20);
+new Chart(document.getElementById('topGrowthBar'),{
+  type:'bar',
+  data:{labels:topG.map(e=>e.brand+' ('+e.camp.split(' ')[0]+'…)'),
+    datasets:[{data:topG.map(e=>e.growth),backgroundColor:GR+'CC',borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#555',font:{size:9,weight:'600'},formatter:v=>'+'+v+'%'}},
+    scales:{x:{grid:{color:'#f5f5f5'},ticks:{callback:v=>v+'%'}},y:{grid:{display:false},ticks:{font:{size:9}}}}}
+});
+
+// Bottom growth bar
+const botG=[...GRW].filter(e=>e.growth<0).sort((a,b)=>a.growth-b.growth).slice(0,20);
+new Chart(document.getElementById('botGrowthBar'),{
+  type:'bar',
+  data:{labels:botG.map(e=>e.brand+' ('+e.camp.split(' ')[0]+'…)'),
+    datasets:[{data:botG.map(e=>e.growth),backgroundColor:RD+'99',borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'start',color:RD,font:{size:9,weight:'600'},formatter:v=>v+'%'}},
+    scales:{x:{grid:{color:'#f5f5f5'},ticks:{callback:v=>v+'%'}},y:{grid:{display:false},ticks:{font:{size:9}}}}}
+});
+
+// ── MONTHLY CHARTS ────────────────────────────────────────────────────
+const mOrd={Mar:0,Apr:0,May:0};
+R.forEach(r=>{ mOrd[r[3]]+=r[6]; });
+new Chart(document.getElementById('mOrdBar'),{
+  type:'bar',
+  data:{labels:['Mar','Apr','May'],datasets:[{data:[mOrd.Mar,mOrd.Apr,mOrd.May],backgroundColor:[OR+'CC',BL+'CC',GR+'CC'],borderRadius:8,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#555',font:{size:12,weight:'700'},formatter:v=>(v/1000).toFixed(1)+'k'}},
+    scales:{y:{grid:{color:'#f5f5f5'},ticks:{callback:v=>(v/1000).toFixed(0)+'k'}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('mCpioLine'),{
+  type:'line',
+  data:{labels:['Mar','Apr','May'],datasets:[
+    {label:'Median',data:[30.2,32.9,35.1],borderColor:OR,backgroundColor:OR+'15',fill:true,tension:.4,pointRadius:6,pointBackgroundColor:OR,borderWidth:2.5},
+    {label:'Avg',data:[47.1,29.9,43.0],borderColor:BL,backgroundColor:BL+'10',fill:false,tension:.4,pointRadius:5,pointBackgroundColor:BL,borderWidth:2,borderDash:[4,4]}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11}}},datalabels:{display:false}},
+    scales:{y:{grid:{color:'#f5f5f5'}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('mPosLine'),{
+  type:'line',
+  data:{labels:['Mar','Apr','May'],datasets:[{label:'% Pos',data:[76.5,88.8,97.0],borderColor:GR,backgroundColor:GR+'20',fill:true,tension:.4,pointRadius:8,pointBackgroundColor:GR,borderWidth:3}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},datalabels:{anchor:'top',align:'top',color:GR,font:{size:13,weight:'800'},formatter:v=>v+'%'}},
+    scales:{y:{min:60,max:100,ticks:{callback:v=>v+'%'}},x:{grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('mNegBar'),{
+  type:'bar',
+  data:{labels:['Mar','Apr','May'],datasets:[{data:[23,12,4],backgroundColor:[RD+'99',RD+'66',RD+'33'],borderRadius:8,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:RD,font:{size:14,weight:'800'},formatter:v=>v}},
+    scales:{y:{grid:{color:'#f5f5f5'}},x:{grid:{display:false}}}}
+});
+
+// ── TYPE CHARTS ───────────────────────────────────────────────────────
+const tSorted=[...TYPE_DATA].sort((a,b)=>a.med-b.med);
+new Chart(document.getElementById('typeBar'),{
+  type:'bar',
+  data:{labels:tSorted.map(t=>t.t),datasets:[{data:tSorted.map(t=>t.med),backgroundColor:tSorted.map(t=>(TYPE_CLR[t.t]||OR)+'CC'),borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#555',font:{size:11,weight:'700'},formatter:v=>v.toFixed(1)}},
+    scales:{x:{grid:{color:'#f5f5f5'}},y:{grid:{display:false}}}}
+});
+
+const tPSorted=[...TYPE_DATA].sort((a,b)=>b.pos-a.pos);
+new Chart(document.getElementById('typePosBar'),{
+  type:'bar',
+  data:{labels:tPSorted.map(t=>t.t),datasets:[{data:tPSorted.map(t=>+(t.pos*100).toFixed(1)),backgroundColor:tPSorted.map(t=>t.pos===1?GR+'CC':t.pos>0.85?OR+'CC':RD+'99'),borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},datalabels:{anchor:'end',align:'end',color:'#555',font:{size:11,weight:'700'},formatter:v=>v+'%'}},
+    scales:{x:{min:0,max:105,grid:{color:'#f5f5f5'},ticks:{callback:v=>v+'%'}},y:{grid:{display:false}}}}
+});
+
+// ── BRAND SCATTER ─────────────────────────────────────────────────────
+const bScatterData=BRANDS.filter(b=>b.campaigns>=2&&b.avgCpio>-100&&b.avgCpio<300&&b.totalOrd>0&&b.totalOrd<80000);
+new Chart(document.getElementById('brandScatter'),{
+  type:'bubble',
+  data:{datasets:[{
+    label:'Brands',
+    data:bScatterData.map(b=>({x:b.avgCpio,y:b.totalOrd,r:Math.max(4,Math.min(18,Math.sqrt(b.baseline||100)*0.5)),brand:b.brand,camps:b.campaigns})),
+    backgroundColor:bScatterData.map(b=>b.negRuns===0?GR+'99':b.negRuns>1?RD+'99':OR+'99'),
+    borderColor:bScatterData.map(b=>b.negRuns===0?GR:b.negRuns>1?RD:OR)
+  }]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},datalabels:{display:false},
+      tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;return[`${d.brand}`,`Avg CPiO: ${d.x} · Total Orders: ${d.y.toLocaleString()}`,`${d.camps} campaigns`];}}}},
+    scales:{
+      x:{title:{display:true,text:'Avg CPiO across all campaigns'},grid:{color:'#f5f5f5'}},
+      y:{title:{display:true,text:'Total Incremental Orders'},ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v},grid:{color:'#f5f5f5'}}
+    }}
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────
+buildCampTable();
+buildTypeTable();
+buildGrowthTable();
+buildBrandTable();
+buildRawTable();
+</script>
+</body>
+</html>
