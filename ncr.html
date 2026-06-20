@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NCR Opportunities — Talabat UAE · June 2026</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--or:#FF6300;--pale:#FFF0E6;--dk:#1A1A1A;--g9:#1E1E1E;--g1:#F5F5F5;--g2:#E8E8E8;--g6:#666;--wh:#fff;--gr:#27AE60;--rd:#E74C3C;--bl:#3498DB;--pu:#9B59B6;--r:10px;--sh:0 2px 12px rgba(0,0,0,.07)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -48,11 +47,7 @@ main{padding:22px 28px;max-width:1300px;margin:0 auto}
 .tool-roas{font-size:12px;color:var(--g6);margin-bottom:10px}
 .tool-meta{display:flex;gap:8px;flex-wrap:wrap}
 .tmeta{font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;background:var(--g1)}
-.charts{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px}
 .card{background:var(--wh);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
-.ct{font-size:14px;font-weight:700;margin-bottom:3px}
-.cs{font-size:11px;color:var(--g6);margin-bottom:14px}
-.ch{position:relative}
 .tcard{background:var(--wh);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
 .thead{padding:14px 18px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .ttl{font-size:14px;font-weight:700}.tsub{font-size:11px;color:var(--g6)}
@@ -132,97 +127,78 @@ footer{text-align:center;padding:18px;font-size:11px;color:#bbb;border-top:1px s
 
 <!-- OVERVIEW -->
 <div class="sec on" id="overview">
-  <div class="kgrid">
-    <div class="kcard"><div class="kl">Total Vendors</div><div class="kv" id="ov-tot">2,712</div><div class="ks">All tools combined</div></div>
-    <div class="kcard bl"><div class="kl">Total Budget Opp.</div><div class="kv">10.4M</div><div class="ks">AED LC</div></div>
-    <div class="kcard gr"><div class="kl">Avg ROAS</div><div class="kv">4.5x</div><div class="ks">Expected return</div></div>
-    <div class="kcard rd"><div class="kl">Budget Churned</div><div class="kv">520K</div><div class="ks">AED LC MoM loss</div></div>
+
+  <!-- Top KPIs -->
+  <div class="kgrid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:22px">
+    <div class="kcard"><div class="kl">Total Vendors</div><div class="kv">2,712</div><div class="ks">All tools · UAE</div></div>
+    <div class="kcard bl"><div class="kl">Budget Opportunity</div><div class="kv">10.4M</div><div class="ks">AED LC total</div></div>
+    <div class="kcard gr"><div class="kl">Avg Expected ROAS</div><div class="kv">4.5x</div><div class="ks">Across all tools</div></div>
+    <div class="kcard rd"><div class="kl">Budget Churned MoM</div><div class="kv">520K</div><div class="ks">AED LC lost</div></div>
     <div class="kcard pu"><div class="kl">Unique Chains</div><div class="kv">1,463</div><div class="ks">Across UAE</div></div>
-    <div class="kcard"><div class="kl">Unique AMs</div><div class="kv">94</div><div class="ks">Account managers</div></div>
+    <div class="kcard"><div class="kl">Account Managers</div><div class="kv">94</div><div class="ks">Unique AMs</div></div>
   </div>
 
+  <!-- 4 Tool cards — tap to go to that tool tab -->
   <div class="toolrow">
     <div class="toolcard cpc" onclick="showTab('cpc',document.querySelectorAll('.tab')[1])">
       <div class="tool-icon ti-cpc">🎯</div>
       <div class="tool-name">CPC</div>
       <div class="tool-count" id="tc-cpc">2,712</div>
-      <div class="tool-roas">Avg Expected ROAS: <strong>4.5x</strong></div>
-      <div class="tool-meta">
-        <span class="tmeta" id="tm-p0">P0: 1,239</span>
-        <span class="tmeta" id="tm-p1">P1: 317</span>
-        <span class="tmeta" id="tm-p2">P2: 240</span>
-        <span class="tmeta" id="tm-p3">P3: 916</span>
+      <div class="tool-roas">Avg ROAS <strong>4.5x</strong></div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>🔴 P0 (Churned)</span><strong id="tm-p0">1,239</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>🟠 P1 (Reduced)</span><strong id="tm-p1">317</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>🟡 P2 (New)</span><strong id="tm-p2">240</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>⚪ P3 (Pipeline)</span><strong id="tm-p3">916</strong></div>
       </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--or);font-weight:600">→ View Details</div>
     </div>
     <div class="toolcard kw" onclick="showTab('kw',document.querySelectorAll('.tab')[2])">
       <div class="tool-icon ti-kw">🔑</div>
       <div class="tool-name">Keywords</div>
       <div class="tool-count" id="tc-kw">278</div>
-      <div class="tool-roas">Avg Expected ROAS: <strong>4.2x</strong></div>
-      <div class="tool-meta">
-        <span class="tmeta" id="km-acq">Acquire: 168</span>
-        <span class="tmeta" id="km-rea">Reactivate: 110</span>
+      <div class="tool-roas">Avg ROAS <strong>4.2x</strong></div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>🆕 Acquire</span><strong id="km-acq">168</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>♻️ Reactivate</span><strong id="km-rea">110</strong></div>
       </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--bl);font-weight:600">→ View Details</div>
     </div>
     <div class="toolcard da" onclick="showTab('display',document.querySelectorAll('.tab')[3])">
       <div class="tool-icon ti-da">📺</div>
       <div class="tool-name">Display Ads</div>
       <div class="tool-count" id="tc-da">1,254</div>
-      <div class="tool-roas">Backend Budget Opp: <strong>2.59M</strong></div>
-      <div class="tool-meta">
-        <span class="tmeta" id="dm-pit">Pitched: 7</span>
-        <span class="tmeta">Pending: 1,247</span>
+      <div class="tool-roas">Budget Opp <strong>2.59M LC</strong></div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>✅ Pitched</span><strong id="dm-pit">7</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>⏳ Remaining</span><strong>1,247</strong></div>
       </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--pu);font-weight:600">→ View Details</div>
     </div>
     <div class="toolcard sd" onclick="showTab('sd',document.querySelectorAll('.tab')[4])">
       <div class="tool-icon ti-sd">💎</div>
       <div class="tool-name">Sponsored Deals</div>
       <div class="tool-count" id="tc-sd">107</div>
-      <div class="tool-roas">Avg Expected ROAS: <strong>2.7x</strong></div>
-      <div class="tool-meta">
-        <span class="tmeta" id="sm-boo">Boosted: 89</span>
-        <span class="tmeta" id="sm-non">Non-Boosted: 18</span>
+      <div class="tool-roas">Avg ROAS <strong>2.7x</strong></div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>💎 SD Boosted</span><strong id="sm-boo">89</strong></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span>📦 Non-Boosted</span><strong id="sm-non">18</strong></div>
       </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--gr);font-weight:600">→ View Details</div>
     </div>
   </div>
 
-  <div class="charts">
-    <div class="card">
-      <div class="ct">CPC Pipeline by Priority</div>
-      <div class="cs">Vendor count and budget opportunity (LC) — P0 = highest urgency, act first</div>
-      <div class="ch" style="height:240px"><canvas id="priChart"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="ct">Acquire vs Reactivate</div>
-      <div class="cs">CPC opportunity type split — reactivation = faster win</div>
-      <div class="ch" style="height:240px"><canvas id="typeChart"></canvas></div>
-    </div>
-  </div>
-
+  <!-- Budget churn alert — compact -->
   <div class="tcard">
-    <div class="thead"><div><div class="ttl">TL Performance Dashboard</div><div class="tsub">P0 progress + budget across CPC, SD, Display</div></div></div>
-    <div style="overflow-x:auto"><table id="tlTable">
-      <thead><tr>
-        <th onclick="sortT('tlTable',0)">Team Lead</th><th onclick="sortT('tlTable',1)">City Head</th>
-        <th onclick="sortT('tlTable',2)">P0 Vendors</th><th onclick="sortT('tlTable',3)">P0 Budget</th>
-        <th onclick="sortT('tlTable',4)">P0 Progress</th><th onclick="sortT('tlTable',5)">P1 Budget Loss</th>
-        <th onclick="sortT('tlTable',6)">P2 Vendors</th><th onclick="sortT('tlTable',7)">P2 Budget</th>
-        <th onclick="sortT('tlTable',8)">SD Vendors</th><th onclick="sortT('tlTable',9)">Display Vendors</th>
-      </tr></thead>
-      <tbody id="tlBody"></tbody>
-    </table></div>
-  </div>
-
-  <div class="tcard">
-    <div class="thead"><div class="ttl" style="color:var(--rd)">⚠️ Top Budget Churn — Chains Reducing CPC Spend MoM</div></div>
+    <div class="thead"><div class="ttl" style="color:var(--rd)">⚠️ Budget Churn — Top Chains Reducing CPC Spend</div></div>
     <div style="overflow-x:auto"><table>
-      <thead><tr><th>Chain</th><th>Apr Budget</th><th>May Budget</th><th>Loss (LC)</th><th>Action</th></tr></thead>
+      <thead><tr><th>Chain</th><th>Apr Budget (LC)</th><th>May Budget (LC)</th><th>Loss</th><th>Action</th></tr></thead>
       <tbody>
-        <tr><td><strong>Burger King</strong></td><td class="num">177,250</td><td class="num">142,450</td><td class="rdc num">-34,800</td><td><span class="bdg b0">Urgent Retention</span></td></tr>
-        <tr><td><strong>Hardee's</strong></td><td class="num">250,842</td><td class="num">225,465</td><td class="rdc num">-25,377</td><td><span class="bdg b0">Urgent Retention</span></td></tr>
-        <tr><td><strong>Al Kalha Restaurant</strong></td><td class="num">38,000</td><td class="num">18,900</td><td class="rdc num">-19,100</td><td><span class="bdg b1">Review & Retain</span></td></tr>
-        <tr><td><strong>Yabala Mahashy</strong></td><td class="num">166,388</td><td class="num">148,388</td><td class="rdc num">-18,000</td><td><span class="bdg b1">Review & Retain</span></td></tr>
-        <tr><td><strong>Backyard</strong></td><td class="num">28,213</td><td class="num">11,900</td><td class="rdc num">-16,313</td><td><span class="bdg b2">Monitor</span></td></tr>
+        <tr><td><strong>Burger King</strong></td><td class="num">177,250</td><td class="num">142,450</td><td class="rdc num">▼ 34,800</td><td><span class="bdg b0">Urgent Retention</span></td></tr>
+        <tr><td><strong>Hardee's</strong></td><td class="num">250,842</td><td class="num">225,465</td><td class="rdc num">▼ 25,377</td><td><span class="bdg b0">Urgent Retention</span></td></tr>
+        <tr><td><strong>Al Kalha Restaurant</strong></td><td class="num">38,000</td><td class="num">18,900</td><td class="rdc num">▼ 19,100</td><td><span class="bdg b1">Review & Retain</span></td></tr>
+        <tr><td><strong>Yabala Mahashy</strong></td><td class="num">166,388</td><td class="num">148,388</td><td class="rdc num">▼ 18,000</td><td><span class="bdg b1">Review & Retain</span></td></tr>
+        <tr><td><strong>Backyard</strong></td><td class="num">28,213</td><td class="num">11,900</td><td class="rdc num">▼ 16,313</td><td><span class="bdg b2">Monitor</span></td></tr>
       </tbody>
     </table></div>
   </div>
@@ -511,19 +487,6 @@ const priCls=p=>({P0:'b0',P1:'b1',P2:'b2',P3:'b3'}[p]||'b3');
 const priLbl=p=>({P0:'🔴 P0',P1:'🟠 P1',P2:'🟡 P2',P3:'⚪ P3'}[p]||p);
 const fmtK=v=>v>=1000?(v/1000).toFixed(0)+'K':v;
 
-function buildTLTable(){
-  const rows=TL_SUMMARY.filter(r=>matchF(r.tl,r.ch));
-  document.getElementById('tlBody').innerHTML=rows.map(r=>`<tr>
-    <td><strong>${r.tl}</strong></td><td>${r.ch}</td>
-    <td class="num">${r.p0v}</td><td class="num">${fmtK(r.p0b)} LC</td>
-    <td><div style="display:flex;align-items:center;gap:6px">
-      <div style="flex:1;height:5px;background:var(--g2);border-radius:3px;max-width:70px"><div style="width:${parseFloat(r.p0p)}%;height:100%;background:var(--gr);border-radius:3px"></div></div>
-      <span class="num">${r.p0p}</span></div></td>
-    <td class="num ${r.p1b>100000?'rdc':''}">${fmtK(r.p1b)} LC</td>
-    <td class="num">${r.p2v}</td><td class="num">${fmtK(r.p2b)} LC</td>
-    <td class="num">${r.sd}</td><td class="num">${r.da}</td>
-  </tr>`).join('');
-}
 
 function buildCPCTable(){
   const rows=CPC.filter(r=>matchF(r.tl,ch_of(r.tl)));
@@ -679,25 +642,7 @@ function updateCounts(){
   document.getElementById('sm-non').textContent='Non-Boosted: '+(any?sF.filter(r=>r.ty!=='SD Boosted').length:'18');
 }
 
-// Charts
-new Chart(document.getElementById('priChart'),{type:'bar',
-  data:{labels:['P0 — Churned','P1 — Reduced','P2 — New','P3 — Pipeline'],
-    datasets:[
-      {label:'Vendors',data:[1239,317,240,916],backgroundColor:['#E74C3C99','#FF630099','#3498DB99','#95A5A699'],borderRadius:5,yAxisID:'y'},
-      {label:'Budget (K LC)',data:[3597,662,759,5391],backgroundColor:['#E74C3C33','#FF630033','#3498DB33','#95A5A633'],borderRadius:5,yAxisID:'y1'}
-    ]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11}}},datalabels:{display:false}},
-    scales:{y:{position:'left',title:{display:true,text:'Vendors'},grid:{color:'#f0f0f0'}},y1:{position:'right',title:{display:true,text:'Budget K LC'},grid:{display:false}}}}
-});
-
-new Chart(document.getElementById('typeChart'),{type:'doughnut',
-  data:{labels:['Acquire (1,094)','Reactivate (1,618)'],
-    datasets:[{data:[1094,1618],backgroundColor:['#FF630099','#3498DB99'],borderWidth:3,borderColor:'#fff'}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
-    plugins:{legend:{position:'bottom',labels:{font:{size:12}}},datalabels:{display:false}}}
-});
-
-buildTLTable();buildCPCTable();buildKWTable();buildDATable();buildSDTable();buildVendors();
+buildCPCTable();buildKWTable();buildDATable();buildSDTable();buildVendors();
 </script>
 </body>
 </html>
