@@ -2,1086 +2,702 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NCR Opportunities Dashboard — talabat Central Sales</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NCR Opportunities — Talabat UAE · June 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-  :root {
-    --orange: #FF6300;
-    --orange-dark: #cc5000;
-    --dark: #1E1E1E;
-    --card-bg: #ffffff;
-    --body-bg: #f4f5f7;
-    --border: #e0e0e0;
-    --text: #1E1E1E;
-    --text-muted: #666;
-    --green: #22c55e;
-    --yellow: #f59e0b;
-    --red: #ef4444;
-    --blue: #3b82f6;
-    --purple: #8b5cf6;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--body-bg); color: var(--text); font-size: 14px; }
-
-  /* Header */
-  .header { background: var(--dark); color: #fff; padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
-  .header-logo { font-size: 22px; font-weight: 800; color: var(--orange); letter-spacing: -0.5px; }
-  .header-title { font-size: 18px; font-weight: 600; }
-  .header-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
-
-  /* Tabs */
-  .tabs { background: var(--dark); display: flex; gap: 4px; padding: 0 24px; border-bottom: 2px solid var(--orange); }
-  .tab { padding: 12px 20px; cursor: pointer; color: #aaa; font-weight: 500; font-size: 13px; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
-  .tab:hover { color: #fff; }
-  .tab.active { color: var(--orange); border-bottom-color: var(--orange); }
-
-  /* Global filter */
-  .global-filter { background: #fff; border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .global-filter label { font-size: 12px; font-weight: 600; color: var(--text-muted); }
-  .global-filter select, .global-filter input { padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; background: #fff; }
-  .filter-badge { background: var(--orange); color: #fff; border-radius: 12px; padding: 2px 10px; font-size: 11px; font-weight: 700; }
-
-  /* Content */
-  .content { padding: 24px; }
-  .tab-pane { display: none; }
-  .tab-pane.active { display: block; }
-
-  /* KPI Cards */
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
-  .kpi-card { background: var(--card-bg); border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border-top: 3px solid var(--orange); }
-  .kpi-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .kpi-value { font-size: 26px; font-weight: 800; color: var(--dark); margin: 6px 0 2px; }
-  .kpi-sub { font-size: 11px; color: var(--text-muted); }
-  .kpi-card.alert { border-top-color: var(--red); }
-  .kpi-card.alert .kpi-value { color: var(--red); }
-
-  /* Charts row */
-  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  @media (max-width: 900px) { .charts-row { grid-template-columns: 1fr; } }
-  .chart-card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-  .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; color: var(--dark); }
-
-  /* Tables */
-  .table-card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 24px; }
-  .table-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
-  .table-title { font-size: 14px; font-weight: 700; }
-  .table-filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .table-filters select, .table-filters input { padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; }
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: var(--dark); color: #fff; padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; cursor: pointer; white-space: nowrap; user-select: none; }
-  th:hover { background: #333; }
-  th.sorted-asc::after { content: ' ↑'; }
-  th.sorted-desc::after { content: ' ↓'; }
-  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  tr:hover { background: #fafafa; }
-  tr:last-child td { border-bottom: none; }
-
-  /* Badges */
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
-  .badge-cpc { background: #dbeafe; color: #1d4ed8; }
-  .badge-kw { background: #dcfce7; color: #166534; }
-  .badge-sd { background: #fef3c7; color: #92400e; }
-  .badge-display { background: #ede9fe; color: #5b21b6; }
-  .badge-p0 { background: #fee2e2; color: #991b1b; }
-  .badge-p1 { background: #ffedd5; color: #9a3412; }
-  .badge-p2 { background: #fef9c3; color: #854d0e; }
-  .badge-p3 { background: #f1f5f9; color: #475569; }
-  .badge-aaa { background: #1E1E1E; color: #FF6300; }
-  .badge-a { background: #374151; color: #fff; }
-  .badge-b { background: #e5e7eb; color: #374151; }
-  .badge-acquire { background: #dbeafe; color: #1e40af; }
-  .badge-reactivate { background: #fce7f3; color: #9d174d; }
-  .badge-yes { background: #dcfce7; color: #166534; }
-  .badge-no { background: #fee2e2; color: #991b1b; }
-  .badge-pending { background: #fef3c7; color: #92400e; }
-  .badge-booked { background: #dcfce7; color: #166534; }
-
-  /* ROAS color */
-  .roas-high { color: #166534; font-weight: 700; }
-  .roas-mid { color: #92400e; font-weight: 700; }
-  .roas-low { color: #991b1b; font-weight: 700; }
-
-  /* Churn table */
-  .churn-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .churn-row:last-child { border-bottom: none; }
-  .churn-name { font-weight: 600; }
-  .churn-amount { color: var(--red); font-weight: 700; }
-  .churn-detail { font-size: 11px; color: var(--text-muted); }
-
-  /* TL Progress table */
-  .progress-bar { background: #e5e7eb; border-radius: 4px; height: 8px; width: 100px; overflow: hidden; }
-  .progress-fill { background: var(--orange); height: 100%; border-radius: 4px; }
-
-  /* Recommendation Cards */
-  .rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
-  .rec-card { background: var(--card-bg); border-radius: 12px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border-left: 4px solid var(--orange); }
-  .rec-card.urgent { border-left-color: var(--red); }
-  .rec-card.high { border-left-color: #f97316; }
-  .rec-card.medium { border-left-color: var(--yellow); }
-  .rec-card.pipeline { border-left-color: var(--green); }
-  .rec-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .rec-chain { font-weight: 700; font-size: 14px; }
-  .rec-vendor { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
-  .rec-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-  .rec-score { font-size: 22px; font-weight: 800; color: var(--orange); }
-  .rec-score-label { font-size: 10px; color: var(--text-muted); }
-  .rec-action { font-size: 12px; font-weight: 600; margin: 8px 0; }
-  .rec-summary { font-size: 11px; color: var(--text-muted); line-height: 1.5; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; }
-  .rec-products { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
-
-  /* Urgency action labels */
-  .action-urgent { color: #dc2626; }
-  .action-high { color: #ea580c; }
-  .action-medium { color: #d97706; }
-  .action-pipeline { color: #16a34a; }
-
-  /* Display summary cards */
-  .display-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 24px; }
-  .display-card { background: var(--card-bg); border-radius: 10px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-  .display-tl { font-weight: 700; font-size: 13px; margin-bottom: 8px; }
-  .display-stats { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-  .display-stat-val { font-weight: 700; color: var(--dark); }
-
-  /* Info box */
-  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; }
-  .info-box strong { color: #1d4ed8; }
-
-  /* Alert badge */
-  .alert-warn { display: inline-flex; align-items: center; gap: 4px; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
-
-  /* Count badge */
-  .count-badge { background: var(--orange); color: #fff; border-radius: 10px; padding: 1px 8px; font-size: 11px; font-weight: 700; margin-left: 6px; }
-
-  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; color: var(--dark); }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
-
-  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+:root{--or:#FF6300;--pale:#FFF0E6;--dk:#1A1A1A;--g9:#1E1E1E;--g1:#F5F5F5;--g2:#E8E8E8;--g6:#666;--wh:#fff;--gr:#27AE60;--rd:#E74C3C;--bl:#3498DB;--pu:#9B59B6;--r:10px;--sh:0 2px 12px rgba(0,0,0,.07)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--g1);color:var(--dk)}
+header{background:var(--g9);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;border-bottom:3px solid var(--or)}
+.logo{display:flex;align-items:center;gap:10px}
+.lm{width:32px;height:32px;background:var(--or);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px}
+.lt{color:#fff;font-size:17px;font-weight:700}.lt span{color:var(--or)}
+.hm{color:#999;font-size:12px;text-align:right;line-height:1.5}
+.fbar{background:var(--wh);border-bottom:1px solid var(--g2);padding:9px 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.fl{font-size:12px;font-weight:600;color:var(--g6)}
+select.fs{padding:6px 28px 6px 10px;border:1.5px solid var(--g2);border-radius:7px;font-size:13px;background:var(--wh) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%23666'/%3E%3C/svg%3E") no-repeat right 9px center;appearance:none;cursor:pointer;min-width:150px}
+select.fs:focus{outline:none;border-color:var(--or)}
+.freset{padding:6px 12px;border:1.5px solid var(--g2);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;background:var(--g1);color:var(--g6)}
+.freset:hover{background:var(--or);border-color:var(--or);color:#fff}
+.fc{font-size:12px;color:var(--or);font-weight:600;margin-left:auto}
+.nav{background:var(--wh);border-bottom:1px solid var(--g2);padding:0 28px;display:flex;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:500;color:var(--g6);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;user-select:none;transition:color .2s}
+.tab:hover{color:var(--or)}.tab.on{color:var(--or);border-bottom-color:var(--or);font-weight:700}
+main{padding:22px 28px;max-width:1300px;margin:0 auto}
+.sec{display:none}.sec.on{display:block}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.kcard{background:var(--wh);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);border-left:4px solid var(--or);position:relative;overflow:hidden}
+.kcard::after{content:'';position:absolute;top:0;right:0;width:44px;height:44px;background:var(--pale);border-radius:0 0 0 44px}
+.kcard.gr{border-left-color:var(--gr)}.kcard.gr::after{background:#E8F8F0}
+.kcard.rd{border-left-color:var(--rd)}.kcard.rd::after{background:#FCE8E6}
+.kcard.bl{border-left-color:var(--bl)}.kcard.bl::after{background:#E8F4FD}
+.kcard.pu{border-left-color:var(--pu)}.kcard.pu::after{background:#F4E6FF}
+.kl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g6);margin-bottom:5px}
+.kv{font-size:24px;font-weight:800;line-height:1;margin-bottom:3px}
+.ks{font-size:11px;color:var(--g6)}
+.toolrow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.toolcard{background:var(--wh);border-radius:var(--r);padding:20px;box-shadow:var(--sh);cursor:pointer;border-top:4px solid transparent;transition:transform .15s,box-shadow .15s}
+.toolcard:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.toolcard.cpc{border-top-color:var(--or)}.toolcard.kw{border-top-color:var(--bl)}
+.toolcard.da{border-top-color:var(--pu)}.toolcard.sd{border-top-color:var(--gr)}
+.tool-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
+.ti-cpc{background:var(--pale)}.ti-kw{background:#E8F4FD}.ti-da{background:#F4E6FF}.ti-sd{background:#E8F8F0}
+.tool-name{font-size:15px;font-weight:800;margin-bottom:3px}
+.tool-count{font-size:26px;font-weight:900;margin-bottom:2px}
+.tool-roas{font-size:12px;color:var(--g6);margin-bottom:10px}
+.tool-meta{display:flex;gap:8px;flex-wrap:wrap}
+.tmeta{font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px;background:var(--g1)}
+.charts{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px}
+.card{background:var(--wh);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+.ct{font-size:14px;font-weight:700;margin-bottom:3px}
+.cs{font-size:11px;color:var(--g6);margin-bottom:14px}
+.ch{position:relative}
+.tcard{background:var(--wh);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
+.thead{padding:14px 18px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ttl{font-size:14px;font-weight:700}.tsub{font-size:11px;color:var(--g6)}
+input.srch{padding:6px 11px;border:1.5px solid var(--g2);border-radius:7px;font-size:12px;width:180px}
+input.srch:focus{outline:none;border-color:var(--or)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{background:var(--g1);padding:9px 13px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g6);cursor:pointer;white-space:nowrap;border-bottom:1px solid var(--g2);user-select:none}
+thead th:hover{color:var(--or)}.srt{color:var(--or)}.srt::after{content:' ↓'}.srt.asc::after{content:' ↑'}
+tbody tr{border-bottom:1px solid var(--g2);transition:background .12s}
+tbody tr:hover{background:var(--pale)}
+tbody td{padding:9px 13px;vertical-align:middle}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.rdc{color:var(--rd);font-weight:700}
+.bdg{display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}
+.bgy{background:var(--g2);color:#555}
+.b0{background:#FCE8E6;color:#C0392B}.b1{background:var(--pale);color:#C0392B}
+.b2{background:#FFF8E1;color:#E67E22}.b3{background:var(--g2);color:#555}
+.bcpc{background:var(--pale);color:var(--or)}.bkw{background:#E8F4FD;color:#2980B9}
+.bda{background:#F4E6FF;color:#8E44AD}.bsd{background:#E8F8F0;color:#27AE60}
+.bpend{background:#FFF8E1;color:#E67E22}
+.roas-hi{color:var(--gr);font-weight:700}.roas-md{color:var(--or);font-weight:700}.roas-lo{color:var(--rd);font-weight:600}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.vcard{background:var(--wh);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.vname{font-size:13px;font-weight:800;margin-bottom:2px}
+.vmeta{font-size:11px;color:var(--g6);margin-bottom:10px}
+.vrec{display:flex;gap:6px;margin-bottom:8px;flex-direction:column}
+.vrec-item{display:flex;align-items:center;gap:8px;background:var(--g1);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600}
+.vrec-rank{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.rk1{background:#FFD700;color:#7B5800}.rk2{background:#C0C0C0;color:#444}.rk3{background:#CD7F32;color:#fff}
+.vrec-info{flex:1}
+.vrec-reason{font-size:10px;color:var(--g6);font-weight:400;margin-top:1px}
+.vscore{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.sc-hi{background:#FCE8E6;color:var(--rd)}.sc-md{background:var(--pale);color:var(--or)}.sc-lo{background:var(--g2);color:var(--g6)}
+.vbottom{display:flex;justify-content:space-between;font-size:11px;color:var(--g6);border-top:1px solid var(--g2);padding-top:7px;margin-top:7px;gap:8px;flex-wrap:wrap}
+footer{text-align:center;padding:18px;font-size:11px;color:#bbb;border-top:1px solid var(--g2);background:var(--wh);margin-top:32px}
+@media(max-width:900px){.toolrow{grid-template-columns:1fr 1fr}.charts{grid-template-columns:1fr}main{padding:14px}}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-logo">talabat</div>
-  <div>
-    <div class="header-title">NCR Opportunities Dashboard</div>
-    <div class="header-sub">Central Sales · UAE · CPC / Keywords / Display Ads / Sponsored Deals</div>
-  </div>
+<header>
+  <div class="logo"><div class="lm">t</div><div class="lt">talabat <span>NCR</span></div></div>
+  <div class="hm">UAE · June 2026<br>CPC · Keywords · Display · Sponsored Deals</div>
+</header>
+
+<div class="fbar">
+  <span class="fl">City Head:</span>
+  <select class="fs" id="fCH" onchange="applyF()">
+    <option value="">All City Heads</option>
+    <option>Alexandr Vrubel</option><option>Aseel Katbi</option>
+    <option>Bashar Sabri</option><option>Salma Soueif</option><option>Nishu Shaji</option>
+  </select>
+  <span class="fl">Team Lead:</span>
+  <select class="fs" id="fTL" onchange="applyF()">
+    <option value="">All TLs</option>
+    <option>Tejasvi Mohan</option><option>Elda George Pudusseripadi</option>
+    <option>Jad Mohamad Adada</option><option>Mahmoud Abdalla</option>
+    <option>Hadir Hamdy</option><option>Hassan Khalifa</option>
+    <option>Cher Malla</option><option>Nadin Taha</option>
+    <option>Medina Cagalj</option><option>Sravani Chandra</option>
+    <option>Omar Elnewihy</option><option>Shaimaa Hassan</option><option>Salma Soueif</option>
+  </select>
+  <button class="freset" onclick="resetF()">✕ Reset</button>
+  <span class="fc" id="fLabel"></span>
 </div>
 
-<div class="tabs">
-  <div class="tab active" data-tab="overview">📊 Overview</div>
-  <div class="tab" data-tab="cpc">🎯 CPC Opportunities</div>
-  <div class="tab" data-tab="keywords">🔑 Keywords</div>
-  <div class="tab" data-tab="display">🖼️ Display Ads</div>
-  <div class="tab" data-tab="sd">💎 Sponsored Deals</div>
-  <div class="tab" data-tab="recommendations">⚡ Vendor Recommendations</div>
+<div class="nav">
+  <div class="tab on" onclick="showTab('overview',this)">Overview</div>
+  <div class="tab" onclick="showTab('cpc',this)">CPC</div>
+  <div class="tab" onclick="showTab('kw',this)">Keywords</div>
+  <div class="tab" onclick="showTab('display',this)">Display Ads</div>
+  <div class="tab" onclick="showTab('sd',this)">Sponsored Deals</div>
+  <div class="tab" onclick="showTab('vendors',this)">Vendors & Recs 🎯</div>
 </div>
 
-<div class="global-filter">
-  <label>Global Filters:</label>
-  <select id="g-tl"><option value="">All TLs</option></select>
-  <select id="g-am"><option value="">All AMs</option></select>
-  <select id="g-tier"><option value="">All Tiers</option></select>
-  <select id="g-priority"><option value="">All Priorities</option></select>
-  <span id="global-count" class="filter-badge">Loading…</span>
-</div>
+<main>
 
-<!-- ===== OVERVIEW TAB ===== -->
-<div class="content">
-<div id="tab-overview" class="tab-pane active">
-  <div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-label">Total Vendors</div><div class="kpi-value">2,712</div><div class="kpi-sub">Across UAE</div></div>
-    <div class="kpi-card"><div class="kpi-label">Total Budget Opportunity</div><div class="kpi-value">AED 10.4M</div><div class="kpi-sub">Pipeline value</div></div>
-    <div class="kpi-card"><div class="kpi-label">Avg Expected ROAS</div><div class="kpi-value">4.5x</div><div class="kpi-sub">Return on ad spend</div></div>
-    <div class="kpi-card"><div class="kpi-label">Unique Chains</div><div class="kpi-value">1,463</div><div class="kpi-sub">Brand groups</div></div>
-    <div class="kpi-card"><div class="kpi-label">Unique AMs</div><div class="kpi-value">94</div><div class="kpi-sub">Account managers</div></div>
-    <div class="kpi-card alert"><div class="kpi-label">Budget Churned MoM</div><div class="kpi-value">AED 520K</div><div class="kpi-sub">⚠️ Apr → May</div></div>
+<!-- OVERVIEW -->
+<div class="sec on" id="overview">
+  <div class="kgrid">
+    <div class="kcard"><div class="kl">Total Vendors</div><div class="kv" id="ov-tot">2,712</div><div class="ks">All tools combined</div></div>
+    <div class="kcard bl"><div class="kl">Total Budget Opp.</div><div class="kv">10.4M</div><div class="ks">AED LC</div></div>
+    <div class="kcard gr"><div class="kl">Avg ROAS</div><div class="kv">4.5x</div><div class="ks">Expected return</div></div>
+    <div class="kcard rd"><div class="kl">Budget Churned</div><div class="kv">520K</div><div class="ks">AED LC MoM loss</div></div>
+    <div class="kcard pu"><div class="kl">Unique Chains</div><div class="kv">1,463</div><div class="ks">Across UAE</div></div>
+    <div class="kcard"><div class="kl">Unique AMs</div><div class="kv">94</div><div class="ks">Account managers</div></div>
   </div>
 
-  <div class="charts-row">
-    <div class="chart-card">
-      <div class="chart-title">Priority Breakdown — Vendors & Budget (LC)</div>
-      <canvas id="chart-priority" height="220"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Opportunity Type Split</div>
-      <canvas id="chart-type" height="220"></canvas>
-    </div>
-  </div>
-
-  <div class="two-col">
-    <div class="table-card">
-      <div class="table-header">
-        <div class="table-title">⚠️ Budget Churn Alert — Top Churners (MoM)</div>
-      </div>
-      <div id="churn-list"></div>
-    </div>
-    <div class="table-card">
-      <div class="table-header">
-        <div class="table-title">Priority Key</div>
-      </div>
-      <table>
-        <thead><tr><th>Priority</th><th>Vendors</th><th>Budget (LC)</th><th>Share</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td><span class="badge badge-p0">P0</span></td><td>1,239</td><td>3.6M</td><td>45.7%</td><td>Not on ads, low VWS, max growth</td></tr>
-          <tr><td><span class="badge badge-p1">P1</span></td><td>317</td><td>662K</td><td>11.7%</td><td>Not on ads, high benchmark gap</td></tr>
-          <tr><td><span class="badge badge-p2">P2</span></td><td>240</td><td>759K</td><td>8.8%</td><td>Warm / lapsed advertisers</td></tr>
-          <tr><td><span class="badge badge-p3">P3</span></td><td>916</td><td>5.4M</td><td>33.8%</td><td>Bulk pipeline</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="table-card">
-    <div class="table-header">
-      <div class="table-title">TL Progress Overview</div>
-    </div>
-    <div class="table-wrap">
-      <table id="tl-progress-table">
-        <thead>
-          <tr>
-            <th>Team Lead</th>
-            <th>P0 Vendors</th><th>P0 Budget</th><th>P0 Progress</th>
-            <th>P1 Vendors</th><th>P1 Budget Loss</th>
-            <th>P2 Vendors</th><th>P2 Budget</th>
-          </tr>
-        </thead>
-        <tbody id="tl-progress-body"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== CPC TAB ===== -->
-<div id="tab-cpc" class="tab-pane">
-  <div class="table-card">
-    <div class="table-header">
-      <div class="table-title">CPC Opportunities <span id="cpc-count" class="count-badge">0</span></div>
-      <div class="table-filters">
-        <input type="text" id="cpc-search" placeholder="Search vendor / chain…">
-        <select id="cpc-tl"><option value="">All TLs</option></select>
-        <select id="cpc-am"><option value="">All AMs</option></select>
-        <select id="cpc-tier"><option value="">All Tiers</option></select>
-        <select id="cpc-type"><option value="">Acquire / Reactivate</option><option>Acquire</option><option>Reactivate</option></select>
-        <select id="cpc-vws"><option value="">VWS Level</option><option>High</option><option>Low</option></select>
+  <div class="toolrow">
+    <div class="toolcard cpc" onclick="showTab('cpc',document.querySelectorAll('.tab')[1])">
+      <div class="tool-icon ti-cpc">🎯</div>
+      <div class="tool-name">CPC</div>
+      <div class="tool-count" id="tc-cpc">2,712</div>
+      <div class="tool-roas">Avg Expected ROAS: <strong>4.5x</strong></div>
+      <div class="tool-meta">
+        <span class="tmeta" id="tm-p0">P0: 1,239</span>
+        <span class="tmeta" id="tm-p1">P1: 317</span>
+        <span class="tmeta" id="tm-p2">P2: 240</span>
+        <span class="tmeta" id="tm-p3">P3: 916</span>
       </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th data-col="chain">Chain</th>
-            <th data-col="vendor">Vendor</th>
-            <th data-col="tier">Tier</th>
-            <th data-col="am">AM</th>
-            <th data-col="tl">TL</th>
-            <th data-col="budget">Budget (LC)</th>
-            <th data-col="roas">ROAS</th>
-            <th data-col="type">Type</th>
-            <th data-col="vws">VWS%</th>
-            <th data-col="on_ads">On Ads</th>
-            <th data-col="pot_orders">Pot. Orders</th>
-            <th data-col="pot_gmv">Pot. GMV</th>
-            <th>Products</th>
-            <th data-col="pitched">Pitched</th>
-          </tr>
-        </thead>
-        <tbody id="cpc-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== KEYWORDS TAB ===== -->
-<div id="tab-keywords" class="tab-pane">
-  <div class="info-box">
-    <strong>Keywords Strategy:</strong> Keywords boost search visibility for vendors already running CPC or with proven conversion rates. Prioritize vendors with KW Budget = Yes and On Ads = Yes.
-  </div>
-  <div class="table-card">
-    <div class="table-header">
-      <div class="table-title">Keywords Opportunities <span id="kw-count" class="count-badge">0</span></div>
-      <div class="table-filters">
-        <input type="text" id="kw-search" placeholder="Search…">
-        <select id="kw-tl"><option value="">All TLs</option></select>
-        <select id="kw-tier"><option value="">All Tiers</option></select>
-        <select id="kw-action"><option value="">All Actions</option></select>
-        <select id="kw-on-ads"><option value="">On Ads</option><option>Yes</option><option>No</option></select>
-        <select id="kw-kw-budget"><option value="">KW Budget</option><option>Yes</option><option>No</option></select>
+    <div class="toolcard kw" onclick="showTab('kw',document.querySelectorAll('.tab')[2])">
+      <div class="tool-icon ti-kw">🔑</div>
+      <div class="tool-name">Keywords</div>
+      <div class="tool-count" id="tc-kw">278</div>
+      <div class="tool-roas">Avg Expected ROAS: <strong>4.2x</strong></div>
+      <div class="tool-meta">
+        <span class="tmeta" id="km-acq">Acquire: 168</span>
+        <span class="tmeta" id="km-rea">Reactivate: 110</span>
       </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th data-col="vendor">Vendor</th>
-            <th data-col="chain">Chain</th>
-            <th data-col="tier">Tier</th>
-            <th data-col="am">AM</th>
-            <th data-col="tl">TL</th>
-            <th data-col="budget">Budget</th>
-            <th data-col="roas">ROAS</th>
-            <th data-col="priority">Priority</th>
-            <th data-col="action">Action</th>
-            <th>Description</th>
-            <th data-col="vws">VWS%</th>
-            <th data-col="on_ads">On Ads</th>
-            <th data-col="kw_budget">KW Budget</th>
-            <th data-col="pot_orders">Pot. Orders</th>
-            <th data-col="pot_gmv">Pot. GMV</th>
-          </tr>
-        </thead>
-        <tbody id="kw-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== DISPLAY TAB ===== -->
-<div id="tab-display" class="tab-pane">
-  <div class="info-box">
-    <strong>Display Ads</strong> reach customers <em>before</em> they search — great for brand awareness. Best for AAA &amp; Tier A brands with high GMV and low ad-to-GMV ratio. Pitch to vendors not yet on CPC, or as upsell to existing CPC vendors.
-  </div>
-  <div class="section-title">Display Opportunities by Team Lead</div>
-  <div class="display-grid" id="display-cards"></div>
-
-  <div class="chart-card" style="margin-bottom:24px;">
-    <div class="chart-title">Display Backend Budget by TL (AED)</div>
-    <canvas id="chart-display" height="180"></canvas>
-  </div>
-
-  <div class="table-card">
-    <div class="table-header">
-      <div class="table-title">Display Summary Table</div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>TL</th><th>Vendors</th><th>Pitched</th><th>Backend Budget</th><th>Progress</th><th>Action</th></tr></thead>
-        <tbody id="display-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== SD TAB ===== -->
-<div id="tab-sd" class="tab-pane">
-  <div class="info-box">
-    <strong>Sponsored Deals (SDs)</strong> give vendors discounted placements to drive incremental orders. Focus on vendors with high cancellation rates above benchmark — fixing operations + SD together drives conversion.
-  </div>
-  <div class="table-card">
-    <div class="table-header">
-      <div class="table-title">Sponsored Deals Opportunities <span id="sd-count" class="count-badge">0</span></div>
-      <div class="table-filters">
-        <input type="text" id="sd-search" placeholder="Search…">
-        <select id="sd-tl"><option value="">All TLs</option></select>
-        <select id="sd-tier"><option value="">All Tiers</option></select>
-        <select id="sd-priority"><option value="">All Priorities</option></select>
-        <select id="sd-type"><option value="">SD Type</option></select>
-        <select id="sd-pitched"><option value="">Pitched</option></select>
+    <div class="toolcard da" onclick="showTab('display',document.querySelectorAll('.tab')[3])">
+      <div class="tool-icon ti-da">📺</div>
+      <div class="tool-name">Display Ads</div>
+      <div class="tool-count" id="tc-da">1,254</div>
+      <div class="tool-roas">Backend Budget Opp: <strong>2.59M</strong></div>
+      <div class="tool-meta">
+        <span class="tmeta" id="dm-pit">Pitched: 7</span>
+        <span class="tmeta">Pending: 1,247</span>
       </div>
     </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th data-col="chain">Chain</th>
-            <th data-col="vendor">Vendor</th>
-            <th data-col="tier">Tier</th>
-            <th data-col="am">AM</th>
-            <th data-col="tl">TL</th>
-            <th data-col="sd_type">SD Type</th>
-            <th data-col="roas">ROAS</th>
-            <th data-col="priority">Priority</th>
-            <th data-col="vws">VWS%</th>
-            <th data-col="adrev">AdRev/GMV</th>
-            <th data-col="canc_rate">Canc. Rate</th>
-            <th data-col="benchmark_canc">Benchmark</th>
-            <th data-col="pot_orders">Pot. Orders</th>
-            <th data-col="pot_gmv">Pot. GMV</th>
-            <th data-col="pitched">Pitched</th>
-            <th data-col="booked">Booked</th>
-          </tr>
-        </thead>
-        <tbody id="sd-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ===== RECOMMENDATIONS TAB ===== -->
-<div id="tab-recommendations" class="tab-pane">
-  <div class="info-box">
-    <strong>Smart Vendor Recommendations</strong> — Urgency scores computed from ROAS, opportunity type, VWS gap, potential orders/GMV and upsell status. Filter to find your highest-impact vendors now.
-  </div>
-  <div class="table-card" style="padding-bottom:0;">
-    <div class="table-header" style="padding-bottom:14px;">
-      <div class="table-title">Vendor Recommendations <span id="rec-count" class="count-badge">0</span></div>
-      <div class="table-filters">
-        <input type="text" id="rec-search" placeholder="Search chain / vendor…">
-        <select id="rec-tl"><option value="">All TLs</option></select>
-        <select id="rec-urgency"><option value="">All Urgency</option><option value="urgent">🔴 Urgent</option><option value="high">🟠 High</option><option value="medium">🟡 Medium</option><option value="pipeline">🟢 Pipeline</option></select>
-        <select id="rec-product"><option value="">Any Product</option><option value="CPC">CPC</option><option value="Keywords">Keywords</option><option value="SD">SD</option><option value="Display">Display</option></select>
+    <div class="toolcard sd" onclick="showTab('sd',document.querySelectorAll('.tab')[4])">
+      <div class="tool-icon ti-sd">💎</div>
+      <div class="tool-name">Sponsored Deals</div>
+      <div class="tool-count" id="tc-sd">107</div>
+      <div class="tool-roas">Avg Expected ROAS: <strong>2.7x</strong></div>
+      <div class="tool-meta">
+        <span class="tmeta" id="sm-boo">Boosted: 89</span>
+        <span class="tmeta" id="sm-non">Non-Boosted: 18</span>
       </div>
     </div>
   </div>
-  <div class="rec-grid" id="rec-grid"></div>
+
+  <div class="charts">
+    <div class="card">
+      <div class="ct">CPC Pipeline by Priority</div>
+      <div class="cs">Vendor count and budget opportunity (LC) — P0 = highest urgency, act first</div>
+      <div class="ch" style="height:240px"><canvas id="priChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Acquire vs Reactivate</div>
+      <div class="cs">CPC opportunity type split — reactivation = faster win</div>
+      <div class="ch" style="height:240px"><canvas id="typeChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="tcard">
+    <div class="thead"><div><div class="ttl">TL Performance Dashboard</div><div class="tsub">P0 progress + budget across CPC, SD, Display</div></div></div>
+    <div style="overflow-x:auto"><table id="tlTable">
+      <thead><tr>
+        <th onclick="sortT('tlTable',0)">Team Lead</th><th onclick="sortT('tlTable',1)">City Head</th>
+        <th onclick="sortT('tlTable',2)">P0 Vendors</th><th onclick="sortT('tlTable',3)">P0 Budget</th>
+        <th onclick="sortT('tlTable',4)">P0 Progress</th><th onclick="sortT('tlTable',5)">P1 Budget Loss</th>
+        <th onclick="sortT('tlTable',6)">P2 Vendors</th><th onclick="sortT('tlTable',7)">P2 Budget</th>
+        <th onclick="sortT('tlTable',8)">SD Vendors</th><th onclick="sortT('tlTable',9)">Display Vendors</th>
+      </tr></thead>
+      <tbody id="tlBody"></tbody>
+    </table></div>
+  </div>
+
+  <div class="tcard">
+    <div class="thead"><div class="ttl" style="color:var(--rd)">⚠️ Top Budget Churn — Chains Reducing CPC Spend MoM</div></div>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th>Chain</th><th>Apr Budget</th><th>May Budget</th><th>Loss (LC)</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Burger King</strong></td><td class="num">177,250</td><td class="num">142,450</td><td class="rdc num">-34,800</td><td><span class="bdg b0">Urgent Retention</span></td></tr>
+        <tr><td><strong>Hardee's</strong></td><td class="num">250,842</td><td class="num">225,465</td><td class="rdc num">-25,377</td><td><span class="bdg b0">Urgent Retention</span></td></tr>
+        <tr><td><strong>Al Kalha Restaurant</strong></td><td class="num">38,000</td><td class="num">18,900</td><td class="rdc num">-19,100</td><td><span class="bdg b1">Review & Retain</span></td></tr>
+        <tr><td><strong>Yabala Mahashy</strong></td><td class="num">166,388</td><td class="num">148,388</td><td class="rdc num">-18,000</td><td><span class="bdg b1">Review & Retain</span></td></tr>
+        <tr><td><strong>Backyard</strong></td><td class="num">28,213</td><td class="num">11,900</td><td class="rdc num">-16,313</td><td><span class="bdg b2">Monitor</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
 </div>
-</div><!-- /content -->
+
+<!-- CPC -->
+<div class="sec" id="cpc">
+  <div class="kgrid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kcard rd"><div class="kl">P0 — Churned</div><div class="kv" id="cp0-v">1,239</div><div class="ks">Reactivate · ROAS 4.4x · 3.6M LC</div></div>
+    <div class="kcard" style="border-left-color:var(--or)"><div class="kl">P1 — Reduced Budget</div><div class="kv" id="cp1-v">317</div><div class="ks">Retention · ROAS 4.4x · 662K LC</div></div>
+    <div class="kcard bl"><div class="kl">P2 — Never Invested</div><div class="kv" id="cp2-v">240</div><div class="ks">Acquire · ROAS 4.5x · 759K LC</div></div>
+    <div class="kcard gr"><div class="kl">P3 — Pipeline</div><div class="kv" id="cp3-v">916</div><div class="ks">Mixed · ROAS 4.7x · 5.4M LC</div></div>
+  </div>
+  <div class="tcard">
+    <div class="thead">
+      <div><div class="ttl">CPC Opportunities</div><div class="tsub">P0 = was on ads, churned · P1 = reduced budget · P2 = never invested · P3 = pipeline · Click headers to sort</div></div>
+      <input class="srch" placeholder="Search vendor / chain…" oninput="filterT(this,'cpcTable')">
+    </div>
+    <div style="overflow-x:auto"><table id="cpcTable">
+      <thead><tr>
+        <th onclick="sortT('cpcTable',0)">Chain</th><th onclick="sortT('cpcTable',1)">Vendor</th>
+        <th onclick="sortT('cpcTable',2)">Tier</th><th onclick="sortT('cpcTable',3)">AM</th>
+        <th onclick="sortT('cpcTable',4)">TL</th><th onclick="sortT('cpcTable',5)">City Head</th>
+        <th onclick="sortT('cpcTable',6)" class="srt">Budget (LC)</th>
+        <th onclick="sortT('cpcTable',7)">ROAS</th><th onclick="sortT('cpcTable',8)">Priority</th>
+        <th onclick="sortT('cpcTable',9)">Type</th><th onclick="sortT('cpcTable',10)">VWS%</th>
+        <th onclick="sortT('cpcTable',11)">On Ads?</th>
+        <th onclick="sortT('cpcTable',12)">Pot. Orders</th><th onclick="sortT('cpcTable',13)">Pot. GMV</th>
+      </tr></thead>
+      <tbody id="cpcBody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- KEYWORDS -->
+<div class="sec" id="kw">
+  <div class="kgrid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kcard bl"><div class="kl">Total KW Opps</div><div class="kv" id="kw-tot">278</div><div class="ks">Keyword opportunities</div></div>
+    <div class="kcard gr"><div class="kl">Acquire</div><div class="kv">168</div><div class="ks">First-time keyword pitches</div></div>
+    <div class="kcard"><div class="kl">Reactivate</div><div class="kv">110</div><div class="ks">Lapsed keyword spenders</div></div>
+  </div>
+  <div class="tcard">
+    <div class="thead">
+      <div><div class="ttl">Keywords Opportunities</div><div class="tsub">Vendors with healthy conversion rates needing keyword activation to improve search visibility</div></div>
+      <input class="srch" placeholder="Search…" oninput="filterT(this,'kwTable')">
+    </div>
+    <div style="overflow-x:auto"><table id="kwTable">
+      <thead><tr>
+        <th onclick="sortT('kwTable',0)">Chain</th><th onclick="sortT('kwTable',1)">Vendor</th>
+        <th onclick="sortT('kwTable',2)">Tier</th><th onclick="sortT('kwTable',3)">TL</th>
+        <th onclick="sortT('kwTable',4)">City Head</th>
+        <th onclick="sortT('kwTable',5)" class="srt">Budget (LC)</th>
+        <th onclick="sortT('kwTable',6)">ROAS</th><th onclick="sortT('kwTable',7)">Priority</th>
+        <th onclick="sortT('kwTable',8)">Action</th>
+        <th onclick="sortT('kwTable',9)">On Ads?</th><th onclick="sortT('kwTable',10)">KW Budget?</th>
+        <th onclick="sortT('kwTable',11)">Pot. Orders</th><th onclick="sortT('kwTable',12)">Pot. GMV</th>
+      </tr></thead>
+      <tbody id="kwBody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- DISPLAY ADS -->
+<div class="sec" id="display">
+  <div class="kgrid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kcard pu"><div class="kl">Total Display Opps</div><div class="kv">1,254</div><div class="ks">Vendors to pitch Display Ads</div></div>
+    <div class="kcard bl"><div class="kl">Backend Budget Opp.</div><div class="kv">2.59M</div><div class="ks">AED LC total opportunity</div></div>
+    <div class="kcard rd"><div class="kl">Pitched So Far</div><div class="kv">7</div><div class="ks">0.6% — needs urgency push</div></div>
+  </div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="ct">What is Display Ads?</div>
+    <div class="cs">Display reaches customers <strong>before</strong> they search — brand awareness at the top of the funnel. Best for AAA &amp; Tier A vendors with high GMV and low ad-to-GMV ratio. Great upsell on top of CPC.</div>
+    <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <div style="background:var(--pale);border-radius:8px;padding:8px 14px;font-size:12px"><strong>Best for:</strong> AAA + Tier A brands</div>
+      <div style="background:#E8F4FD;border-radius:8px;padding:8px 14px;font-size:12px"><strong>Goal:</strong> Increase impressions before intent</div>
+      <div style="background:#E8F8F0;border-radius:8px;padding:8px 14px;font-size:12px"><strong>Upsell:</strong> Stack on existing CPC vendors</div>
+    </div>
+  </div>
+  <div class="tcard">
+    <div class="thead"><div><div class="ttl">Display Ads by Team Lead</div><div class="tsub">Budget opportunity and pitch progress per TL</div></div></div>
+    <div style="overflow-x:auto"><table id="daTable">
+      <thead><tr>
+        <th onclick="sortT('daTable',0)">Team Lead</th><th onclick="sortT('daTable',1)">City Head</th>
+        <th onclick="sortT('daTable',2)">Vendors</th>
+        <th onclick="sortT('daTable',3)" class="srt">Backend Budget (LC)</th>
+        <th onclick="sortT('daTable',4)">Pitched</th><th onclick="sortT('daTable',5)">Progress</th>
+        <th>Status</th>
+      </tr></thead>
+      <tbody id="daBody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- SPONSORED DEALS -->
+<div class="sec" id="sd">
+  <div class="kgrid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kcard gr"><div class="kl">Total SD Opps</div><div class="kv">107</div><div class="ks">Sponsored deal opportunities</div></div>
+    <div class="kcard"><div class="kl">SD Boosted</div><div class="kv">89</div><div class="ks">Higher visibility + boost</div></div>
+    <div class="kcard bl"><div class="kl">SD Non-Boosted</div><div class="kv">18</div><div class="ks">Standard sponsored placement</div></div>
+    <div class="kcard gr"><div class="kl">Avg ROAS</div><div class="kv">2.7x</div><div class="ks">Expected return on deal</div></div>
+  </div>
+  <div class="tcard">
+    <div class="thead">
+      <div><div class="ttl">Sponsored Deals Opportunities</div><div class="tsub">SD Boosted = priority listing + visibility boost · Red cancellation = above benchmark (needs attention)</div></div>
+      <input class="srch" placeholder="Search…" oninput="filterT(this,'sdTable')">
+    </div>
+    <div style="overflow-x:auto"><table id="sdTable">
+      <thead><tr>
+        <th onclick="sortT('sdTable',0)">Chain</th><th onclick="sortT('sdTable',1)">Vendor</th>
+        <th onclick="sortT('sdTable',2)">Tier</th><th onclick="sortT('sdTable',3)">TL</th>
+        <th onclick="sortT('sdTable',4)">City Head</th><th onclick="sortT('sdTable',5)">SD Type</th>
+        <th onclick="sortT('sdTable',6)">ROAS</th><th onclick="sortT('sdTable',7)">Priority</th>
+        <th onclick="sortT('sdTable',8)">VWS%</th><th onclick="sortT('sdTable',9)">Canc. Rate</th>
+        <th onclick="sortT('sdTable',10)">Benchmark</th>
+        <th onclick="sortT('sdTable',11)" class="srt">Pot. Orders</th>
+        <th onclick="sortT('sdTable',12)">Pot. GMV</th><th onclick="sortT('sdTable',13)">Pitched</th>
+      </tr></thead>
+      <tbody id="sdBody"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- VENDORS -->
+<div class="sec" id="vendors">
+  <div class="kgrid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="kcard rd"><div class="kl">🔴 Urgent (Score 70+)</div><div class="kv" id="vsc-hi">—</div><div class="ks">Contact immediately</div></div>
+    <div class="kcard" style="border-left-color:var(--or)"><div class="kl">🟠 High Priority (45–69)</div><div class="kv" id="vsc-md">—</div><div class="ks">Pitch this week</div></div>
+    <div class="kcard bl"><div class="kl">🟡 Pipeline (&lt;45)</div><div class="kv" id="vsc-lo">—</div><div class="ks">Standard outreach</div></div>
+  </div>
+  <div class="thead" style="background:var(--wh);border-radius:var(--r);box-shadow:var(--sh);padding:14px 18px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <div>
+      <div class="ttl">Vendor Recommendations — Top 3 Tools in Priority Order</div>
+      <div class="tsub">🥇 = highest impact tool · ranked by ROAS, potential orders, VWS gap, tier · sorted by urgency score</div>
+    </div>
+    <input class="srch" placeholder="Search vendor…" oninput="filterVendors(this.value)" style="margin-left:auto;width:200px">
+  </div>
+  <div class="vgrid" id="vgrid"></div>
+</div>
+
+</main>
+<footer>NCR Opportunities · talabat UAE · June 2026 · CPC · Keywords · Display Ads · Sponsored Deals</footer>
 
 <script>
-// ========== DATA ==========
-const CPC_DATA = [
-{chain:"Five Guys",vendor:"Five Guys, Town Square",tier:"AAA",am:"Noor Alhusan",tl:"Salma Soueif",budget:815,roas:18.0,type:"Reactivate",vws:"23.4%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:129,pot_gmv:14665,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Little Bangkok",vendor:"Little Bangkok, Al Hamra Village",tier:"Tier A",am:"Bhagyashree Revandkar",tl:"Elda George Pudusseripadi",budget:725,roas:14.9,type:"Reactivate",vws:"40.5%",adrev_gmv:"2.0%",on_ads:"Yes",kw_budget:"Yes",pot_orders:86,pot_gmv:10820,vws_low:"High",team:"Alexandr Vrubel",pitched:"Yes"},
-{chain:"Costa Coffee",vendor:"Costa Coffee, Century village,Al Garhoud",tier:"AAA",am:"Umesh Nair",tl:"Tejasvi Mohan",budget:875,roas:13.5,type:"Acquire",vws:"31.5%",adrev_gmv:"0.0%",on_ads:"No",kw_budget:"No",pot_orders:107,pot_gmv:11785,vws_low:"High",team:"Alexandr Vrubel",pitched:"Yes"},
-{chain:"Krispy Kreme",vendor:"Krispy Kreme, Jabal Ali",tier:"AAA",am:"Seif Eldin Ismail",tl:"Salma Soueif",budget:2515,roas:9.8,type:"Acquire",vws:"55.2%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:197,pot_gmv:24670,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Starbucks",vendor:"Starbucks, Bay Avenue",tier:"AAA",am:"Nadine Anderson",tl:"Salma Soueif",budget:5885,roas:9.8,type:"Reactivate",vws:"24.0%",adrev_gmv:"1.5%",on_ads:"Yes",kw_budget:"No",pot_orders:420,pot_gmv:36850,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Kfc",vendor:"KFC, Khor Fakkan",tier:"AAA",am:"Seif Eldin Ismail",tl:"Salma Soueif",budget:4340,roas:9.7,type:"Reactivate",vws:"32.1%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:310,pot_gmv:27450,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Nando'S Restaurant",vendor:"Nando's, JBR",tier:"Tier A",am:"Anton Pashkov",tl:"Salma Soueif",budget:4510,roas:8.9,type:"Acquire",vws:"24.0%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:362,pot_gmv:40240,vws_low:"Low",team:"Salma Soueif",pitched:"Yes"},
-{chain:"Din Tai Fung",vendor:"Din Tai Fung, Dubai Hills",tier:"Tier A",am:"Bhagyashree Revandkar",tl:"Elda George Pudusseripadi",budget:7070,roas:10.7,type:"Acquire",vws:"26.0%",adrev_gmv:"0.0%",on_ads:"No",kw_budget:"No",pot_orders:494,pot_gmv:75950,vws_low:"Low",team:"Alexandr Vrubel",pitched:""},
-{chain:"Din Tai Fung",vendor:"Din Tai Fung, Al Barsha 2",tier:"Tier A",am:"Bhagyashree Revandkar",tl:"Elda George Pudusseripadi",budget:8745,roas:8.5,type:"Acquire",vws:"25.9%",adrev_gmv:"0.0%",on_ads:"No",kw_budget:"No",pot_orders:535,pot_gmv:74410,vws_low:"Low",team:"Alexandr Vrubel",pitched:""},
-{chain:"800Pizza",vendor:"800 Pizza, The Sustainable City",tier:"Tier B",am:"Mohamad Sawalha",tl:"Elda George Pudusseripadi",budget:7695,roas:9.5,type:"Acquire",vws:"27.3%",adrev_gmv:"2.6%",on_ads:"Yes",kw_budget:"Yes",pot_orders:647,pot_gmv:73360,vws_low:"Low",team:"Alexandr Vrubel",pitched:"Yes"},
-{chain:"Zouzou",vendor:"Zouzou, Dubai Hills Mall",tier:"Tier B",am:"Belal Tonbol",tl:"Jad Mohamad Adada",budget:7460,roas:8.7,type:"Acquire",vws:"26.9%",adrev_gmv:"0.0%",on_ads:"No",kw_budget:"No",pot_orders:340,pot_gmv:64915,vws_low:"Low",team:"Alexandr Vrubel",pitched:"No"},
-{chain:"Zouzou",vendor:"Zouzou, JBR",tier:"Tier B",am:"Belal Tonbol",tl:"Jad Mohamad Adada",budget:6035,roas:8.0,type:"Acquire",vws:"26.8%",adrev_gmv:"0.0%",on_ads:"No",kw_budget:"No",pot_orders:304,pot_gmv:48555,vws_low:"Low",team:"Alexandr Vrubel",pitched:"No"},
-{chain:"Oregano",vendor:"Oregano, The Villa",tier:"Tier A",am:"Renata Valeska Dsouza",tl:"Elda George Pudusseripadi",budget:12220,roas:9.5,type:"Reactivate",vws:"28.5%",adrev_gmv:"1.2%",on_ads:"Yes",kw_budget:"No",pot_orders:892,pot_gmv:78400,vws_low:"Low",team:"Alexandr Vrubel",pitched:""},
-{chain:"Mcdonald'S",vendor:"McDonald's, Shabhat Plaza",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",budget:29585,roas:9.4,type:"Reactivate",vws:"35.1%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:2150,pot_gmv:189280,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Mcdonald'S",vendor:"McDonald's, Al Hili",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",budget:60610,roas:9.0,type:"Reactivate",vws:"32.8%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:4200,pot_gmv:360000,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Mcdonald'S",vendor:"McDonald's, Al Rahmania",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",budget:61620,roas:8.3,type:"Reactivate",vws:"31.5%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:4250,pot_gmv:364000,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Mcdonald'S",vendor:"McDonald's, Arabian Ranches",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",budget:33235,roas:8.2,type:"Reactivate",vws:"30.2%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:2420,pot_gmv:210600,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Pizza Hut",vendor:"Pizza Hut, Box Park",tier:"AAA",am:"Seif Eldin Ismail",tl:"Salma Soueif",budget:12800,roas:7.6,type:"Reactivate",vws:"28.5%",adrev_gmv:"0.0%",on_ads:"Yes",kw_budget:"No",pot_orders:980,pot_gmv:71200,vws_low:"High",team:"Salma Soueif",pitched:""},
-{chain:"Karachi Darbar",vendor:"Karachi Darbar, Al Satwa",tier:"Tier A",am:"Yawar Mueen",tl:"Tejasvi Mohan",budget:610,roas:9.2,type:"Reactivate",vws:"22.5%",adrev_gmv:"1.1%",on_ads:"Yes",kw_budget:"No",pot_orders:48,pot_gmv:4300,vws_low:"High",team:"Alexandr Vrubel",pitched:"Yes"},
-{chain:"Fogo De Chao",vendor:"Fogo De Chao, DIFC",tier:"Tier A",am:"Kareem Shalaby",tl:"Shaimaa Hassan",budget:7690,roas:9.2,type:"Reactivate",vws:"31.5%",adrev_gmv:"2.1%",on_ads:"Yes",kw_budget:"Yes",pot_orders:510,pot_gmv:87400,vws_low:"Low",team:"Nishu Shaji",pitched:"Yes"},
-{chain:"Pitfire Pizza",vendor:"Pitfire Pizza, Arjan",tier:"Tier A",am:"Umang Naik",tl:"Elda George Pudusseripadi",budget:23975,roas:7.5,type:"Reactivate",vws:"29.8%",adrev_gmv:"3.2%",on_ads:"Yes",kw_budget:"Yes",pot_orders:1850,pot_gmv:148000,vws_low:"Low",team:"Alexandr Vrubel",pitched:"Yes"},
-{chain:"Just Burger",vendor:"Just Burger, Al Barsha South",tier:"Tier A",am:"Mahmoud Essam",tl:"Mahmoud Abdalla",budget:6072,roas:3.0,type:"Reactivate",vws:"28.5%",adrev_gmv:"1.2%",on_ads:"Yes",kw_budget:"No",pot_orders:428,pot_gmv:36400,vws_low:"Low",team:"Aseel Katbi",pitched:""},
-{chain:"Tea Time",vendor:"Tea Time, Al Falah Suburb",tier:"Tier B",am:"Umesh Nair",tl:"Tejasvi Mohan",budget:1270,roas:4.5,type:"Acquire",vws:"32.3%",adrev_gmv:"7.6%",on_ads:"No",kw_budget:"Yes",pot_orders:103,pot_gmv:5670,vws_low:"Low",team:"Alexandr Vrubel",pitched:""},
-{chain:"Lavo",vendor:"Lavo",tier:"Tier B",am:"Umang Naik",tl:"Elda George Pudusseripadi",budget:4495,roas:6.5,type:"Reactivate",vws:"34.1%",adrev_gmv:"3.2%",on_ads:"No",kw_budget:"Yes",pot_orders:309,pot_gmv:29090,vws_low:"Low",team:"Alexandr Vrubel",pitched:""},
-{chain:"Hamba",vendor:"HAMBA, Al Warqa 4",tier:"Tier A",am:"Belal Tonbol",tl:"Jad Mohamad Adada",budget:3290,roas:4.9,type:"Reactivate",vws:"36.3%",adrev_gmv:"2.8%",on_ads:"No",kw_budget:"Yes",pot_orders:233,pot_gmv:15990,vws_low:"Low",team:"Alexandr Vrubel",pitched:""},
-{chain:"Grand Zor Restaurant",vendor:"Grand Zor Restaurant, Bluewaters",tier:"Tier C",am:"Ekaterina Nosova",tl:"Hadir Hamdy",budget:5750,roas:13.0,type:"Acquire",vws:"29.9%",adrev_gmv:"0.0%",on_ads:"No",kw_budget:"No",pot_orders:304,pot_gmv:74645,vws_low:"Low",team:"Alexandr Vrubel",pitched:"Yes"},
-{chain:"Chowking",vendor:"Chowking, Al Barsha 1",tier:"Tier A",am:"Noor Alhusan",tl:"Salma Soueif",budget:1795,roas:4.1,type:"Acquire",vws:"38.5%",adrev_gmv:"0.0%",on_ads:"No",kw_budget:"No",pot_orders:98,pot_gmv:5890,vws_low:"Low",team:"Salma Soueif",pitched:""},
-{chain:"Tacos & Burritos",vendor:"Tacos & Burritos, Yas Mall",tier:"Tier B",am:"Nadine Anderson",tl:"Salma Soueif",budget:650,roas:3.0,type:"Reactivate",vws:"37.9%",adrev_gmv:"3.9%",on_ads:"No",kw_budget:"Yes",pot_orders:27,pot_gmv:1970,vws_low:"Low",team:"Salma Soueif",pitched:""},
-{chain:"Tacos & Burritos",vendor:"Tacos & Burritos, Bay Square",tier:"Tier B",am:"Nadine Anderson",tl:"Salma Soueif",budget:650,roas:3.4,type:"Reactivate",vws:"42.8%",adrev_gmv:"3.7%",on_ads:"No",kw_budget:"Yes",pot_orders:34,pot_gmv:2210,vws_low:"Low",team:"Salma Soueif",pitched:""},
-{chain:"Zouzou",vendor:"ZouZou, Jumeirah 1",tier:"Tier B",am:"Belal Tonbol",tl:"Jad Mohamad Adada",budget:4520,roas:6.8,type:"Acquire",vws:"29.4%",adrev_gmv:"2.4%",on_ads:"No",kw_budget:"Yes",pot_orders:215,pot_gmv:30865,vws_low:"Low",team:"Alexandr Vrubel",pitched:""},
+const TL_CH={'Tejasvi Mohan':'Alexandr Vrubel','Elda George Pudusseripadi':'Alexandr Vrubel','Jad Mohamad Adada':'Alexandr Vrubel','Hadir Hamdy':'Alexandr Vrubel','Mahmoud Abdalla':'Aseel Katbi','Sravani Chandra':'Aseel Katbi','Medina Cagalj':'Aseel Katbi','Omar Elnewihy':'Aseel Katbi','Hassan Khalifa':'Bashar Sabri','Cher Malla':'Bashar Sabri','Nadin Taha':'Bashar Sabri','Salma Soueif':'Salma Soueif','Shaimaa Hassan':'Nishu Shaji'};
+
+const CPC=[
+{ch:"Five Guys",v:"Five Guys, Town Square",tier:"AAA",am:"Noor Alhusan",tl:"Salma Soueif",bud:815,roas:18.0,pri:"P0",typ:"Reactivate",vws:"23.4%",on:"Yes",kw:"No",po:129,pg:14665},
+{ch:"McDonald's",v:"McDonald's, Shabhat Plaza",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",bud:29585,roas:9.4,pri:"P0",typ:"Reactivate",vws:"35.1%",on:"Yes",kw:"No",po:2150,pg:189280},
+{ch:"McDonald's",v:"McDonald's, Al Hili",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",bud:60610,roas:9.0,pri:"P0",typ:"Reactivate",vws:"32.8%",on:"Yes",kw:"No",po:4200,pg:360000},
+{ch:"McDonald's",v:"McDonald's, Al Rahmania",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",bud:61620,roas:8.3,pri:"P0",typ:"Reactivate",vws:"31.5%",on:"Yes",kw:"No",po:4250,pg:364000},
+{ch:"McDonald's",v:"McDonald's, Arabian Ranches",tier:"AAA",am:"Ghina Ezzeddine",tl:"Salma Soueif",bud:33235,roas:8.2,pri:"P0",typ:"Reactivate",vws:"30.2%",on:"Yes",kw:"No",po:2420,pg:210600},
+{ch:"Starbucks",v:"Starbucks, Bay Avenue",tier:"AAA",am:"Nadine Anderson",tl:"Salma Soueif",bud:5885,roas:9.8,pri:"P0",typ:"Reactivate",vws:"24.0%",on:"Yes",kw:"No",po:420,pg:36850},
+{ch:"KFC",v:"KFC, Khor Fakkan",tier:"AAA",am:"Seif Eldin Ismail",tl:"Salma Soueif",bud:4340,roas:9.7,pri:"P0",typ:"Reactivate",vws:"32.1%",on:"Yes",kw:"No",po:310,pg:27450},
+{ch:"Pizza Hut",v:"Pizza Hut, Box Park",tier:"AAA",am:"Seif Eldin Ismail",tl:"Salma Soueif",bud:12800,roas:7.6,pri:"P0",typ:"Reactivate",vws:"28.5%",on:"Yes",kw:"No",po:980,pg:71200},
+{ch:"Krispy Kreme",v:"Krispy Kreme, Jabal Ali",tier:"AAA",am:"Seif Eldin Ismail",tl:"Salma Soueif",bud:2515,roas:9.8,pri:"P1",typ:"Acquire",vws:"55.2%",on:"Yes",kw:"No",po:197,pg:24670},
+{ch:"Costa Coffee",v:"Costa Coffee, Century Village",tier:"AAA",am:"Umesh Nair",tl:"Tejasvi Mohan",bud:875,roas:13.5,pri:"P1",typ:"Acquire",vws:"31.5%",on:"No",kw:"No",po:107,pg:11785},
+{ch:"Din Tai Fung",v:"Din Tai Fung, Dubai Hills",tier:"Tier A",am:"Bhagyashree Revandkar",tl:"Elda George Pudusseripadi",bud:7070,roas:10.7,pri:"P1",typ:"Acquire",vws:"26.0%",on:"No",kw:"No",po:494,pg:75950},
+{ch:"Din Tai Fung",v:"Din Tai Fung, Al Barsha 2",tier:"Tier A",am:"Bhagyashree Revandkar",tl:"Elda George Pudusseripadi",bud:8745,roas:8.5,pri:"P1",typ:"Acquire",vws:"25.9%",on:"No",kw:"No",po:535,pg:74410},
+{ch:"Oregano",v:"Oregano, The Villa",tier:"Tier A",am:"Renata Valeska Dsouza",tl:"Elda George Pudusseripadi",bud:12220,roas:9.5,pri:"P1",typ:"Reactivate",vws:"28.5%",on:"Yes",kw:"No",po:892,pg:78400},
+{ch:"Grand Zor",v:"Grand Zor Restaurant, Bluewaters",tier:"Tier C",am:"Ekaterina Nosova",tl:"Hadir Hamdy",bud:5750,roas:13.0,pri:"P1",typ:"Acquire",vws:"29.9%",on:"No",kw:"No",po:304,pg:74645},
+{ch:"Little Bangkok",v:"Little Bangkok, Al Hamra Village",tier:"Tier A",am:"Bhagyashree Revandkar",tl:"Elda George Pudusseripadi",bud:725,roas:14.9,pri:"P2",typ:"Reactivate",vws:"40.5%",on:"Yes",kw:"Yes",po:86,pg:10820},
+{ch:"800Pizza",v:"800 Pizza, The Sustainable City",tier:"Tier B",am:"Mohamad Sawalha",tl:"Elda George Pudusseripadi",bud:7695,roas:9.5,pri:"P2",typ:"Acquire",vws:"27.3%",on:"Yes",kw:"Yes",po:647,pg:73360},
+{ch:"Fogo De Chao",v:"Fogo De Chao, DIFC",tier:"Tier A",am:"Kareem Shalaby",tl:"Shaimaa Hassan",bud:7690,roas:9.2,pri:"P2",typ:"Reactivate",vws:"31.5%",on:"Yes",kw:"Yes",po:510,pg:87400},
+{ch:"Pitfire Pizza",v:"Pitfire Pizza, Arjan",tier:"Tier A",am:"Umang Naik",tl:"Elda George Pudusseripadi",bud:23975,roas:7.5,pri:"P2",typ:"Reactivate",vws:"29.8%",on:"Yes",kw:"Yes",po:1850,pg:148000},
+{ch:"Nando's",v:"Nando's, JBR",tier:"Tier A",am:"Anton Pashkov",tl:"Salma Soueif",bud:4510,roas:8.9,pri:"P2",typ:"Acquire",vws:"24.0%",on:"Yes",kw:"No",po:362,pg:40240},
+{ch:"Zouzou",v:"Zouzou, Dubai Hills Mall",tier:"Tier B",am:"Belal Tonbol",tl:"Jad Mohamad Adada",bud:7460,roas:8.7,pri:"P3",typ:"Acquire",vws:"26.9%",on:"No",kw:"No",po:340,pg:64915},
+{ch:"Zouzou",v:"ZouZou, Jumeirah 1",tier:"Tier B",am:"Belal Tonbol",tl:"Jad Mohamad Adada",bud:4520,roas:6.8,pri:"P3",typ:"Acquire",vws:"29.4%",on:"No",kw:"Yes",po:215,pg:30865},
+{ch:"Lavo",v:"Lavo, JLT",tier:"Tier B",am:"Umang Naik",tl:"Elda George Pudusseripadi",bud:4495,roas:6.5,pri:"P3",typ:"Reactivate",vws:"34.1%",on:"No",kw:"Yes",po:309,pg:29090},
+{ch:"Hamba",v:"HAMBA, Al Warqa 4",tier:"Tier A",am:"Belal Tonbol",tl:"Jad Mohamad Adada",bud:3290,roas:4.9,pri:"P3",typ:"Reactivate",vws:"36.3%",on:"No",kw:"Yes",po:233,pg:15990},
+{ch:"Karachi Darbar",v:"Karachi Darbar, Al Satwa",tier:"Tier A",am:"Yawar Mueen",tl:"Tejasvi Mohan",bud:610,roas:9.2,pri:"P3",typ:"Reactivate",vws:"22.5%",on:"Yes",kw:"No",po:48,pg:4300},
+{ch:"Tea Time",v:"Tea Time, Al Falah Suburb",tier:"Tier B",am:"Umesh Nair",tl:"Tejasvi Mohan",bud:1270,roas:4.5,pri:"P3",typ:"Acquire",vws:"32.3%",on:"No",kw:"Yes",po:103,pg:5670},
+{ch:"Chowking",v:"Chowking, Al Barsha 1",tier:"Tier A",am:"Noor Alhusan",tl:"Salma Soueif",bud:1795,roas:4.1,pri:"P3",typ:"Acquire",vws:"38.5%",on:"No",kw:"No",po:98,pg:5890},
+{ch:"Al Kabab Al Khososi",v:"Al Kabab Al Khososi, Al Mushairef",tier:"Tier C",am:"Mustafa Ayoub",tl:"Cher Malla",bud:1520,roas:3.9,pri:"P3",typ:"Acquire",vws:"37.9%",on:"No",kw:"Yes",po:99,pg:6005},
+{ch:"Tacos & Burritos",v:"Tacos & Burritos, Yas Mall",tier:"Tier B",am:"Nadine Anderson",tl:"Salma Soueif",bud:650,roas:3.0,pri:"P3",typ:"Reactivate",vws:"37.9%",on:"No",kw:"Yes",po:27,pg:1970},
+{ch:"Just Burger",v:"Just Burger, Al Barsha South",tier:"Tier A",am:"Mahmoud Essam",tl:"Mahmoud Abdalla",bud:6072,roas:3.0,pri:"P3",typ:"Reactivate",vws:"28.5%",on:"Yes",kw:"No",po:428,pg:36400},
+{ch:"Bon Arabica",v:"Bon Arabica Coffee, Al Rashidiya",tier:"Tier E",am:"Aya Omar",tl:"Shaimaa Hassan",bud:650,roas:3.0,pri:"P3",typ:"Acquire",vws:"44.8%",on:"No",kw:"Yes",po:31,pg:1960},
 ];
 
-const KW_DATA = [
-{chain:"Tea Time",vendor:"Tea Time, Al Falah Suburb",tier:"Tier B",am:"Umesh Nair",tl:"Tejasvi Mohan",budget:1270,roas:4.5,priority:"P2",opp_type:"CPC opp list",action:"Acquire on CPC",description:"Healthy conversion rate, acquire CPC to improve impressions. Budget: 1270 LC, ROAS: 4.5",category:"Acquire",vws:"32.3%",adrev:"7.6%",on_ads:"No",kw_budget:"Yes",pot_orders:103,pot_gmv:5670,vws_low:"Low"},
-{chain:"Bon Arabica Coffee",vendor:"Bon Arabica Coffee, Al Rashidiya",tier:"Tier E",am:"Aya Omar",tl:"Shaimaa Hassan",budget:650,roas:3.0,priority:"P3",opp_type:"CPC opp list",action:"Acquire on CPC",description:"Healthy conversion rate. Budget: 650 LC, ROAS: 3.0",category:"Acquire",vws:"44.8%",adrev:"5.5%",on_ads:"No",kw_budget:"Yes",pot_orders:31,pot_gmv:1960,vws_low:"Low"},
-{chain:"Al Kabab Al Khososi",vendor:"Al Kabab Al Khososi, Al Mushairef",tier:"Tier C",am:"Mustafa Ayoub",tl:"Cher Malla",budget:1520,roas:3.9,priority:"P3",opp_type:"CPC opp list",action:"Acquire on CPC",description:"Healthy conversion rate. Budget: 1520 LC, ROAS: 3.9",category:"Acquire",vws:"37.9%",adrev:"4.1%",on_ads:"No",kw_budget:"Yes",pot_orders:99,pot_gmv:6005,vws_low:"Low"},
-{chain:"Tacos & Burritos",vendor:"Tacos & Burritos, Yas Mall",tier:"Tier B",am:"Nadine Anderson",tl:"Salma Soueif",budget:650,roas:3.0,priority:"P3",opp_type:"CPC Hygiene",action:"Reactivate on CPC",description:"Impressions in bottom 75%, -28.2% MoM drop. Activate CPC to improve visibility.",category:"Reactivate",vws:"37.9%",adrev:"3.9%",on_ads:"No",kw_budget:"Yes",pot_orders:27,pot_gmv:1970,vws_low:"Low"},
-{chain:"Tacos & Burritos",vendor:"Tacos & Burritos, Bay Square",tier:"Tier B",am:"Nadine Anderson",tl:"Salma Soueif",budget:650,roas:3.4,priority:"P3",opp_type:"CPC Hygiene",action:"Reactivate on CPC",description:"Impressions in bottom 25%, -44.6% MoM drop. Activate CPC to improve visibility.",category:"Reactivate",vws:"42.8%",adrev:"3.7%",on_ads:"No",kw_budget:"Yes",pot_orders:34,pot_gmv:2210,vws_low:"Low"},
-{chain:"Lavo",vendor:"Lavo",tier:"Tier B",am:"Umang Naik",tl:"Elda George Pudusseripadi",budget:4495,roas:6.5,priority:"P3",opp_type:"CPC opp list",action:"Reactivate on CPC",description:"Healthy conversion rate. Budget: 4495 LC, ROAS: 6.5",category:"Reactivate",vws:"34.1%",adrev:"3.2%",on_ads:"No",kw_budget:"Yes",pot_orders:309,pot_gmv:29090,vws_low:"Low"},
-{chain:"Hamba",vendor:"HAMBA, Al Warqa 4",tier:"Tier A",am:"Belal Tonbol",tl:"Jad Mohamad Adada",budget:3290,roas:4.9,priority:"P3",opp_type:"CPC opp list",action:"Reactivate on CPC",description:"Healthy conversion rate. Budget: 3290 LC, ROAS: 4.9",category:"Reactivate",vws:"36.3%",adrev:"2.8%",on_ads:"No",kw_budget:"Yes",pot_orders:233,pot_gmv:15990,vws_low:"Low"},
-{chain:"Zouzou",vendor:"ZouZou, Jumeirah 1",tier:"Tier B",am:"Belal Tonbol",tl:"Jad Mohamad Adada",budget:4520,roas:6.8,priority:"P3",opp_type:"CPC opp list",action:"Acquire on CPC",description:"Healthy conversion rate. Budget: 4520 LC, ROAS: 6.8",category:"Acquire",vws:"29.4%",adrev:"2.4%",on_ads:"No",kw_budget:"Yes",pot_orders:215,pot_gmv:30865,vws_low:"Low"},
-{chain:"Al Kabab Al Khososi",vendor:"Al Kabab Al Khososi, Al Rawda 1",tier:"Tier C",am:"Mustafa Ayoub",tl:"Cher Malla",budget:1585,roas:4.7,priority:"P3",opp_type:"CPC opp list",action:"Acquire on CPC",description:"Healthy conversion rate. Budget: 1585 LC, ROAS: 4.7",category:"Acquire",vws:"35.8%",adrev:"2.4%",on_ads:"No",kw_budget:"Yes",pot_orders:123,pot_gmv:7480,vws_low:"Low"},
-{chain:"Hamba",vendor:"Hamba, Muwaileh Commercial",tier:"Tier A",am:"Belal Tonbol",tl:"Jad Mohamad Adada",budget:2045,roas:3.9,priority:"P3",opp_type:"CPC opp list",action:"Reactivate on CPC",description:"Healthy conversion rate. Budget: 2045 LC, ROAS: 3.9",category:"Reactivate",vws:"36.9%",adrev:"2.4%",on_ads:"No",kw_budget:"Yes",pot_orders:120,pot_gmv:7955,vws_low:"Low"},
-{chain:"800Pizza",vendor:"800 Pizza, The Sustainable City",tier:"Tier B",am:"Mohamad Sawalha",tl:"Elda George Pudusseripadi",budget:7695,roas:9.5,priority:"P2",opp_type:"CPC opp list",action:"Acquire on CPC",description:"Healthy conversion rate. Budget: 7695 LC, ROAS: 9.5",category:"Acquire",vws:"27.3%",adrev:"2.6%",on_ads:"Yes",kw_budget:"Yes",pot_orders:647,pot_gmv:73360,vws_low:"Low"},
-{chain:"Fogo De Chao",vendor:"Fogo De Chao, DIFC",tier:"Tier A",am:"Kareem Shalaby",tl:"Shaimaa Hassan",budget:7690,roas:9.2,priority:"P2",opp_type:"CPC opp list",action:"Reactivate on CPC",description:"Healthy conversion rate. Budget: 7690 LC, ROAS: 9.2",category:"Reactivate",vws:"31.5%",adrev:"2.1%",on_ads:"Yes",kw_budget:"Yes",pot_orders:510,pot_gmv:87400,vws_low:"Low"},
-{chain:"Little Bangkok",vendor:"Little Bangkok, Al Hamra Village",tier:"Tier A",am:"Bhagyashree Revandkar",tl:"Elda George Pudusseripadi",budget:725,roas:14.9,priority:"P2",opp_type:"CPC opp list",action:"Reactivate on CPC",description:"Excellent ROAS history. Budget: 725 LC, ROAS: 14.9",category:"Reactivate",vws:"40.5%",adrev:"2.0%",on_ads:"Yes",kw_budget:"Yes",pot_orders:86,pot_gmv:10820,vws_low:"High"},
-{chain:"Pitfire Pizza",vendor:"Pitfire Pizza, Arjan",tier:"Tier A",am:"Umang Naik",tl:"Elda George Pudusseripadi",budget:23975,roas:7.5,priority:"P2",opp_type:"CPC opp list",action:"Reactivate on CPC",description:"Large potential. Budget: 23975 LC, ROAS: 7.5",category:"Reactivate",vws:"29.8%",adrev:"3.2%",on_ads:"Yes",kw_budget:"Yes",pot_orders:1850,pot_gmv:148000,vws_low:"Low"},
+const KW_DATA=[
+{ch:"Tea Time",v:"Tea Time, Al Falah Suburb",tier:"Tier B",tl:"Tejasvi Mohan",bud:1270,roas:4.5,pri:"P2",act:"Acquire on CPC",on:"No",kw:"Yes",po:103,pg:5670},
+{ch:"Lavo",v:"Lavo, JLT",tier:"Tier B",tl:"Elda George Pudusseripadi",bud:4495,roas:6.5,pri:"P3",act:"Reactivate on CPC",on:"No",kw:"Yes",po:309,pg:29090},
+{ch:"Hamba",v:"HAMBA, Al Warqa 4",tier:"Tier A",tl:"Jad Mohamad Adada",bud:3290,roas:4.9,pri:"P3",act:"Reactivate on CPC",on:"No",kw:"Yes",po:233,pg:15990},
+{ch:"Zouzou",v:"ZouZou, Jumeirah 1",tier:"Tier B",tl:"Jad Mohamad Adada",bud:4520,roas:6.8,pri:"P3",act:"Acquire on CPC",on:"No",kw:"Yes",po:215,pg:30865},
+{ch:"Al Kabab Al Khososi",v:"Al Kabab Al Khososi, Al Mushairef",tier:"Tier C",tl:"Cher Malla",bud:1520,roas:3.9,pri:"P3",act:"Acquire on CPC",on:"No",kw:"Yes",po:99,pg:6005},
+{ch:"Tacos & Burritos",v:"Tacos & Burritos, Yas Mall",tier:"Tier B",tl:"Salma Soueif",bud:650,roas:3.0,pri:"P3",act:"Reactivate on CPC",on:"No",kw:"Yes",po:27,pg:1970},
+{ch:"Tacos & Burritos",v:"Tacos & Burritos, Bay Square",tier:"Tier B",tl:"Salma Soueif",bud:650,roas:3.4,pri:"P3",act:"Reactivate on CPC",on:"No",kw:"Yes",po:34,pg:2210},
+{ch:"800Pizza",v:"800 Pizza, The Sustainable City",tier:"Tier B",tl:"Elda George Pudusseripadi",bud:7695,roas:9.5,pri:"P2",act:"Acquire on CPC",on:"Yes",kw:"Yes",po:647,pg:73360},
+{ch:"Fogo De Chao",v:"Fogo De Chao, DIFC",tier:"Tier A",tl:"Shaimaa Hassan",bud:7690,roas:9.2,pri:"P2",act:"Reactivate on CPC",on:"Yes",kw:"Yes",po:510,pg:87400},
+{ch:"Little Bangkok",v:"Little Bangkok, Al Hamra Village",tier:"Tier A",tl:"Elda George Pudusseripadi",bud:725,roas:14.9,pri:"P2",act:"Reactivate on CPC",on:"Yes",kw:"Yes",po:86,pg:10820},
+{ch:"Pitfire Pizza",v:"Pitfire Pizza, Arjan",tier:"Tier A",tl:"Elda George Pudusseripadi",bud:23975,roas:7.5,pri:"P2",act:"Reactivate on CPC",on:"Yes",kw:"Yes",po:1850,pg:148000},
+{ch:"Bon Arabica",v:"Bon Arabica Coffee, Al Rashidiya",tier:"Tier E",tl:"Shaimaa Hassan",bud:650,roas:3.0,pri:"P3",act:"Acquire on CPC",on:"No",kw:"Yes",po:31,pg:1960},
+{ch:"Hamba",v:"Hamba, Muwaileh Commercial",tier:"Tier A",tl:"Jad Mohamad Adada",bud:2045,roas:3.9,pri:"P3",act:"Reactivate on CPC",on:"No",kw:"Yes",po:120,pg:7955},
+{ch:"Al Kabab Al Khososi",v:"Al Kabab Al Khososi, Al Rawda",tier:"Tier C",tl:"Cher Malla",bud:1585,roas:4.7,pri:"P3",act:"Acquire on CPC",on:"No",kw:"Yes",po:123,pg:7480},
 ];
 
-const DISPLAY_SUMMARY = [
-{tl:"Alexandr Vrubel",vendors:127,pitched:0,backend_budget:279700,progress:"0%"},
-{tl:"Salma Soueif",vendors:118,pitched:0,backend_budget:524115,progress:"0%"},
-{tl:"Hadir Hamdy",vendors:87,pitched:0,backend_budget:154715,progress:"0%"},
-{tl:"Tejasvi Mohan",vendors:141,pitched:5,backend_budget:281630,progress:"3.5%"},
-{tl:"Medina Cagalj",vendors:99,pitched:1,backend_budget:120810,progress:"1.0%"},
-{tl:"Hassan Khalifa",vendors:104,pitched:0,backend_budget:99305,progress:"0%"},
-{tl:"Nadin Taha",vendors:90,pitched:0,backend_budget:96300,progress:"0%"},
-{tl:"Mahmoud Abdalla",vendors:144,pitched:0,backend_budget:196695,progress:"0%"},
-{tl:"Sravani Chandra",vendors:132,pitched:0,backend_budget:117120,progress:"0%"},
-{tl:"Cher Malla",vendors:133,pitched:0,backend_budget:82030,progress:"0%"},
-{tl:"Elda George Pudusseripadi",vendors:127,pitched:0,backend_budget:462135,progress:"0%"},
-{tl:"Jad Mohamad Adada",vendors:182,pitched:0,backend_budget:344775,progress:"0%"},
-{tl:"Omar Elnewihy",vendors:79,pitched:1,backend_budget:127599,progress:"1.3%"},
+const DA_DATA=[
+{tl:"Jad Mohamad Adada",ch:"Alexandr Vrubel",vend:182,bud:344775,pit:0},
+{tl:"Elda George Pudusseripadi",ch:"Alexandr Vrubel",vend:127,bud:462135,pit:0},
+{tl:"Tejasvi Mohan",ch:"Alexandr Vrubel",vend:141,bud:281630,pit:5},
+{tl:"Hadir Hamdy",ch:"Alexandr Vrubel",vend:87,bud:154715,pit:0},
+{tl:"Mahmoud Abdalla",ch:"Aseel Katbi",vend:144,bud:196695,pit:0},
+{tl:"Sravani Chandra",ch:"Aseel Katbi",vend:132,bud:117120,pit:0},
+{tl:"Medina Cagalj",ch:"Aseel Katbi",vend:99,bud:120810,pit:1},
+{tl:"Omar Elnewihy",ch:"Aseel Katbi",vend:79,bud:127599,pit:1},
+{tl:"Hassan Khalifa",ch:"Bashar Sabri",vend:104,bud:99305,pit:0},
+{tl:"Cher Malla",ch:"Bashar Sabri",vend:133,bud:82030,pit:0},
+{tl:"Nadin Taha",ch:"Bashar Sabri",vend:90,bud:96300,pit:0},
+{tl:"Salma Soueif",ch:"Salma Soueif",vend:118,bud:524115,pit:0},
+{tl:"Shaimaa Hassan",ch:"Nishu Shaji",vend:0,bud:158675,pit:0},
 ];
 
-const SD_DATA = [
-{chain:"Subway",vendor:"Subway, Al Khalidiyah",tier:"A",am:"Patricia BORGES",tl:"Salma Soueif",sd_type:"SD Boosted",roas:2.72,priority:"P2",vws:"31.09%",adrev:"0.4%",canc_rate:"25.7%",benchmark_canc:"11.1%",pot_orders:6.6,pot_gmv:2192,pitched:"PENDING",booked:"No"},
-{chain:"Subway",vendor:"Subway, Al Nahda 2",tier:"A",am:"Patricia BORGES",tl:"Salma Soueif",sd_type:"SD Boosted",roas:2.72,priority:"P2",vws:"32.1%",adrev:"0.5%",canc_rate:"24.2%",benchmark_canc:"11.1%",pot_orders:8.2,pot_gmv:2840,pitched:"PENDING",booked:"No"},
-{chain:"Texas Chicken",vendor:"Texas Chicken, Al Manhal",tier:"A",am:"Serge Dibeh",tl:"Salma Soueif",sd_type:"SD Non-Boosted",roas:2.72,priority:"P1",vws:"28.42%",adrev:"0.8%",canc_rate:"22.9%",benchmark_canc:"10.2%",pot_orders:208.6,pot_gmv:2175,pitched:"YES",booked:"YES"},
-{chain:"Farooj Abu Al Abed",vendor:"Farooj Abu Al Abed, Ajman Corniche",tier:"A",am:"Ehab Salah",tl:"Hadir Hamdy",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"28.39%",adrev:"1.2%",canc_rate:"27.2%",benchmark_canc:"14.3%",pot_orders:314.4,pot_gmv:3718,pitched:"PENDING",booked:"No"},
-{chain:"Gulf Pastry",vendor:"Gulf Pastry, Al Barsha 3",tier:"A",am:"Kavya R",tl:"Sravani Chandra",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"28.34%",adrev:"0.4%",canc_rate:"26.2%",benchmark_canc:"15.0%",pot_orders:311.2,pot_gmv:2797,pitched:"PENDING",booked:"No"},
-{chain:"Gulf Pastry",vendor:"Gulf Pastry, Al Nuaimia 1",tier:"A",am:"Kavya R",tl:"Sravani Chandra",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"27.95%",adrev:"0.3%",canc_rate:"32.3%",benchmark_canc:"14.5%",pot_orders:437.0,pot_gmv:3789,pitched:"PENDING",booked:"No"},
-{chain:"Aseer Time",vendor:"Aseer Time, Al Barsha 1",tier:"A",am:"Ehab Salah",tl:"Hadir Hamdy",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"27.77%",adrev:"0.7%",canc_rate:"26.5%",benchmark_canc:"15.7%",pot_orders:656.7,pot_gmv:7896,pitched:"PENDING",booked:"No"},
-{chain:"Qasmieh Al Fawal",vendor:"Qasmieh Al Fawal, Al Warqa 1",tier:"A",am:"Omar Khamis",tl:"Mahmoud Abdalla",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"28.21%",adrev:"0.4%",canc_rate:"28.5%",benchmark_canc:"15.1%",pot_orders:476.2,pot_gmv:4599,pitched:"PENDING",booked:"No"},
-{chain:"Alternatives",vendor:"ALTERNATIVES, Al Manhal",tier:"A",am:"Salah Mniemneh",tl:"Mahmoud Abdalla",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"28.11%",adrev:"0.1%",canc_rate:"36.3%",benchmark_canc:"27.5%",pot_orders:734.3,pot_gmv:10258,pitched:"YES",booked:"No"},
-{chain:"Mixit",vendor:"Mixit, Al Falah City",tier:"A",am:"Salah Mniemneh",tl:"Mahmoud Abdalla",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"28.11%",adrev:"0.0%",canc_rate:"33.3%",benchmark_canc:"22.7%",pot_orders:271.3,pot_gmv:5097,pitched:"YES",booked:"No"},
-{chain:"Texas Chicken",vendor:"Texas Chicken, Discovery Gardens",tier:"A",am:"Serge Dibeh",tl:"Salma Soueif",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"27.83%",adrev:"2.4%",canc_rate:"27.2%",benchmark_canc:"13.2%",pot_orders:190.8,pot_gmv:2321,pitched:"YES",booked:"No"},
-{chain:"Aseer Time",vendor:"Aseer Time, Al Zahra",tier:"A",am:"Ehab Salah",tl:"Hadir Hamdy",sd_type:"SD Boosted",roas:2.72,priority:"P1",vws:"27.82%",adrev:"0.8%",canc_rate:"25.1%",benchmark_canc:"14.9%",pot_orders:280.0,pot_gmv:3679,pitched:"PENDING",booked:"No"},
+const SD_DATA=[
+{ch:"Texas Chicken",v:"Texas Chicken, Al Manhal",tier:"A",tl:"Salma Soueif",ty:"SD Non-Boosted",roas:2.72,pri:"P1",vws:"28.42%",canc:"22.9%",bm:"10.2%",po:208.6,pg:2175,pit:"YES"},
+{ch:"Farooj Abu Al Abed",v:"Farooj Abu Al Abed, Ajman Corniche",tier:"A",tl:"Hadir Hamdy",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"28.39%",canc:"27.2%",bm:"14.3%",po:314.4,pg:3718,pit:"PENDING"},
+{ch:"Gulf Pastry",v:"Gulf Pastry, Al Barsha 3",tier:"A",tl:"Sravani Chandra",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"28.34%",canc:"26.2%",bm:"15.0%",po:311.2,pg:2797,pit:"PENDING"},
+{ch:"Qasmieh Al Fawal",v:"Qasmieh Al Fawal, Al Warqa 1",tier:"A",tl:"Mahmoud Abdalla",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"28.21%",canc:"28.5%",bm:"15.1%",po:476.2,pg:4599,pit:"PENDING"},
+{ch:"ALTERNATIVES",v:"ALTERNATIVES, Al Manhal",tier:"A",tl:"Mahmoud Abdalla",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"28.11%",canc:"36.3%",bm:"27.5%",po:734.3,pg:10258,pit:"YES"},
+{ch:"Mixit",v:"Mixit, Al Falah City",tier:"A",tl:"Mahmoud Abdalla",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"28.11%",canc:"33.3%",bm:"22.7%",po:271.3,pg:5097,pit:"YES"},
+{ch:"Gulf Pastry",v:"Gulf Pastry, Al Nuaimia 1",tier:"A",tl:"Sravani Chandra",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"27.95%",canc:"32.3%",bm:"14.5%",po:437.0,pg:3789,pit:"PENDING"},
+{ch:"Aseer Time",v:"Aseer Time, Al Barsha 1",tier:"A",tl:"Hadir Hamdy",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"27.77%",canc:"26.5%",bm:"15.7%",po:656.7,pg:7896,pit:"PENDING"},
+{ch:"Aseer Time",v:"Aseer Time, Al Zahra",tier:"A",tl:"Hadir Hamdy",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"27.82%",canc:"25.1%",bm:"14.9%",po:280.0,pg:3679,pit:"PENDING"},
+{ch:"Texas Chicken",v:"Texas Chicken, Discovery Gardens",tier:"A",tl:"Salma Soueif",ty:"SD Boosted",roas:2.72,pri:"P1",vws:"27.83%",canc:"27.2%",bm:"13.2%",po:190.8,pg:2321,pit:"YES"},
+{ch:"Subway",v:"Subway, Al Khalidiyah",tier:"A",tl:"Salma Soueif",ty:"SD Boosted",roas:2.72,pri:"P2",vws:"31.09%",canc:"25.7%",bm:"11.1%",po:6.6,pg:2192,pit:"PENDING"},
+{ch:"Subway",v:"Subway, Al Nahda 2",tier:"A",tl:"Salma Soueif",ty:"SD Boosted",roas:2.72,pri:"P2",vws:"32.1%",canc:"24.2%",bm:"11.1%",po:8.2,pg:2840,pit:"PENDING"},
 ];
 
-const TL_PROGRESS = [
-{tl:"Alexandr Vrubel",p0_vendors:404,p0_budget:"1.04M",p0_progress:92.8,p1_vendors:67,p1_budget_loss:135706,p2_vendors:440,p2_budget:"1.24M"},
-{tl:"Aseel Katbi",p0_vendors:283,p0_budget:"1.03M",p0_progress:95.8,p1_vendors:66,p1_budget_loss:127121,p2_vendors:160,p2_budget:"539K"},
-{tl:"Bashar Sabri",p0_vendors:236,p0_budget:"515K",p0_progress:92.4,p1_vendors:61,p1_budget_loss:84222,p2_vendors:160,p2_budget:"278K"},
-{tl:"Salma Soueif",p0_vendors:490,p0_budget:"4.70M",p0_progress:73.3,p1_vendors:50,p1_budget_loss:171853,p2_vendors:150,p2_budget:"533K"},
+const TL_SUMMARY=[
+{tl:"Salma Soueif",ch:"Salma Soueif",p0v:490,p0b:4698865,p0p:"73.3%",p1b:171853,p2v:150,p2b:532730,sd:12,da:118},
+{tl:"Tejasvi Mohan",ch:"Alexandr Vrubel",p0v:165,p0b:362310,p0p:"92.8%",p1b:71061,p2v:176,p2b:281630,sd:27,da:141},
+{tl:"Elda George Pudusseripadi",ch:"Alexandr Vrubel",p0v:119,p0b:401230,p0p:"92.8%",p1b:111715,p2v:102,p2b:462135,sd:18,da:127},
+{tl:"Mahmoud Abdalla",ch:"Aseel Katbi",p0v:72,p0b:223210,p0p:"95.8%",p1b:303476,p2v:49,p2b:196695,sd:20,da:144},
+{tl:"Hassan Khalifa",ch:"Bashar Sabri",p0v:69,p0b:166935,p0p:"92.4%",p1b:39935,p2v:72,p2b:99305,sd:16,da:104},
+{tl:"Medina Cagalj",ch:"Aseel Katbi",p0v:69,p0b:289390,p0p:"95.8%",p1b:40232,p2v:44,p2b:120810,sd:10,da:99},
+{tl:"Jad Mohamad Adada",ch:"Alexandr Vrubel",p0v:69,p0b:177850,p0p:"92.8%",p1b:0,p2v:92,p2b:344775,sd:19,da:182},
+{tl:"Hadir Hamdy",ch:"Alexandr Vrubel",p0v:51,p0b:105285,p0p:"92.8%",p1b:86588,p2v:70,p2b:154715,sd:15,da:87},
+{tl:"Nadin Taha",ch:"Bashar Sabri",p0v:72,p0b:157585,p0p:"92.4%",p1b:71905,p2v:37,p2b:96300,sd:11,da:90},
+{tl:"Sravani Chandra",ch:"Aseel Katbi",p0v:88,p0b:295050,p0p:"95.8%",p1b:256142,p2v:45,p2b:117120,sd:13,da:132},
+{tl:"Cher Malla",ch:"Bashar Sabri",p0v:95,p0b:190990,p0p:"92.4%",p1b:51105,p2v:50,p2b:82030,sd:14,da:133},
+{tl:"Omar Elnewihy",ch:"Aseel Katbi",p0v:54,p0b:220705,p0p:"95.8%",p1b:0,p2v:22,p2b:104435,sd:8,da:79},
+{tl:"Shaimaa Hassan",ch:"Nishu Shaji",p0v:139,p0b:200570,p0p:"73.3%",p1b:0,p2v:120,p2b:158675,sd:30,da:0},
 ];
 
-const CHURN_DATA = [
-{name:"Burger King",apr:177250,may:142450,delta:-34800},
-{name:"Hardee's",apr:250842,may:225465,delta:-25377},
-{name:"Al Kalha Restaurant",apr:null,may:null,delta:-19100},
-{name:"Yabala Mahashy",apr:null,may:null,delta:-18000},
-{name:"Backyard",apr:null,may:null,delta:-16313},
-];
+let GF={ch:'',tl:''};
+const ch_of=tl=>TL_CH[tl]||'';
+const matchF=(tl,ch)=>{if(GF.ch&&ch!==GF.ch)return false;if(GF.tl&&tl!==GF.tl)return false;return true;};
 
-// ========== HELPERS ==========
-function fmt(n){return n!=null?n.toLocaleString():'—';}
-function fmtC(n){return n!=null?'AED '+n.toLocaleString():'—';}
-function roasBadge(r){
-  if(r>=8) return `<span class="roas-high">${r}x</span>`;
-  if(r>=5) return `<span class="roas-mid">${r}x</span>`;
-  return `<span class="roas-low">${r}x</span>`;
+function applyF(){
+  GF.ch=document.getElementById('fCH').value;
+  GF.tl=document.getElementById('fTL').value;
+  const parts=[];if(GF.ch)parts.push(GF.ch);if(GF.tl)parts.push(GF.tl);
+  document.getElementById('fLabel').textContent=parts.length?'Filtered: '+parts.join(' · '):'';
+  rebuildAll();
 }
-function tierBadge(t){
-  if(!t) return '';
-  const lc=t.replace('Tier ','').toLowerCase();
-  if(t==='AAA') return `<span class="badge badge-aaa">AAA</span>`;
-  if(t==='A'||t==='Tier A') return `<span class="badge badge-a">A</span>`;
-  if(t==='B'||t==='Tier B') return `<span class="badge badge-b">B</span>`;
-  return `<span class="badge" style="background:#e5e7eb;color:#374151">${t.replace('Tier ','')}</span>`;
+function resetF(){
+  document.getElementById('fCH').value='';document.getElementById('fTL').value='';
+  GF={ch:'',tl:''};document.getElementById('fLabel').textContent='';rebuildAll();
 }
-function priBadge(p){
-  if(!p) return '';
-  const cl={P0:'badge-p0',P1:'badge-p1',P2:'badge-p2',P3:'badge-p3'}[p]||'badge-p3';
-  return `<span class="badge ${cl}">${p}</span>`;
-}
-function typeBadge(t){
-  if(!t) return '';
-  return t==='Acquire'?`<span class="badge badge-acquire">Acquire</span>`:`<span class="badge badge-reactivate">Reactivate</span>`;
-}
-function yesnoBadge(v){
-  return v==='Yes'?`<span class="badge badge-yes">Yes</span>`:`<span class="badge badge-no">No</span>`;
-}
-function pitchedBadge(v){
-  if(!v||v==='') return `<span class="badge" style="background:#f1f5f9;color:#475569">—</span>`;
-  if(v==='YES'||v==='Yes') return `<span class="badge badge-yes">Yes</span>`;
-  if(v==='PENDING') return `<span class="badge badge-pending">Pending</span>`;
-  if(v==='No') return `<span class="badge badge-no">No</span>`;
-  return `<span class="badge">${v}</span>`;
-}
-function bookedBadge(v){
-  return v==='YES'?`<span class="badge badge-booked">Booked</span>`:`<span class="badge badge-no">No</span>`;
-}
-function productBadges(row){
-  let b='';
-  if(row.roas>=3) b+=`<span class="badge badge-cpc">CPC</span> `;
-  if(row.on_ads==='Yes'||row.kw_budget==='Yes') b+=`<span class="badge badge-kw">KW</span> `;
-  const tier=row.tier||'';
-  if((tier==='AAA'||tier==='Tier A')&&row.roas>=4) b+=`<span class="badge badge-sd">SD</span> `;
-  if(row.pot_gmv>20000) b+=`<span class="badge badge-display">Display</span>`;
-  return b;
+function rebuildAll(){buildTLTable();buildCPCTable();buildKWTable();buildDATable();buildSDTable();buildVendors();updateCounts();}
+
+function showTab(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(el)el.classList.add('on');
 }
 
-// ========== SORTING ==========
-let sortState = {};
-function makeSortable(tableId, data, renderFn){
-  document.querySelectorAll(`#${tableId} th[data-col]`).forEach(th=>{
-    th.addEventListener('click',()=>{
-      const col=th.dataset.col;
-      const asc = sortState[tableId]?.col===col ? !sortState[tableId].asc : true;
-      sortState[tableId]={col,asc};
-      document.querySelectorAll(`#${tableId} th`).forEach(h=>h.classList.remove('sorted-asc','sorted-desc'));
-      th.classList.add(asc?'sorted-asc':'sorted-desc');
-      renderFn();
-    });
+const _s={};
+function sortT(id,col){
+  const tb=document.querySelector('#'+id+' tbody');
+  const rows=[...tb.querySelectorAll('tr')];
+  const asc=_s[id]!==col||!_s[id+'a'];_s[id]=col;_s[id+'a']=asc;
+  rows.sort((a,b)=>{
+    const av=(a.cells[col]?.textContent||'').trim().replace(/[%,K LC]/g,'');
+    const bv=(b.cells[col]?.textContent||'').trim().replace(/[%,K LC]/g,'');
+    const an=parseFloat(av),bn=parseFloat(bv);
+    if(!isNaN(an)&&!isNaN(bn))return asc?an-bn:bn-an;
+    return asc?av.localeCompare(bv):bv.localeCompare(av);
   });
+  rows.forEach(r=>tb.appendChild(r));
+  document.querySelectorAll('#'+id+' thead th').forEach((th,i)=>{th.classList.toggle('srt',i===col);th.classList.toggle('asc',i===col&&asc);});
+}
+function filterT(inp,id){const q=inp.value.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});}
+
+const roasCls=v=>v>=8?'roas-hi':v>=5?'roas-md':'roas-lo';
+const priCls=p=>({P0:'b0',P1:'b1',P2:'b2',P3:'b3'}[p]||'b3');
+const priLbl=p=>({P0:'🔴 P0',P1:'🟠 P1',P2:'🟡 P2',P3:'⚪ P3'}[p]||p);
+const fmtK=v=>v>=1000?(v/1000).toFixed(0)+'K':v;
+
+function buildTLTable(){
+  const rows=TL_SUMMARY.filter(r=>matchF(r.tl,r.ch));
+  document.getElementById('tlBody').innerHTML=rows.map(r=>`<tr>
+    <td><strong>${r.tl}</strong></td><td>${r.ch}</td>
+    <td class="num">${r.p0v}</td><td class="num">${fmtK(r.p0b)} LC</td>
+    <td><div style="display:flex;align-items:center;gap:6px">
+      <div style="flex:1;height:5px;background:var(--g2);border-radius:3px;max-width:70px"><div style="width:${parseFloat(r.p0p)}%;height:100%;background:var(--gr);border-radius:3px"></div></div>
+      <span class="num">${r.p0p}</span></div></td>
+    <td class="num ${r.p1b>100000?'rdc':''}">${fmtK(r.p1b)} LC</td>
+    <td class="num">${r.p2v}</td><td class="num">${fmtK(r.p2b)} LC</td>
+    <td class="num">${r.sd}</td><td class="num">${r.da}</td>
+  </tr>`).join('');
 }
 
-// ========== GLOBAL FILTERS ==========
-function unique(arr,key){return [...new Set(arr.map(r=>r[key]).filter(Boolean))].sort();}
-function populateSelect(id,vals){
-  const sel=document.getElementById(id);
-  if(!sel) return;
-  const cur=sel.value;
-  sel.innerHTML=`<option value="">${sel.options[0].text}</option>`+vals.map(v=>`<option>${v}</option>`).join('');
-  if(cur) sel.value=cur;
+function buildCPCTable(){
+  const rows=CPC.filter(r=>matchF(r.tl,ch_of(r.tl)));
+  document.getElementById('cpcBody').innerHTML=rows.map(r=>`<tr>
+    <td><strong>${r.ch}</strong></td><td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.v}</td>
+    <td><span class="bdg bgy">${r.tier}</span></td><td>${r.am}</td><td>${r.tl}</td><td>${ch_of(r.tl)}</td>
+    <td class="num">${r.bud.toLocaleString()}</td>
+    <td class="${roasCls(r.roas)}">${r.roas}x</td>
+    <td><span class="bdg ${priCls(r.pri)}">${priLbl(r.pri)}</span></td>
+    <td><span class="bdg ${r.typ==='Reactivate'?'bkw':'bcpc'}">${r.typ}</span></td>
+    <td class="num">${r.vws}</td>
+    <td>${r.on==='Yes'?'✅':'❌'}</td>
+    <td class="num">${r.po.toLocaleString()}</td>
+    <td class="num">${fmtK(r.pg)}</td>
+  </tr>`).join('');
 }
 
-const allData=[...CPC_DATA,...KW_DATA,...SD_DATA];
-const allTLs=unique(allData,'tl');
-const allAMs=unique(allData,'am');
-const allTiers=unique(allData,'tier');
-populateSelect('g-tl',allTLs);
-populateSelect('g-am',allAMs);
-populateSelect('g-tier',allTiers);
-['P0','P1','P2','P3'].forEach(p=>{
-  const opt=document.createElement('option');opt.value=p;opt.textContent=p;
-  document.getElementById('g-priority').appendChild(opt);
-});
-
-// ========== TAB SWITCHING ==========
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
-    renderAll();
-  });
-});
-
-// ========== OVERVIEW ==========
-function renderChurn(){
-  const el=document.getElementById('churn-list');
-  el.innerHTML=CHURN_DATA.map(c=>`
-    <div class="churn-row">
-      <div>
-        <div class="churn-name">${c.name} <span class="alert-warn">⚠️ Churn</span></div>
-        <div class="churn-detail">${c.apr?`Apr AED ${fmt(c.apr)} → May AED ${fmt(c.may)}`:'MoM drop'}</div>
-      </div>
-      <div class="churn-amount">${fmtC(c.delta)}</div>
-    </div>`).join('');
+function buildKWTable(){
+  const rows=KW_DATA.filter(r=>matchF(r.tl,ch_of(r.tl)));
+  document.getElementById('kwBody').innerHTML=rows.map(r=>`<tr>
+    <td><strong>${r.ch}</strong></td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.v}</td>
+    <td><span class="bdg bgy">${r.tier}</span></td><td>${r.tl}</td><td>${ch_of(r.tl)}</td>
+    <td class="num">${r.bud.toLocaleString()}</td>
+    <td class="${roasCls(r.roas)}">${r.roas}x</td>
+    <td><span class="bdg ${priCls(r.pri)}">${priLbl(r.pri)}</span></td>
+    <td><span class="bdg bkw" style="font-size:10px">${r.act}</span></td>
+    <td>${r.on==='Yes'?'✅':'❌'}</td><td>${r.kw==='Yes'?'✅':'❌'}</td>
+    <td class="num">${r.po}</td><td class="num">${fmtK(r.pg)}</td>
+  </tr>`).join('');
 }
 
-function renderTLProgress(){
-  const body=document.getElementById('tl-progress-body');
-  body.innerHTML=TL_PROGRESS.map(r=>{
-    const pct=r.p0_progress;
-    return `<tr>
-      <td><strong>${r.tl}</strong></td>
-      <td>${r.p0_vendors}</td>
-      <td>${r.p0_budget}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <span>${pct}%</span>
-        </div>
-      </td>
-      <td>${r.p1_vendors}</td>
-      <td style="color:var(--red);font-weight:600;">AED ${fmt(r.p1_budget_loss)}</td>
-      <td>${r.p2_vendors}</td>
-      <td>${r.p2_budget}</td>
+function buildDATable(){
+  const rows=DA_DATA.filter(r=>matchF(r.tl,r.ch));
+  document.getElementById('daBody').innerHTML=rows.map(r=>{
+    const pct=r.vend>0?Math.round(r.pit/r.vend*100):0;
+    const status=pct>10?'✅ On Track':pct>0?'⚠️ Started':'🔴 Not Started';
+    return`<tr>
+      <td><strong>${r.tl}</strong></td><td>${r.ch}</td>
+      <td class="num">${r.vend}</td>
+      <td class="num">${r.bud.toLocaleString()} LC</td>
+      <td class="num">${r.pit}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">
+        <div style="flex:1;height:5px;background:var(--g2);border-radius:3px;max-width:70px"><div style="width:${Math.min(pct,100)}%;height:100%;background:${pct>10?'var(--gr)':pct>0?'var(--or)':'var(--rd)'};border-radius:3px"></div></div>
+        <span>${pct}%</span></div></td>
+      <td>${status}</td>
     </tr>`;
   }).join('');
 }
 
-function renderOverviewCharts(){
-  // Priority bar chart
-  const ctx1=document.getElementById('chart-priority');
-  if(ctx1._chart) ctx1._chart.destroy();
-  ctx1._chart=new Chart(ctx1,{
-    type:'bar',
-    data:{
-      labels:['P0 — Top Priority','P1 — High Priority','P2 — Medium','P3 — General Pipeline'],
-      datasets:[
-        {label:'Vendors',data:[1239,317,240,916],backgroundColor:'#FF6300',yAxisID:'y',borderRadius:4},
-        {label:'Budget (LC 000s)',data:[3600,662,759,5400],backgroundColor:'#1E1E1E',yAxisID:'y1',borderRadius:4},
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top'}},
-      scales:{
-        y:{position:'left',title:{display:true,text:'Vendors'},beginAtZero:true},
-        y1:{position:'right',title:{display:true,text:'Budget (LC 000s)'},beginAtZero:true,grid:{drawOnChartArea:false}},
-      }
-    }
-  });
-
-  // Donut
-  const ctx2=document.getElementById('chart-type');
-  if(ctx2._chart) ctx2._chart.destroy();
-  ctx2._chart=new Chart(ctx2,{
-    type:'doughnut',
-    data:{
-      labels:['Acquire (1,094 vendors · 2.8M LC)','Reactivate (1,618 vendors · 7.6M LC)'],
-      datasets:[{data:[2800,7600],backgroundColor:['#FF6300','#1E1E1E'],borderWidth:0}]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: AED ${ctx.parsed.toLocaleString()}K`}}}
-    }
-  });
-}
-
-// ========== CPC TAB ==========
-populateSelect('cpc-tl',unique(CPC_DATA,'tl'));
-populateSelect('cpc-am',unique(CPC_DATA,'am'));
-populateSelect('cpc-tier',unique(CPC_DATA,'tier'));
-
-function getCPCFiltered(){
-  const q=(document.getElementById('cpc-search').value||'').toLowerCase();
-  const tl=document.getElementById('cpc-tl').value;
-  const am=document.getElementById('cpc-am').value;
-  const tier=document.getElementById('cpc-tier').value;
-  const type=document.getElementById('cpc-type').value;
-  const vws=document.getElementById('cpc-vws').value;
-  const gTL=document.getElementById('g-tl').value;
-  const gAM=document.getElementById('g-am').value;
-  const gTier=document.getElementById('g-tier').value;
-
-  let data=[...CPC_DATA];
-  if(sortState['cpc-table']){
-    const {col,asc}=sortState['cpc-table'];
-    data.sort((a,b)=>{
-      let av=a[col],bv=b[col];
-      if(typeof av==='number') return asc?av-bv:bv-av;
-      return asc?(av||'').localeCompare(bv||''):(bv||'').localeCompare(av||'');
-    });
-  }
-  return data.filter(r=>{
-    if(q&&!r.vendor.toLowerCase().includes(q)&&!r.chain.toLowerCase().includes(q)) return false;
-    if(tl&&r.tl!==tl) return false;
-    if(am&&r.am!==am) return false;
-    if(tier&&r.tier!==tier) return false;
-    if(type&&r.type!==type) return false;
-    if(vws&&r.vws_low!==vws) return false;
-    if(gTL&&r.tl!==gTL) return false;
-    if(gAM&&r.am!==gAM) return false;
-    if(gTier&&r.tier!==gTier) return false;
-    return true;
-  });
-}
-
-function renderCPC(){
-  const data=getCPCFiltered();
-  document.getElementById('cpc-count').textContent=data.length;
-  document.getElementById('cpc-tbody').innerHTML=data.map(r=>`<tr>
-    <td><strong>${r.chain}</strong></td>
-    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.vendor}">${r.vendor}</td>
-    <td>${tierBadge(r.tier)}</td>
-    <td style="white-space:nowrap;">${r.am}</td>
-    <td style="white-space:nowrap;">${r.tl}</td>
-    <td style="font-weight:600;">${fmt(r.budget)}</td>
-    <td>${roasBadge(r.roas)}</td>
-    <td>${typeBadge(r.type)}</td>
-    <td>${r.vws} <span class="badge" style="background:${r.vws_low==='High'?'#fee2e2':'#dcfce7'};color:${r.vws_low==='High'?'#991b1b':'#166534'}">${r.vws_low}</span></td>
-    <td>${yesnoBadge(r.on_ads)}</td>
-    <td style="font-weight:600;">${fmt(r.pot_orders)}</td>
-    <td style="font-weight:600;">AED ${fmt(r.pot_gmv)}</td>
-    <td style="white-space:nowrap;">${productBadges(r)}</td>
-    <td>${pitchedBadge(r.pitched)}</td>
+function buildSDTable(){
+  const rows=SD_DATA.filter(r=>matchF(r.tl,ch_of(r.tl)));
+  document.getElementById('sdBody').innerHTML=rows.map(r=>`<tr>
+    <td><strong>${r.ch}</strong></td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.v}</td>
+    <td><span class="bdg bgy">Tier ${r.tier}</span></td><td>${r.tl}</td><td>${ch_of(r.tl)}</td>
+    <td><span class="bdg ${r.ty==='SD Boosted'?'bcpc':'bkw'}">${r.ty}</span></td>
+    <td class="${roasCls(r.roas)}">${r.roas}x</td>
+    <td><span class="bdg ${priCls(r.pri)}">${priLbl(r.pri)}</span></td>
+    <td class="num">${r.vws}</td>
+    <td class="num ${parseFloat(r.canc)>parseFloat(r.bm)?'rdc':''}">${r.canc}</td>
+    <td class="num">${r.bm}</td>
+    <td class="num">${r.po}</td><td class="num">${fmtK(r.pg)}</td>
+    <td><span class="bdg ${r.pit==='YES'?'bsd':r.pit==='PENDING'?'bpend':'b3'}">${r.pit}</span></td>
   </tr>`).join('');
 }
 
-['cpc-search','cpc-tl','cpc-am','cpc-tier','cpc-type','cpc-vws'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',renderCPC);
-  document.getElementById(id).addEventListener('change',renderCPC);
-});
-makeSortable('cpc-table',CPC_DATA,renderCPC);
-
-// ========== KEYWORDS TAB ==========
-populateSelect('kw-tl',unique(KW_DATA,'tl'));
-populateSelect('kw-tier',unique(KW_DATA,'tier'));
-populateSelect('kw-action',unique(KW_DATA,'action'));
-
-function getKWFiltered(){
-  const q=(document.getElementById('kw-search').value||'').toLowerCase();
-  const tl=document.getElementById('kw-tl').value;
-  const tier=document.getElementById('kw-tier').value;
-  const action=document.getElementById('kw-action').value;
-  const on=document.getElementById('kw-on-ads').value;
-  const kw=document.getElementById('kw-kw-budget').value;
-  const gTL=document.getElementById('g-tl').value;
-  const gTier=document.getElementById('g-tier').value;
-
-  let data=[...KW_DATA];
-  if(sortState['kw-table']){
-    const {col,asc}=sortState['kw-table'];
-    data.sort((a,b)=>{
-      let av=a[col],bv=b[col];
-      if(typeof av==='number') return asc?av-bv:bv-av;
-      return asc?(av||'').localeCompare(bv||''):(bv||'').localeCompare(av||'');
-    });
-  }
-  return data.filter(r=>{
-    if(q&&!r.vendor.toLowerCase().includes(q)&&!r.chain.toLowerCase().includes(q)) return false;
-    if(tl&&r.tl!==tl) return false;
-    if(tier&&r.tier!==tier) return false;
-    if(action&&r.action!==action) return false;
-    if(on&&r.on_ads!==on) return false;
-    if(kw&&r.kw_budget!==kw) return false;
-    if(gTL&&r.tl!==gTL) return false;
-    if(gTier&&r.tier!==gTier) return false;
-    return true;
-  });
-}
-
-function renderKW(){
-  const data=getKWFiltered();
-  document.getElementById('kw-count').textContent=data.length;
-  document.getElementById('kw-tbody').innerHTML=data.map(r=>`<tr>
-    <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.vendor}">${r.vendor}</td>
-    <td><strong>${r.chain}</strong></td>
-    <td>${tierBadge(r.tier)}</td>
-    <td>${r.am}</td>
-    <td style="white-space:nowrap;">${r.tl}</td>
-    <td>${fmt(r.budget)}</td>
-    <td>${roasBadge(r.roas)}</td>
-    <td>${priBadge(r.priority)}</td>
-    <td style="white-space:nowrap;"><span class="badge ${r.category==='Acquire'?'badge-acquire':'badge-reactivate'}">${r.action}</span></td>
-    <td style="max-width:200px;font-size:11px;color:var(--text-muted);" title="${r.description}">${r.description.substring(0,60)}${r.description.length>60?'…':''}</td>
-    <td>${r.vws}</td>
-    <td>${yesnoBadge(r.on_ads)}</td>
-    <td>${yesnoBadge(r.kw_budget)}</td>
-    <td>${fmt(r.pot_orders)}</td>
-    <td>AED ${fmt(r.pot_gmv)}</td>
-  </tr>`).join('');
-}
-
-['kw-search','kw-tl','kw-tier','kw-action','kw-on-ads','kw-kw-budget'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',renderKW);
-  document.getElementById(id).addEventListener('change',renderKW);
-});
-
-// ========== DISPLAY TAB ==========
-function renderDisplay(){
-  // Cards
-  const cards=document.getElementById('display-cards');
-  cards.innerHTML=DISPLAY_SUMMARY.map(d=>{
-    const pct=parseFloat(d.progress);
-    return `<div class="display-card">
-      <div class="display-tl">${d.tl}</div>
-      <div class="display-stats">
-        <div><div class="display-stat-val">${d.vendors}</div><div>Vendors</div></div>
-        <div><div class="display-stat-val">${d.pitched}</div><div>Pitched</div></div>
-        <div><div class="display-stat-val">AED ${(d.backend_budget/1000).toFixed(0)}K</div><div>Budget</div></div>
-      </div>
-      <div class="progress-bar" style="width:100%;margin-top:4px;">
-        <div class="progress-fill" style="width:${Math.max(pct,pct>0?4:0)}%;background:${pct===0?'#e5e7eb':'var(--orange)'}"></div>
-      </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">${d.progress} pitched</div>
-    </div>`;
-  }).join('');
-
-  // Chart
-  const ctx=document.getElementById('chart-display');
-  if(ctx._chart) ctx._chart.destroy();
-  ctx._chart=new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels:DISPLAY_SUMMARY.map(d=>d.tl.split(' ')[0]),
-      datasets:[{
-        label:'Backend Budget (AED)',
-        data:DISPLAY_SUMMARY.map(d=>d.backend_budget),
-        backgroundColor:'#FF6300',borderRadius:4
-      },{
-        label:'Vendors',
-        data:DISPLAY_SUMMARY.map(d=>d.vendors),
-        backgroundColor:'#1E1E1E',borderRadius:4,yAxisID:'y1'
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top'}},
-      scales:{
-        y:{title:{display:true,text:'Budget (AED)'},beginAtZero:true},
-        y1:{position:'right',title:{display:true,text:'Vendors'},beginAtZero:true,grid:{drawOnChartArea:false}}
-      }
-    }
-  });
-
-  // Table
-  document.getElementById('display-tbody').innerHTML=DISPLAY_SUMMARY.map(d=>{
-    const pct=parseFloat(d.progress);
-    return `<tr>
-      <td><strong>${d.tl}</strong></td>
-      <td>${d.vendors}</td>
-      <td>${d.pitched} <span class="badge" style="background:${d.pitched>0?'#dcfce7':'#f1f5f9'};color:${d.pitched>0?'#166534':'#475569'}">${d.pitched>0?'Started':'Not Started'}</span></td>
-      <td>AED ${fmt(d.backend_budget)}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div class="progress-bar"><div class="progress-fill" style="width:${Math.max(pct,pct>0?5:0)}%"></div></div>
-          <span>${d.progress}</span>
-        </div>
-      </td>
-      <td>${pct===0?'<span class="badge badge-p0">Action Needed</span>':'<span class="badge badge-p2">In Progress</span>'}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ========== SD TAB ==========
-populateSelect('sd-tl',unique(SD_DATA,'tl'));
-populateSelect('sd-tier',unique(SD_DATA,'tier'));
-populateSelect('sd-priority',unique(SD_DATA,'priority'));
-populateSelect('sd-type',unique(SD_DATA,'sd_type'));
-populateSelect('sd-pitched',unique(SD_DATA,'pitched'));
-
-function getSDFiltered(){
-  const q=(document.getElementById('sd-search').value||'').toLowerCase();
-  const tl=document.getElementById('sd-tl').value;
-  const tier=document.getElementById('sd-tier').value;
-  const pri=document.getElementById('sd-priority').value;
-  const type=document.getElementById('sd-type').value;
-  const pitched=document.getElementById('sd-pitched').value;
-  const gTL=document.getElementById('g-tl').value;
-
-  let data=[...SD_DATA];
-  if(sortState['sd-table']){
-    const {col,asc}=sortState['sd-table'];
-    data.sort((a,b)=>{
-      let av=a[col],bv=b[col];
-      if(typeof av==='number') return asc?av-bv:bv-av;
-      return asc?(av||'').localeCompare(bv||''):(bv||'').localeCompare(av||'');
-    });
-  }
-  return data.filter(r=>{
-    if(q&&!r.vendor.toLowerCase().includes(q)&&!r.chain.toLowerCase().includes(q)) return false;
-    if(tl&&r.tl!==tl) return false;
-    if(tier&&r.tier!==tier) return false;
-    if(pri&&r.priority!==pri) return false;
-    if(type&&r.sd_type!==type) return false;
-    if(pitched&&r.pitched!==pitched) return false;
-    if(gTL&&r.tl!==gTL) return false;
-    return true;
-  });
-}
-
-function renderSD(){
-  const data=getSDFiltered();
-  document.getElementById('sd-count').textContent=data.length;
-  document.getElementById('sd-tbody').innerHTML=data.map(r=>`<tr>
-    <td><strong>${r.chain}</strong></td>
-    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${r.vendor}">${r.vendor}</td>
-    <td>${tierBadge('Tier '+r.tier)}</td>
-    <td>${r.am}</td>
-    <td style="white-space:nowrap;">${r.tl}</td>
-    <td><span class="badge" style="background:${r.sd_type.includes('Boosted')?'#fef3c7':'#dbeafe'};color:${r.sd_type.includes('Boosted')?'#92400e':'#1d4ed8'}">${r.sd_type}</span></td>
-    <td>${roasBadge(r.roas)}</td>
-    <td>${priBadge(r.priority)}</td>
-    <td>${r.vws}</td>
-    <td>${r.adrev}</td>
-    <td style="color:var(--red);font-weight:600;">${r.canc_rate}</td>
-    <td>${r.benchmark_canc}</td>
-    <td>${typeof r.pot_orders==='number'?r.pot_orders.toFixed(1):r.pot_orders}</td>
-    <td>AED ${fmt(r.pot_gmv)}</td>
-    <td>${pitchedBadge(r.pitched)}</td>
-    <td>${bookedBadge(r.booked)}</td>
-  </tr>`).join('');
-}
-
-['sd-search','sd-tl','sd-tier','sd-priority','sd-type','sd-pitched'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',renderSD);
-  document.getElementById(id).addEventListener('change',renderSD);
-});
-
-// ========== RECOMMENDATIONS TAB ==========
-populateSelect('rec-tl',unique(CPC_DATA,'tl'));
-
-function computeScore(r){
-  let s=0;
-  if(r.roas>=10) s+=40; else if(r.roas>=7) s+=30; else if(r.roas>=5) s+=20; else if(r.roas>=3) s+=10;
-  if(r.type==='Reactivate') s+=20;
-  if(r.vws_low==='High') s+=15;
-  if(r.pot_orders>500) s+=15;
-  if(r.pot_gmv>50000) s+=10;
-  if(r.on_ads==='Yes'&&!r.pitched) s+=10;
+function score(r){
+  let s=0;const roas=parseFloat(r.roas)||0;
+  if(roas>=12)s+=40;else if(roas>=8)s+=30;else if(roas>=5)s+=20;else if(roas>=3)s+=10;
+  if(r.typ==='Reactivate')s+=20;
+  if(r.pri==='P0')s+=25;else if(r.pri==='P1')s+=18;else if(r.pri==='P2')s+=10;
+  if(r.po>500)s+=15;else if(r.po>200)s+=8;
+  if(r.pg>100000)s+=12;else if(r.pg>40000)s+=7;
+  if(r.on==='Yes'&&r.kw==='No')s+=8;
   return Math.min(s,100);
 }
 
-function scoreLabel(s){
-  if(s>=80) return {cls:'urgent',icon:'🔴',text:'URGENT — Contact immediately'};
-  if(s>=60) return {cls:'high',icon:'🟠',text:'HIGH PRIORITY — Pitch this week'};
-  if(s>=40) return {cls:'medium',icon:'🟡',text:'MEDIUM — Include in weekly plan'};
-  return {cls:'pipeline',icon:'🟢',text:'PIPELINE — Standard outreach'};
+function recTools(r){
+  const tools=[];
+  // CPC — always #1 if ROAS >= 3
+  if(parseFloat(r.roas)>=3)
+    tools.push({name:'CPC',cls:'bcpc',icon:'🎯',reason:`ROAS ${r.roas}x · ${r.typ} · Budget ${r.bud.toLocaleString()} LC`,sc:parseFloat(r.roas)*8+(r.pri==='P0'?40:r.pri==='P1'?30:r.pri==='P2'?20:10)});
+  // Keywords
+  if(r.on==='Yes'||r.kw==='Yes')
+    tools.push({name:'Keywords',cls:'bkw',icon:'🔑',reason:`On ads: ${r.on} · KW budget: ${r.kw} · boost impressions`,sc:parseFloat(r.roas)*5+40});
+  // SD — Tier A / AAA
+  if((r.tier==='AAA'||r.tier==='Tier A')&&parseFloat(r.roas)>=4)
+    tools.push({name:'Sponsored Deal',cls:'bsd',icon:'💎',reason:`Premium brand · ROAS ${r.roas}x · pot. GMV ${fmtK(r.pg)}`,sc:parseFloat(r.roas)*3+35});
+  // Display
+  if(r.pg>30000)
+    tools.push({name:'Display Ads',cls:'bda',icon:'📺',reason:`High GMV ${fmtK(r.pg)} · brand awareness reach`,sc:r.pg/6000+18});
+  return tools.sort((a,b)=>b.sc-a.sc).slice(0,3);
 }
 
-function recProducts(r){
-  const p=[];
-  if(r.roas>=3) p.push('CPC');
-  if(r.on_ads==='Yes'||r.kw_budget==='Yes') p.push('Keywords');
-  const tier=r.tier||'';
-  if((tier==='AAA'||tier==='Tier A')&&r.roas>=4) p.push('SD');
-  if(r.pot_gmv>20000) p.push('Display');
-  return p;
-}
+function buildVendors(){
+  const rows=CPC.filter(r=>matchF(r.tl,ch_of(r.tl)));
+  const sorted=[...rows].sort((a,b)=>score(b)-score(a));
+  let hi=0,md=0,lo=0;
+  sorted.forEach(r=>{const s=score(r);if(s>=70)hi++;else if(s>=45)md++;else lo++;});
+  document.getElementById('vsc-hi').textContent=hi;
+  document.getElementById('vsc-md').textContent=md;
+  document.getElementById('vsc-lo').textContent=lo;
 
-function recSummary(r){
-  const parts=[];
-  if(r.type==='Reactivate') parts.push(`Reactivate CPC (prev ROAS ${r.roas}x)`);
-  else parts.push(`Acquire on CPC (proj ROAS ${r.roas}x)`);
-  if(r.on_ads==='Yes'||r.kw_budget==='Yes') parts.push('add Keywords boost');
-  if((r.tier==='AAA'||r.tier==='Tier A')&&r.roas>=4) parts.push('pitch SD Boosted');
-  if(r.pot_gmv>20000) parts.push('upsell Display Ads');
-  return parts.join(' + ')+` — ${fmt(r.pot_orders)} incremental orders potential`;
-}
-
-function getRecFiltered(){
-  const q=(document.getElementById('rec-search').value||'').toLowerCase();
-  const tl=document.getElementById('rec-tl').value;
-  const urgency=document.getElementById('rec-urgency').value;
-  const product=document.getElementById('rec-product').value;
-  const gTL=document.getElementById('g-tl').value;
-
-  return CPC_DATA
-    .map(r=>({...r,score:computeScore(r),products:recProducts(r)}))
-    .sort((a,b)=>b.score-a.score)
-    .filter(r=>{
-      if(q&&!r.vendor.toLowerCase().includes(q)&&!r.chain.toLowerCase().includes(q)) return false;
-      if(tl&&r.tl!==tl) return false;
-      if(gTL&&r.tl!==gTL) return false;
-      if(urgency){
-        const s=r.score;
-        if(urgency==='urgent'&&s<80) return false;
-        if(urgency==='high'&&(s<60||s>=80)) return false;
-        if(urgency==='medium'&&(s<40||s>=60)) return false;
-        if(urgency==='pipeline'&&s>=40) return false;
-      }
-      if(product&&!r.products.includes(product)) return false;
-      return true;
-    });
-}
-
-function renderRec(){
-  const data=getRecFiltered();
-  document.getElementById('rec-count').textContent=data.length;
-  const grid=document.getElementById('rec-grid');
-  grid.innerHTML=data.map(r=>{
-    const lbl=scoreLabel(r.score);
-    const prodBadges=r.products.map(p=>`<span class="badge badge-${p.toLowerCase().replace(' ','')}">${p}</span>`).join(' ');
-    return `<div class="rec-card ${lbl.cls}">
-      <div class="rec-header">
-        <div>
-          <div class="rec-chain">${r.chain}</div>
-          <div class="rec-vendor">${r.vendor}</div>
-        </div>
-        <div style="text-align:right;">
-          <div class="rec-score">${r.score}</div>
-          <div class="rec-score-label">/ 100</div>
-        </div>
+  const ranks=['🥇','🥈','🥉'];
+  document.getElementById('vgrid').innerHTML=sorted.map(r=>{
+    const s=score(r);
+    const tools=recTools(r);
+    const sCls=s>=70?'sc-hi':s>=45?'sc-md':'sc-lo';
+    const sLbl=s>=70?'🔴 Urgent':s>=45?'🟠 High':'🟡 Pipeline';
+    return`<div class="vcard" data-n="${(r.v+r.ch+r.tl).toLowerCase()}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div><div class="vname">${r.ch}</div><div class="vmeta">${r.v}<br>${r.tier} · ${r.tl} · ${ch_of(r.tl)}</div></div>
+        <span class="vscore ${sCls}">${sLbl} (${s})</span>
       </div>
-      <div class="rec-meta">
-        ${tierBadge(r.tier)}
-        ${typeBadge(r.type)}
-        <span style="font-size:11px;color:var(--text-muted);">ROAS ${roasBadge(r.roas)}</span>
+      <div class="vrec">
+        ${tools.map((t,i)=>`<div class="vrec-item">
+          <span class="vrec-rank rk${i+1}">${ranks[i]}</span>
+          <div class="vrec-info">
+            <span class="bdg ${t.cls}">${t.icon} ${t.name}</span>
+            <div class="vrec-reason">${t.reason}</div>
+          </div>
+        </div>`).join('')}
       </div>
-      <div class="rec-action action-${lbl.cls}">${lbl.icon} ${lbl.text}</div>
-      <div class="rec-products">${prodBadges}</div>
-      <div class="rec-summary">${recSummary(r)}</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">AM: ${r.am} · TL: ${r.tl}</div>
+      <div class="vbottom">
+        <span>💰 ${r.bud.toLocaleString()} LC</span>
+        <span>📈 <strong class="${roasCls(r.roas)}">${r.roas}x</strong> ROAS</span>
+        <span>📦 ${r.po} orders</span>
+        <span><span class="bdg ${priCls(r.pri)}">${priLbl(r.pri)}</span></span>
+      </div>
     </div>`;
   }).join('');
 }
 
-['rec-search','rec-tl','rec-urgency','rec-product'].forEach(id=>{
-  document.getElementById(id).addEventListener('input',renderRec);
-  document.getElementById(id).addEventListener('change',renderRec);
-});
+function filterVendors(q){q=q.toLowerCase();document.querySelectorAll('.vcard').forEach(c=>{c.style.display=c.dataset.n.includes(q)?'':'none';});}
 
-// ========== GLOBAL FILTER WIRING ==========
-['g-tl','g-am','g-tier','g-priority'].forEach(id=>{
-  document.getElementById(id).addEventListener('change',()=>{
-    renderCPC(); renderKW(); renderSD(); renderRec();
-    const total=getCPCFiltered().length+getKWFiltered().length+getSDFiltered().length;
-    document.getElementById('global-count').textContent=total+' records';
-  });
-});
-
-// ========== INIT ==========
-function renderAll(){
-  renderCPC(); renderKW(); renderDisplay(); renderSD(); renderRec();
-  const total=getCPCFiltered().length+getKWFiltered().length+getSDFiltered().length;
-  document.getElementById('global-count').textContent=total+' records';
+function updateCounts(){
+  const cF=CPC.filter(r=>matchF(r.tl,ch_of(r.tl)));
+  const kF=KW_DATA.filter(r=>matchF(r.tl,ch_of(r.tl)));
+  const dF=DA_DATA.filter(r=>matchF(r.tl,r.ch));
+  const sF=SD_DATA.filter(r=>matchF(r.tl,ch_of(r.tl)));
+  const any=GF.ch||GF.tl;
+  document.getElementById('tc-cpc').textContent=any?cF.length:'2,712';
+  document.getElementById('tc-kw').textContent=any?kF.length:'278';
+  document.getElementById('tc-da').textContent=any?dF.reduce((a,r)=>a+r.vend,0):'1,254';
+  document.getElementById('tc-sd').textContent=any?sF.length:'107';
+  document.getElementById('tm-p0').textContent='P0: '+(any?cF.filter(r=>r.pri==='P0').length:'1,239');
+  document.getElementById('tm-p1').textContent='P1: '+(any?cF.filter(r=>r.pri==='P1').length:'317');
+  document.getElementById('tm-p2').textContent='P2: '+(any?cF.filter(r=>r.pri==='P2').length:'240');
+  document.getElementById('tm-p3').textContent='P3: '+(any?cF.filter(r=>r.pri==='P3').length:'916');
+  document.getElementById('km-acq').textContent='Acquire: '+(any?kF.filter(r=>r.act.includes('Acquire')).length:'168');
+  document.getElementById('km-rea').textContent='Reactivate: '+(any?kF.filter(r=>r.act.includes('Reactivate')).length:'110');
+  document.getElementById('dm-pit').textContent='Pitched: '+(any?dF.reduce((a,r)=>a+r.pit,0):'7');
+  document.getElementById('sm-boo').textContent='Boosted: '+(any?sF.filter(r=>r.ty==='SD Boosted').length:'89');
+  document.getElementById('sm-non').textContent='Non-Boosted: '+(any?sF.filter(r=>r.ty!=='SD Boosted').length:'18');
 }
 
-renderChurn();
-renderTLProgress();
-renderOverviewCharts();
-renderAll();
+// Charts
+new Chart(document.getElementById('priChart'),{type:'bar',
+  data:{labels:['P0 — Churned','P1 — Reduced','P2 — New','P3 — Pipeline'],
+    datasets:[
+      {label:'Vendors',data:[1239,317,240,916],backgroundColor:['#E74C3C99','#FF630099','#3498DB99','#95A5A699'],borderRadius:5,yAxisID:'y'},
+      {label:'Budget (K LC)',data:[3597,662,759,5391],backgroundColor:['#E74C3C33','#FF630033','#3498DB33','#95A5A633'],borderRadius:5,yAxisID:'y1'}
+    ]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11}}},datalabels:{display:false}},
+    scales:{y:{position:'left',title:{display:true,text:'Vendors'},grid:{color:'#f0f0f0'}},y1:{position:'right',title:{display:true,text:'Budget K LC'},grid:{display:false}}}}
+});
+
+new Chart(document.getElementById('typeChart'),{type:'doughnut',
+  data:{labels:['Acquire (1,094)','Reactivate (1,618)'],
+    datasets:[{data:[1094,1618],backgroundColor:['#FF630099','#3498DB99'],borderWidth:3,borderColor:'#fff'}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+    plugins:{legend:{position:'bottom',labels:{font:{size:12}}},datalabels:{display:false}}}
+});
+
+buildTLTable();buildCPCTable();buildKWTable();buildDATable();buildSDTable();buildVendors();
 </script>
 </body>
 </html>
