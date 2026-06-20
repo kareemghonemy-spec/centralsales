@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OKRs 2026 — Talabat UAE</title>
+<style>
+:root{
+  --or:#FF6300;--pale:#FFF0E6;--dk:#111827;--g9:#1E1E1E;
+  --g1:#F9FAFB;--g2:#E5E7EB;--g6:#6B7280;--wh:#fff;
+  --gr:#16A34A;--gr-pale:#DCFCE7;--gr-mid:#BBF7D0;
+  --am:#D97706;--am-pale:#FEF3C7;
+  --rd:#DC2626;--rd-pale:#FEE2E2;
+  --bl:#2563EB;--bl-pale:#DBEAFE;
+  --pu:#7C3AED;--pu-pale:#EDE9FE;
+  --r:10px;--sh:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.05)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g1);color:var(--dk)}
+
+header{background:var(--g9);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;border-bottom:3px solid var(--or);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.lm{width:32px;height:32px;background:var(--or);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px}
+.lt{color:#fff;font-size:16px;font-weight:700}.lt span{color:var(--or)}
+.hactions{display:flex;align-items:center;gap:12px}
+.hdate{color:#888;font-size:11px}
+#refreshBtn{background:var(--or);color:#fff;border:none;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:opacity .2s}
+#refreshBtn:hover{opacity:.85}
+#refreshStatus{font-size:11px;color:#888}
+
+.fbar{background:var(--wh);border-bottom:1px solid var(--g2);padding:10px 32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:60px;z-index:99}
+.fl{font-size:12px;font-weight:600;color:var(--g6);white-space:nowrap}
+select.fs{padding:6px 24px 6px 10px;border:1.5px solid var(--g2);border-radius:7px;font-size:12px;background:var(--wh) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%23666'/%3E%3C/svg%3E") no-repeat right 8px center;appearance:none;cursor:pointer}
+select.fs:focus{outline:none;border-color:var(--or)}
+.lv-pills{display:flex;gap:6px}
+.lv{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--g2);background:var(--wh);color:var(--g6);user-select:none;transition:all .2s}
+.lv.on,.lv:hover{border-color:var(--or);background:var(--or);color:#fff}
+.lv.lv-p0.on{background:#DC2626;border-color:#DC2626}
+.lv.lv-p1.on{background:#D97706;border-color:#D97706}
+.lv.lv-p2.on{background:#2563EB;border-color:#2563EB}
+#alertBanner{display:none;background:#FFFBEB;border:1px solid #FDE68A;padding:10px 32px;font-size:12px;color:#92400E}
+
+main{padding:24px 32px 48px;max-width:1300px;margin:0 auto}
+
+/* SUMMARY CARDS */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:28px}
+.scard{background:var(--wh);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);border-top:3px solid var(--g2);text-align:center}
+.scard.gr{border-top-color:var(--gr)}.scard.am{border-top-color:var(--am)}.scard.rd{border-top-color:var(--rd)}
+.sc-val{font-size:28px;font-weight:900;line-height:1;margin-bottom:4px}
+.sc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--g6)}
+
+/* CATEGORY GROUPS */
+.cat-group{margin-bottom:24px}
+.cat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--g2)}
+.cat-title{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.cat-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.cat-meta{font-size:12px;color:var(--g6);display:flex;gap:16px}
+.cat-meta span{display:flex;align-items:center;gap:4px}
+
+/* OKR CARDS */
+.okr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.okr-card{background:var(--wh);border-radius:var(--r);padding:16px;box-shadow:var(--sh);border-left:4px solid var(--g2);transition:transform .15s}
+.okr-card:hover{transform:translateY(-1px)}
+.okr-card.ach-gr{border-left-color:var(--gr)}
+.okr-card.ach-am{border-left-color:var(--am)}
+.okr-card.ach-rd{border-left-color:var(--rd)}
+.okr-card.ach-bl{border-left-color:var(--bl)}
+
+.okr-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.okr-obj{font-size:13px;font-weight:700;line-height:1.3;flex:1}
+.okr-badges{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.pri-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;white-space:nowrap}
+.p0{background:#FEE2E2;color:#991B1B}.p1{background:#FEF3C7;color:#92400E}.p2{background:#DBEAFE;color:#1E40AF}
+.freq-badge{font-size:9px;color:var(--g6);background:var(--g1);padding:2px 6px;border-radius:6px}
+
+.okr-metric{font-size:11px;color:var(--g6);margin-bottom:8px}
+
+.okr-numbers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.okr-num{text-align:center;padding:6px;background:var(--g1);border-radius:7px}
+.on-val{font-size:16px;font-weight:800;line-height:1;margin-bottom:1px}
+.on-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--g6)}
+
+.ach-bar{margin-bottom:8px}
+.ach-bar-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+.ach-val{font-weight:700}
+.ach-track{height:7px;background:var(--g2);border-radius:4px;overflow:hidden}
+.ach-fill{height:100%;border-radius:4px;transition:width .8s ease}
+.fill-gr{background:var(--gr)}.fill-am{background:var(--am)}.fill-rd{background:var(--rd)}
+
+.okr-trend{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--g6);margin-bottom:8px}
+.spark{display:flex;align-items:flex-end;gap:2px;height:20px}
+.spark-bar{width:6px;background:var(--g2);border-radius:2px;transition:background .2s}
+.spark-bar.active{background:var(--or)}
+.spark-bar.hi{background:var(--gr)}
+.spark-bar.lo{background:var(--rd)}
+
+.okr-action{font-size:10px;color:var(--g6);line-height:1.5;padding-top:8px;border-top:1px solid var(--g2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.okr-action.expanded{-webkit-line-clamp:unset}
+
+.okr-owner{display:flex;align-items:center;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--g6)}
+.owner-pill{background:var(--pale);color:var(--or);font-weight:700;padding:2px 8px;border-radius:10px}
+
+/* HIDDEN */
+.hidden{display:none!important}
+
+footer{text-align:center;padding:16px;font-size:11px;color:#aaa;border-top:1px solid var(--g2);background:var(--wh);margin-top:24px}
+@media(max-width:700px){main{padding:14px}header{padding:0 16px}.fbar{padding:8px 16px}.okr-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="lm">t</div><div class="lt">talabat <span>OKRs 2026</span></div></div>
+  <div class="hactions">
+    <span id="refreshStatus"></span>
+    <span class="hdate" id="hdate"></span>
+    <button id="refreshBtn" onclick="fetchLive()">🔄 Refresh from Sheet</button>
+  </div>
+</header>
+
+<div id="alertBanner">⚠️ Live data unavailable — showing cached data. To enable live refresh, share the sheet as <strong>"Anyone with the link can view"</strong>.</div>
+
+<div class="fbar">
+  <span class="fl">Category:</span>
+  <select class="fs" id="fCat" onchange="applyFilters()">
+    <option value="">All Categories</option>
+    <option>NCR</option><option>KPP</option><option>Savings</option>
+    <option>Inventory</option><option>Wallet Share</option><option>AM Experience</option>
+  </select>
+  <span class="fl">Owner:</span>
+  <select class="fs" id="fOwner" onchange="applyFilters()">
+    <option value="">All Owners</option>
+    <option>Yasir</option><option>Kareem</option><option>Prateek</option><option>Aya</option>
+  </select>
+  <span class="fl">Priority:</span>
+  <div class="lv-pills">
+    <div class="lv on" data-p="" onclick="setPri(this,'')">All</div>
+    <div class="lv lv-p0" data-p="P0" onclick="setPri(this,'P0')">P0</div>
+    <div class="lv lv-p1" data-p="P1" onclick="setPri(this,'P1')">P1</div>
+    <div class="lv lv-p2" data-p="P2" onclick="setPri(this,'P2')">P2</div>
+  </div>
+  <span class="fl">Achievement:</span>
+  <select class="fs" id="fAch" onchange="applyFilters()">
+    <option value="">All</option>
+    <option value="gr">✅ On Track (≥100%)</option>
+    <option value="am">⚠️ At Risk (90–99%)</option>
+    <option value="rd">🔴 Behind (&lt;90%)</option>
+  </select>
+</div>
+
+<main>
+<div class="summary" id="summary"></div>
+<div id="okrContent"></div>
+</main>
+<footer>OKRs 2026 · talabat UAE · Live data via Google Sheets · Last refresh: <span id="footerTime">cached</span></footer>
+
+<script>
+const SHEET_ID = '1Zlszb5tosvsIH8JGXN4JKkhTbyemh70FHwzKLGdPHv0';
+const SHEET_NAME = 'OKRs_2026';
+
+// ── DATA ────────────────────────────────────────────────────────────────────
+// Fields: id, cat, obj, metric, pri, freq, supervisor, poc,
+//         target, q2_25, q3_25, q4_25, jan, feb, mar, apr, may, jun, qtd, ach_pct, action
+// ach_pct: parsed float (1.17 = 117%). null = no data. isLowerBetter for metrics where lower=good
+
+const OKR_DATA = [
+// ── NCR ──────────────────────────────────────────────────────────────────
+{id:1,cat:'NCR',obj:'Ad Revenue vs GMV',metric:'Ads/GMV %',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'3.43%',q4_25:'3.49%',target:'3.50%',jan:'3.34%',feb:'3.51%',mar:'3.62%',apr:'3.49%',may:'3.44%',jun:null,qtd:'3.44%',ach:1.00,lowerBetter:false,
+  action:'MTD vs LMTD revenue (5x/week). Discounts = manual + credit tracking (1x/week).'},
+{id:2,cat:'NCR',obj:'Active Vendor Penetration',metric:'Penetration %',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'52.44%',q4_25:'49.04%',target:'53.80%',jan:'59.35%',feb:'59.00%',mar:'60.56%',apr:'66.34%',may:'66.09%',jun:'(Live)',qtd:'66.09%',ach:1.11,lowerBetter:false,
+  action:'Refer to top line numbers on product level twice a week. Deep dive wherever there is a gap. VWS monthly per tool.'},
+{id:3,cat:'NCR',obj:'Keyword Revenue',metric:'Keywords / GMV',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'0.14%',q4_25:'0.29%',target:'0.40%',jan:'0.34%',feb:'0.44%',mar:'0.43%',apr:'0.51%',may:'0.51%',jun:'0.69%',qtd:'0.69%',ach:1.25,lowerBetter:false,
+  action:'Refer to Keyword DB for churned and reduced budgets. Clean up bad budget once per quarter.'},
+{id:4,cat:'NCR',obj:'CPC Revenue',metric:'CPC / GMV',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'1.99%',q4_25:'2.12%',target:'2.23%',jan:'2.11%',feb:'2.54%',mar:'2.13%',apr:'2.61%',may:'2.65%',jun:'2.15%',qtd:'2.61%',ach:1.17,lowerBetter:false,
+  action:'Refer to CPC DB for churned and reduced budgets. Clean up bad budget once per quarter.'},
+{id:5,cat:'NCR',obj:'GEMs / SD Boosted',metric:'SD Boosted / GMV',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'0.81%',q4_25:'0.73%',target:'0.87%',jan:'0.75%',feb:'0.68%',mar:'0.59%',apr:'0.51%',may:'0.56%',jun:'0.69%',qtd:'0.56%',ach:0.80,lowerBetter:false,
+  action:'Refer to GEMs DB for churned and reduced revenue. Check GEMs/vendor availability. Penetration trend review.'},
+{id:6,cat:'NCR',obj:'Deal Targeting',metric:'SD Non-Boosted / GMV',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'0.33%',q4_25:'0.29%',target:'0.34%',jan:'0.25%',feb:'0.26%',mar:'0.21%',apr:'0.71%',may:'0.65%',jun:'0.30%',qtd:'0.65%',ach:2.85,lowerBetter:false,
+  action:'Refer to GEMs DB for churned and reduced revenue. Penetration trend review.'},
+{id:7,cat:'NCR',obj:'Display Ads',metric:'Display (Video + Static) / GMV',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'0.05%',q4_25:'0.08%',target:'0.08%',jan:'0.05%',feb:'0.09%',mar:'0.09%',apr:'0.94%',may:'0.93%',jun:'0.03%',qtd:'0.93%',ach:12.51,lowerBetter:false,
+  action:'Refer to Display DB for churned and reduced budgets. Penetration trend review.'},
+{id:8,cat:'NCR',obj:'Maintain CPC RoAS',metric:'CPC RoAS',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'4.7',q4_25:'3.9',target:'4.5',jan:'3.81',feb:'3.3',mar:'3.1',apr:'3.3',may:'3.6',jun:'4.4',qtd:'3.6',ach:1.01,lowerBetter:false,
+  action:'Track RoAS MTD vs LMTD vs L2MTD. Guide teams on appropriate tools for better RoAS by tier.'},
+{id:9,cat:'NCR',obj:'Maintain Keywords RoAS',metric:'Kwrd RoAS',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'7.1',q4_25:'5.4',target:'7.0',jan:'5.27',feb:'4.7',mar:'5.6',apr:'5.8',may:'6.3',jun:'7.2',qtd:'6.3',ach:1.17,lowerBetter:false,
+  action:'Track RoAS MTD vs LMTD vs L2MTD. Highlight product bugs to PG.'},
+{id:10,cat:'NCR',obj:'Maintain CPC UTR',metric:'CPC UTR %',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'92.25%',q4_25:'95.00%',target:'95.00%',jan:'83.00%',feb:'91.00%',mar:'91.00%',apr:'97.69%',may:'97.61%',jun:'56.79%',qtd:'97.69%',ach:1.11,lowerBetter:false,
+  action:'Track UTR for brands MoM. CPC clean up monthly.'},
+{id:11,cat:'NCR',obj:'Adrev Discount Optimization',metric:'Discount / Adrev',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'17.69%',q4_25:'17.77%',target:'20.00%',jan:'16.11%',feb:'16.73%',mar:'17.66%',apr:'15.84%',may:'15.97%',jun:null,qtd:'15.97%',ach:0.94,lowerBetter:true,
+  action:'Track discount consumption weekly. Process optimization to have highly efficient discount inputs.'},
+{id:12,cat:'NCR',obj:'Maintain BE Accuracy',metric:'BE Achievement %',pri:'P0',freq:'Monthly',sup:'Yasir',poc:'Tanshiq',
+  q3_25:'99.22%',q4_25:'100.00%',target:'98%',jan:'97.04%',feb:'108.21%',mar:'97.89%',apr:'103.12%',may:'99%',jun:null,qtd:'103.12%',ach:1.01,lowerBetter:false,
+  action:'Daily NCR gap check. Highlight risks per product. Update stakeholders on BE achievement.'},
+// ── KPP ──────────────────────────────────────────────────────────────────
+{id:13,cat:'KPP',obj:'KPP GMV Share',metric:'KPP % GMV',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Yasir',
+  q3_25:'34.90%',q4_25:'33.20%',target:'29.80%',jan:'30.00%',feb:'31.04%',mar:'30.00%',apr:'30.54%',may:'29.67%',jun:'29.72%',qtd:'30.54%',ach:0.93,lowerBetter:false,
+  action:'Maintain/increase KPP GMV% contribution. KPP acquisition, retention and growth framework.'},
+{id:14,cat:'KPP',obj:'KPP Acquisition GMV',metric:'KPP Acq GMV %',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Yasir',
+  q3_25:'-',q4_25:'-',target:'0.20%',jan:'-',feb:'-',mar:'0.1%',apr:'0.1%',may:'0.1%',jun:'0.1%',qtd:'0.1%',ach:0.11,lowerBetter:false,
+  action:'Close acquisition brand list as part of sprint. Measure performance vs monthly and quarterly target.'},
+{id:15,cat:'KPP',obj:'KPP Retention GMV',metric:'KPP Ret GMV %',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Yasir',
+  q3_25:'-',q4_25:'-',target:'0.44%',jan:'-',feb:'-',mar:'3.4%',apr:'3.6%',may:'3.6%',jun:'3.6%',qtd:'3.6%',ach:1.91,lowerBetter:false,
+  action:'Close retention brand list as part of sprint. Measure performance vs monthly and quarterly target.'},
+// ── SAVINGS ───────────────────────────────────────────────────────────────
+{id:16,cat:'Savings',obj:'VFD Savings / GMV',metric:'Vendor Funded Savings / GMV',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'9.00%',q4_25:'9.11%',target:'9.70%',jan:'9.48%',feb:'10.08%',mar:'8.98%',apr:'9.82%',may:'10.45%',jun:null,qtd:'10.13%',ach:1.032,lowerBetter:false,
+  action:'Monitor savings/GMV in the pipeline tracker. Share city-level hitlists highlighting gaps by incentive subtype.'},
+{id:17,cat:'Savings',obj:'Savings Efficiency',metric:'Savings Efficiency % (Pen × Savings/GMV)',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'7.90%',q4_25:'8.00%',target:'8.5%',jan:'8.30%',feb:'9.00%',mar:'8.90%',apr:'9.40%',may:'9.10%',jun:null,qtd:'9.10%',ach:1.034,lowerBetter:false,
+  action:'3 sheets shared monthly: savings opportunity loss, savings/GMV by city vs tier benchmark, vendors never invested.'},
+{id:18,cat:'Savings',obj:'tPro Coverage',metric:'tPro Coverage %',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'77.58%',q4_25:'79.45%',target:'78.2%',jan:'77.93%',feb:'78.16%',mar:'-',apr:'81.10%',may:'79.50%',jun:null,qtd:'79.50%',ach:1.00,lowerBetter:false,
+  action:'Share vendors churned from tPro platform. Increase tPro coverage MoM.'},
+{id:19,cat:'Savings',obj:'Anchor Brand Campaigns',metric:'Anchor Brand Penetration in Campaigns',pri:'P1',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'-',q4_25:'-',target:'12',jan:'12',feb:'16',mar:'18',apr:'12',may:'10',jun:null,qtd:'10',ach:0.833,lowerBetter:false,
+  action:'Increase anchor brand coverage across talabat campaigns using ADO target per CH.'},
+{id:20,cat:'Savings',obj:'Price Parity',metric:'Reduction in Parity Gap',pri:'P2',freq:'Quarterly',sup:'Kareem',poc:'Prateek',
+  q3_25:'7.40%',q4_25:'8.56%',target:'8.2%',jan:'9.10%',feb:'9.92%',mar:'-',apr:'-',may:'-',jun:null,qtd:'9.10%',ach:null,lowerBetter:true,
+  action:'Maintain price parity below 7.6% by sharing weekly top offenders vendor lists with AMs.'},
+// ── INVENTORY ─────────────────────────────────────────────────────────────
+{id:21,cat:'Inventory',obj:'Active Inventory',metric:'Total Active Restaurant Count',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'24,115',q4_25:'25,330',target:'25,718',jan:'25,367',feb:'25,949',mar:'26,097',apr:'26,584',may:'27,026',jun:null,qtd:'27,026',ach:1.017,lowerBetter:false,
+  action:'Track daily performance of retained vendors. Flag to inventory champions on Slack 3x/week.'},
+{id:22,cat:'Inventory',obj:'Vendor Retention',metric:'Retention %',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'97.30%',q4_25:'97.00%',target:'96.3%',jan:'95.90%',feb:'96.90%',mar:'96.8%',apr:'97.30%',may:'97.20%',jun:null,qtd:'97.20%',ach:1.008,lowerBetter:false,
+  action:'Track daily retained vendors. Flag to inventory champions on Slack 3x/week.'},
+{id:23,cat:'Inventory',obj:'Churn Control',metric:'Churn %',pri:'P0',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'1.95%',q4_25:'2.29%',target:'2.50%',jan:'2.60%',feb:'2.27%',mar:'2.8%',apr:'2.7%',may:'2.5%',jun:null,qtd:'2.5%',ach:0.992,lowerBetter:true,
+  action:'Track daily churned vendors. Flag to inventory champions on Slack 3x/week.'},
+{id:24,cat:'Inventory',obj:'New Closures Gap',metric:'New Total Closures',pri:'P1',freq:'Monthly',sup:'Kareem',poc:'Prateek',
+  q3_25:'3,175',q4_25:'3,246',target:'3,200',jan:'1,221',feb:'1,332',mar:'1,215',apr:'1,245',may:'1,082',jun:null,qtd:'2,327',ach:0.686,lowerBetter:false,
+  action:'Track daily performance of FS, TS and AMs against target/BE.'},
+{id:25,cat:'Inventory',obj:'Unhealthy Inventory',metric:'< 100 orders / brand',pri:'P2',freq:'Quarterly',sup:'Kareem',poc:'Prateek',
+  q3_25:'47.1%',q4_25:'49.8%',target:'47.0%',jan:'49.4%',feb:'52.2%',mar:'51.4%',apr:'50.0%',may:'-',jun:null,qtd:'50.0%',ach:0.0,lowerBetter:true,
+  action:'Review chains < 100 orders and share with sales team. Move to VHD every quarter.'},
+// ── WALLET SHARE ──────────────────────────────────────────────────────────
+{id:26,cat:'Wallet Share',obj:'KPP Commission Rate',metric:'Comm Revenue / GFV',pri:'P1',freq:'Monthly',sup:'Yasir',poc:'Yasir',
+  q3_25:'19.7%',q4_25:'19.27%',target:'18.00%',jan:'18.65%',feb:'17.47%',mar:'18.22%',apr:'18.00%',may:'17.79%',jun:'16.47%',qtd:'18.00%',ach:null,lowerBetter:false,
+  action:'Track CR% distribution for KPP by country and cities. Highlight opportunities by tier.'},
+{id:27,cat:'Wallet Share',obj:'Non-KPP Commission Rate',metric:'Comm Revenue / GFV',pri:'P1',freq:'Monthly',sup:'Yasir',poc:'Yasir',
+  q3_25:'19.3%',q4_25:'19.22%',target:'18.75%',jan:'18.80%',feb:'17.66%',mar:'18.97%',apr:'19.26%',may:'19.21%',jun:'17.87%',qtd:'19.26%',ach:null,lowerBetter:false,
+  action:'Track CR% distribution for Non-KPP by country and cities.'},
+{id:28,cat:'Wallet Share',obj:'Savings Share',metric:'Savings / Wallet Share',pri:'P1',freq:'Monthly',sup:'Yasir',poc:'Yasir',
+  q3_25:'9.3%',q4_25:'9.02%',target:'9.16%',jan:'9.55%',feb:'9.63%',mar:'9.95%',apr:'10.55%',may:'10.23%',jun:'9.51%',qtd:'10.55%',ach:null,lowerBetter:false,
+  action:'Track Savings share for TL/CH portfolio. Check adrev impact.'},
+{id:29,cat:'Wallet Share',obj:'Adrev Share',metric:'Adrev / Wallet Share',pri:'P1',freq:'Monthly',sup:'Yasir',poc:'Yasir',
+  q3_25:'3.85%',q4_25:'4.03%',target:'4.09%',jan:'4.11%',feb:'4.44%',mar:'4.27%',apr:'4.62%',may:'4.23%',jun:'4.67%',qtd:'4.62%',ach:null,lowerBetter:false,
+  action:'Track adrev share for TL/CH. Look for converting into contractual agreements.'},
+{id:30,cat:'Wallet Share',obj:'Overall Wallet Share',metric:'Total Spend / GFV',pri:'P1',freq:'Monthly',sup:'Yasir',poc:'Yasir',
+  q3_25:'36.04%',q4_25:'35.64%',target:'35.70%',jan:'35.60%',feb:'35.50%',mar:'36.05%',apr:'37.52%',may:'36.52%',jun:'34.96%',qtd:'37.52%',ach:null,lowerBetter:false,
+  action:'Check WS, GMV, components (adrev, savings, pro cost) by country, cities, TL by chain tier.'},
+// ── AM EXPERIENCE ─────────────────────────────────────────────────────────
+{id:31,cat:'AM Experience',obj:'AMC Adoption Rate',metric:'Action Rate %',pri:'P0',freq:'Monthly',sup:'Prateek',poc:'Aya',
+  q3_25:'60%',q4_25:'-',target:'65%',jan:'39%',feb:'52%',mar:'42%',apr:'-',may:'-',jun:null,qtd:'44.33%',ach:0.68,lowerBetter:false,
+  action:'Send daily Slack reminders to Sales leaders. Ensure savings/adrev pipelines exceed gap.'},
+{id:32,cat:'AM Experience',obj:'Portfolio Index Score',metric:'Count of AMs > 7.5 PI Score',pri:'P0',freq:'Daily',sup:'Aya',poc:'Mouza',
+  q3_25:'-',q4_25:'1',target:'45',jan:'20',feb:'35',mar:'-',apr:'-',may:'-',jun:null,qtd:'35',ach:0.444,lowerBetter:false,
+  action:'Ensure AMs hit 7.5 PI Score benchmark. Tracker updated daily with recommended AM actions.'},
+{id:33,cat:'AM Experience',obj:'AM Training',metric:'# of AM Trainings Monthly',pri:'P1',freq:'Monthly',sup:'Prateek',poc:'Aya',
+  q3_25:'-',q4_25:'-',target:'6',jan:'1',feb:'1',mar:'-',apr:'-',may:'-',jun:null,qtd:'-',ach:0.0,lowerBetter:false,
+  action:'Identify AM knowledge gaps (AMC, Adrev, KPI mgmt). Coordinate with L&D for Cheatos trainings.'},
+];
+
+// Category config
+const CATS = {
+  'NCR':       {icon:'💰', color:'#FF6300', bg:'#FFF0E6'},
+  'KPP':       {icon:'🤝', color:'#7C3AED', bg:'#EDE9FE'},
+  'Savings':   {icon:'💚', color:'#16A34A', bg:'#DCFCE7'},
+  'Inventory': {icon:'🏪', color:'#2563EB', bg:'#DBEAFE'},
+  'Wallet Share':{icon:'💳', color:'#D97706', bg:'#FEF3C7'},
+  'AM Experience':{icon:'🧑‍💼', color:'#DB2777', bg:'#FCE7F3'},
+};
+
+let GF = {cat:'', owner:'', pri:'', ach:''};
+
+function achClass(ach, lowerBetter){
+  if(ach===null||ach===undefined) return 'ach-bl';
+  // For lower-is-better metrics: ach<1 is good
+  const pct = lowerBetter ? (2-ach) : ach;
+  if(pct>=1.0) return 'ach-gr';
+  if(pct>=0.9) return 'ach-am';
+  return 'ach-rd';
+}
+function fillClass(cls){ return cls.replace('ach-','fill-'); }
+function achLabel(ach, lowerBetter){
+  if(ach===null) return '—';
+  const pct = lowerBetter ? (2-ach) : ach;
+  return Math.round(pct*100)+'%';
+}
+function achBarW(ach, lowerBetter){
+  if(ach===null) return 30;
+  const pct = lowerBetter ? (2-ach) : ach;
+  return Math.min(Math.round(pct*100), 120);
+}
+function priClass(p){ return ({P0:'p0',P1:'p1',P2:'p2'}[p])||'p2'; }
+
+function sparkline(okr){
+  const vals = [okr.jan, okr.feb, okr.mar, okr.apr, okr.may, okr.jun].filter(v=>v&&v!=='-'&&v!=='(Live)');
+  if(vals.length < 2) return '';
+  const nums = vals.map(v=>parseFloat(v.replace(/[%,]/g,''))||0);
+  const mn=Math.min(...nums), mx=Math.max(...nums), range=mx-mn||1;
+  const bars = nums.map((n,i)=>{
+    const h = Math.max(4, Math.round((n-mn)/range*18)+2);
+    const cls = i===nums.length-1?'active':'';
+    return`<div class="spark-bar ${cls}" style="height:${h}px"></div>`;
+  }).join('');
+  const trend = nums[nums.length-1] > nums[0] ? '↑' : nums[nums.length-1] < nums[0] ? '↓' : '→';
+  const tcol = (okr.lowerBetter ? trend==='↓' : trend==='↑') ? '#16A34A' : trend==='→' ? '#6B7280' : '#DC2626';
+  return `<div class="okr-trend"><div class="spark">${bars}</div><span style="color:${tcol};font-weight:700">${trend}</span><span>Jan→${vals.length<=4?'Apr':'May'}</span></div>`;
+}
+
+function renderCard(okr){
+  const ac = achClass(okr.ach, okr.lowerBetter);
+  const fc = fillClass(ac);
+  const pct = achBarW(okr.ach, okr.lowerBetter);
+  const lbl = achLabel(okr.ach, okr.lowerBetter);
+  const cat = CATS[okr.cat] || CATS['NCR'];
+
+  const latest = okr.jun || okr.may || okr.apr || okr.mar || '—';
+
+  return `<div class="okr-card ${ac}" data-cat="${okr.cat}" data-owner="${okr.sup} ${okr.poc}" data-pri="${okr.pri}" data-ach="${ac}">
+    <div class="okr-top">
+      <div class="okr-obj">${okr.obj}</div>
+      <div class="okr-badges">
+        <span class="pri-badge ${priClass(okr.pri)}">${okr.pri}</span>
+        <span class="freq-badge">${okr.freq}</span>
+      </div>
+    </div>
+    <div class="okr-metric">${okr.metric}</div>
+    <div class="okr-numbers">
+      <div class="okr-num">
+        <div class="on-val">${okr.target}</div>
+        <div class="on-lbl">Target</div>
+      </div>
+      <div class="okr-num">
+        <div class="on-val" style="color:${ac==='ach-gr'?'var(--gr)':ac==='ach-am'?'var(--am)':'var(--rd)'}">${latest}</div>
+        <div class="on-lbl">Latest</div>
+      </div>
+      <div class="okr-num">
+        <div class="on-val" style="color:${ac==='ach-gr'?'var(--gr)':ac==='ach-am'?'var(--am)':'var(--rd)'}">${lbl}</div>
+        <div class="on-lbl">Achievement</div>
+      </div>
+    </div>
+    <div class="ach-bar">
+      <div class="ach-bar-top"><span style="color:var(--g6)">Progress</span><span class="ach-val" style="color:${ac==='ach-gr'?'var(--gr)':ac==='ach-am'?'var(--am)':'var(--rd)'}">${lbl}</span></div>
+      <div class="ach-track"><div class="ach-fill ${fc}" style="width:${Math.min(pct,100)}%"></div></div>
+    </div>
+    ${sparkline(okr)}
+    <div class="okr-action" onclick="this.classList.toggle('expanded')" title="Click to expand">${okr.action}</div>
+    <div class="okr-owner">
+      <span>👤 ${okr.sup} / ${okr.poc}</span>
+      <span class="owner-pill">${okr.cat}</span>
+    </div>
+  </div>`;
+}
+
+function renderAll(data){
+  const cats = [...new Set(data.map(o=>o.cat))];
+  const content = cats.map(cat=>{
+    const items = data.filter(o=>o.cat===cat);
+    if(!items.length) return '';
+    const cfg = CATS[cat]||CATS['NCR'];
+    const total = items.length;
+    const onTrack = items.filter(o=>o.ach&&(o.lowerBetter?(2-o.ach)>=1.0:o.ach>=1.0)).length;
+    const atRisk  = items.filter(o=>o.ach&&(o.lowerBetter?(2-o.ach)<1.0&&(2-o.ach)>=0.9:o.ach<1.0&&o.ach>=0.9)).length;
+    const behind  = items.filter(o=>o.ach&&(o.lowerBetter?(2-o.ach)<0.9:o.ach<0.9)).length;
+    return `<div class="cat-group" data-cat="${cat}">
+      <div class="cat-header">
+        <div class="cat-title">
+          <div class="cat-icon" style="background:${cfg.bg};color:${cfg.color}">${cfg.icon}</div>
+          ${cat}
+        </div>
+        <div class="cat-meta">
+          <span><span style="color:var(--gr)">✅</span> ${onTrack} on track</span>
+          <span><span style="color:var(--am)">⚠️</span> ${atRisk} at risk</span>
+          <span><span style="color:var(--rd)">🔴</span> ${behind} behind</span>
+          <span style="color:var(--g6)">${total} total KRs</span>
+        </div>
+      </div>
+      <div class="okr-grid">${items.map(renderCard).join('')}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('okrContent').innerHTML = content;
+}
+
+function renderSummary(data){
+  const total = data.length;
+  const onTrack = data.filter(o=>o.ach&&(o.lowerBetter?(2-o.ach)>=1.0:o.ach>=1.0)).length;
+  const atRisk  = data.filter(o=>o.ach&&(o.lowerBetter?(2-o.ach)<1.0&&(2-o.ach)>=0.9:o.ach<1.0&&o.ach>=0.9)).length;
+  const behind  = data.filter(o=>o.ach&&(o.lowerBetter?(2-o.ach)<0.9:o.ach<0.9)).length;
+  const noData  = data.filter(o=>!o.ach).length;
+  const p0 = data.filter(o=>o.pri==='P0').length;
+  const p0ok = data.filter(o=>o.pri==='P0'&&o.ach&&(o.lowerBetter?(2-o.ach)>=1.0:o.ach>=1.0)).length;
+
+  document.getElementById('summary').innerHTML = `
+    <div class="scard"><div class="sc-val">${total}</div><div class="sc-lbl">Total Key Results</div></div>
+    <div class="scard gr"><div class="sc-val" style="color:var(--gr)">${onTrack}</div><div class="sc-lbl">✅ On Track (≥100%)</div></div>
+    <div class="scard am"><div class="sc-val" style="color:var(--am)">${atRisk}</div><div class="sc-lbl">⚠️ At Risk (90–99%)</div></div>
+    <div class="scard rd"><div class="sc-val" style="color:var(--rd)">${behind}</div><div class="sc-lbl">🔴 Behind (&lt;90%)</div></div>
+    <div class="scard"><div class="sc-val" style="color:var(--g6)">${noData}</div><div class="sc-lbl">No Data Yet</div></div>
+    <div class="scard" style="border-top-color:var(--rd)"><div class="sc-val">${p0ok}/${p0}</div><div class="sc-lbl">P0 On Track</div></div>
+    <div class="scard" style="border-top-color:var(--gr)"><div class="sc-val">${Math.round(onTrack/total*100)}%</div><div class="sc-lbl">Overall Health</div></div>
+  `;
+}
+
+function applyFilters(){
+  GF.cat   = document.getElementById('fCat').value;
+  GF.owner = document.getElementById('fOwner').value;
+  GF.ach   = document.getElementById('fAch').value;
+  const pri = document.querySelector('.lv.on[data-p]')?.dataset.p || '';
+  GF.pri = pri;
+
+  document.querySelectorAll('.okr-card').forEach(c=>{
+    const catMatch  = !GF.cat   || c.dataset.cat===GF.cat;
+    const ownerMatch= !GF.owner || c.dataset.owner.includes(GF.owner);
+    const priMatch  = !GF.pri   || c.dataset.pri===GF.pri;
+    const achMatch  = !GF.ach   || c.dataset.ach===`ach-${GF.ach}`;
+    c.classList.toggle('hidden', !(catMatch&&ownerMatch&&priMatch&&achMatch));
+  });
+
+  // Hide empty cat groups
+  document.querySelectorAll('.cat-group').forEach(g=>{
+    const visible = [...g.querySelectorAll('.okr-card')].some(c=>!c.classList.contains('hidden'));
+    g.classList.toggle('hidden', !visible);
+  });
+}
+
+function setPri(el, val){
+  document.querySelectorAll('.lv[data-p]').forEach(l=>l.classList.remove('on'));
+  el.classList.add('on');
+  GF.pri = val;
+  applyFilters();
+}
+
+// ── LIVE REFRESH ──────────────────────────────────────────────────────────
+async function fetchLive(){
+  const btn = document.getElementById('refreshBtn');
+  const status = document.getElementById('refreshStatus');
+  btn.textContent = '⏳ Fetching…';
+  btn.disabled = true;
+  status.textContent = '';
+
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}&t=${Date.now()}`;
+
+  try {
+    const res = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const text = await res.text();
+
+    // Parse gviz response (JSON wrapped in callback)
+    const json = JSON.parse(text.replace(/^[^(]+\(|\);?\s*$/g,''));
+    const rows = json.table?.rows || [];
+    const cols = json.table?.cols || [];
+
+    if(rows.length > 2){
+      // Try to parse and update OKR_DATA from live sheet
+      let updated = 0;
+      rows.forEach(row => {
+        const cells = row.c || [];
+        const getV = i => cells[i]?.v ?? cells[i]?.f ?? null;
+        const obj = getV(3);
+        const metric = getV(4);
+        const achRaw = getV(14); // achievement column (varies)
+        if(obj && achRaw !== null){
+          const match = OKR_DATA.find(o => o.obj.toLowerCase().includes((obj+'').toLowerCase().slice(0,15)));
+          if(match){
+            const ach = typeof achRaw === 'string' ? parseFloat(achRaw)/100 : achRaw;
+            if(!isNaN(ach)) { match.ach = ach; updated++; }
+          }
+        }
+      });
+      const now = new Date().toLocaleTimeString();
+      status.textContent = `✅ Updated ${updated} KRs · ${now}`;
+      document.getElementById('footerTime').textContent = now;
+      document.getElementById('alertBanner').style.display = 'none';
+      renderAll(OKR_DATA);
+      renderSummary(OKR_DATA);
+      applyFilters();
+    } else {
+      throw new Error('Empty sheet data');
+    }
+  } catch(e) {
+    console.warn('Live fetch failed:', e);
+    document.getElementById('alertBanner').style.display = 'block';
+    status.textContent = '⚠️ Using cached data';
+  } finally {
+    btn.textContent = '🔄 Refresh from Sheet';
+    btn.disabled = false;
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+const now = new Date();
+document.getElementById('hdate').textContent = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+renderSummary(OKR_DATA);
+renderAll(OKR_DATA);
+
+// Auto-try live on load (silently)
+setTimeout(()=>fetchLive().catch(()=>{}), 500);
+</script>
+</body>
+</html>
