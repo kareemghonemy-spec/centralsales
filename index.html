@@ -751,31 +751,78 @@ new Chart(document.getElementById('cpioBar'),{type:'bar',data:{labels:cpioSorted
 new Chart(document.getElementById('typeBubble'),{type:'bubble',data:{datasets:TYPE_DATA.map(t=>({label:t.t,data:[{x:t.med,y:+(t.pos*100).toFixed(1),r:Math.sqrt(t.n)*3}],backgroundColor:(TYPE_CLR[t.t]||OR)+'99',borderColor:TYPE_CLR[t.t]||OR}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:12}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:(v,ctx)=>ctx.dataset.label}},scales:{x:{title:{display:true,text:'Median CPiO'},grid:{color:'#f5f5f5'}},y:{title:{display:true,text:'% Positive'},min:70,max:105,ticks:{callback:v=>v+'%'}}}}});
 
 const GRW=ENRICHED.filter(e=>e.growth!==null&&Math.abs(e.growth)<600);
-// Draw country median line at CPiO = 40
+// Draw two fixed reference lines: CPiO=40 (vertical) + Growth=34% (horizontal)
 const medianLinePlugin={id:'medianLine',afterDraw(chart){
-  if(!chart.canvas.id||chart.canvas.id!=='scatterMain') return;
-  const {ctx,chartArea:{top,bottom},scales:{x}}=chart;
-  const xPos=x.getPixelForValue(40);
-  if(xPos<x.left||xPos>x.right) return;
+  if(chart.canvas.id!=='scatterMain') return;
+  const {ctx,chartArea:{top,bottom,left,right},scales:{x,y}}=chart;
   ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(xPos,top);
-  ctx.lineTo(xPos,bottom);
-  ctx.strokeStyle='#FF6300';
-  ctx.lineWidth=2;
-  ctx.setLineDash([6,4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.fillStyle='#FF6300';
-  ctx.font='bold 11px sans-serif';
-  ctx.textAlign='center';
-  ctx.fillRect(xPos-42,top,84,18);
-  ctx.fillStyle='#fff';
-  ctx.fillText('Country Median: 40',xPos,top+12);
+
+  // ── Vertical line: CPiO = 40 ──────────────────────────────────
+  const xPos=x.getPixelForValue(40);
+  if(xPos>=left&&xPos<=right){
+    ctx.beginPath();
+    ctx.moveTo(xPos,top);
+    ctx.lineTo(xPos,bottom);
+    ctx.strokeStyle='#FF6300';
+    ctx.lineWidth=2;
+    ctx.setLineDash([7,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Label pill
+    const lbl1='Avg CPiO: 40';
+    const tw1=ctx.measureText(lbl1).width+16;
+    ctx.fillStyle='#FF6300';
+    ctx.beginPath();
+    ctx.roundRect(xPos-tw1/2,top+6,tw1,18,4);
+    ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.font='bold 10px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(lbl1,xPos,top+18);
+  }
+
+  // ── Horizontal line: Growth = 34% ────────────────────────────
+  const yPos=y.getPixelForValue(34);
+  if(yPos>=top&&yPos<=bottom){
+    ctx.beginPath();
+    ctx.moveTo(left,yPos);
+    ctx.lineTo(right,yPos);
+    ctx.strokeStyle='#2563EB';
+    ctx.lineWidth=2;
+    ctx.setLineDash([7,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Label pill
+    const lbl2='Avg Growth: 34%';
+    const tw2=ctx.measureText(lbl2).width+16;
+    ctx.fillStyle='#2563EB';
+    ctx.beginPath();
+    ctx.roundRect(left+8,yPos-22,tw2,18,4);
+    ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.font='bold 10px sans-serif';
+    ctx.textAlign='left';
+    ctx.fillText(lbl2,left+16,yPos-10);
+  }
+
+  // ── Quadrant labels ───────────────────────────────────────────
+  ctx.font='bold 10px sans-serif';
+  ctx.globalAlpha=0.35;
+  const xM=x.getPixelForValue(40),yM=y.getPixelForValue(34);
+  ctx.fillStyle='#16A34A';ctx.textAlign='center';
+  ctx.fillText('🌟 Best (low CPiO, high growth)',(left+xM)/2,yM-12);
+  ctx.fillStyle='#DC2626';
+  ctx.fillText('⚠️ Expensive, low growth',(xM+right)/2,yM+18);
+  ctx.fillStyle='#D97706';
+  ctx.fillText('💡 Cheap, low growth',(left+xM)/2,yM+18);
+  ctx.fillStyle='#2563EB';
+  ctx.fillText('📈 High growth, high cost',(xM+right)/2,yM-12);
+  ctx.globalAlpha=1;
+
   ctx.restore();
 }};
 Chart.register(medianLinePlugin);
-const SCATTER_OPTS={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}},datalabels:{display:false},tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;return[`${d.brand} · ${d.camp}`,`CPiO: ${d.x} · Growth: ${d.y>0?'+':''}${d.y}%`,`Orders: ${d.ord.toLocaleString()}`];}}}},scales:{x:{min:-150,max:300,title:{display:true,text:'CPiO — country median: 40 (orange line)'},grid:{color:ctx=>ctx.tick.value===0?'#555':'#f5f5f5'},ticks:{stepSize:50}},y:{title:{display:true,text:'Growth % vs Baseline'},grid:{color:ctx=>ctx.tick.value===0?'#555':'#f5f5f5'},ticks:{callback:v=>v+'%'}}}};
+const SCATTER_OPTS={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}},datalabels:{display:false},tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;return[`${d.brand} · ${d.camp}`,`CPiO: ${d.x} · Growth: ${d.y>0?'+':''}${d.y}%`,`Orders: ${d.ord.toLocaleString()}`];}}}},scales:{x:{min:-150,max:300,title:{display:true,text:'CPiO  ·  🟠 Avg = 40'},grid:{color:ctx=>ctx.tick.value===0?'#555':'#f5f5f5'},ticks:{stepSize:50}},y:{title:{display:true,text:'Growth %  ·  🔵 Avg = 34%'},grid:{color:ctx=>ctx.tick.value===0?'#555':'#f5f5f5'},ticks:{callback:v=>v+'%'}}}};
 function makeScatterDatasets(data){
   const grw=data.filter(e=>e.growth!==null&&Math.abs(e.growth)<600);
   const types=[...new Set(grw.map(e=>e.type))];
