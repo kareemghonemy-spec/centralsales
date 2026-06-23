@@ -369,16 +369,16 @@ footer{text-align:center;padding:20px;font-size:12px;color:#aaa;border-top:1px s
   <div style="background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:12px;padding:18px 22px;margin-bottom:20px">
     <div style="font-size:15px;font-weight:800;color:#991B1B;margin-bottom:6px">🚫 Co-Funding Blacklist — Do Not Invest</div>
     <div style="font-size:13px;color:#7F1D1D;line-height:1.7">
-      Brands flagged here had <strong>average CPiO &gt; 40</strong> (above country median) AND <strong>average growth &lt; 34%</strong> (below country average) across ALL campaigns they participated in.<br>
-      Co-funding these brands is inefficient: spend is high relative to the orders driven, and growth is below what a normal campaign delivers on average.
+      Brands flagged here were <strong>consistently above their campaign's average CPiO</strong> AND <strong>consistently below their campaign's average growth</strong> across all campaigns they joined.<br>
+      Each brand is judged <em>relative to how that specific campaign performed overall</em> — so a brand that was expensive in an expensive month is not unfairly penalised; only brands that underperform their peers in every context are flagged.
     </div>
   </div>
 
   <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-    <div class="kpi rd"><div class="kpi-lbl">🚫 Do Not Co-Fund</div><div class="kpi-val" id="nf-count">—</div><div class="kpi-sub">Avg CPiO &gt;40 AND Growth &lt;34%</div></div>
-    <div class="kpi" style="border-left-color:var(--or)"><div class="kpi-lbl">⚠️ Watch List</div><div class="kpi-val" id="nf-watch">—</div><div class="kpi-sub">High CPiO but growing</div></div>
-    <div class="kpi bl"><div class="kpi-lbl">🟡 Monitor</div><div class="kpi-val" id="nf-monitor">—</div><div class="kpi-sub">Low CPiO but low growth</div></div>
-    <div class="kpi gr"><div class="kpi-lbl">✅ Co-Fund</div><div class="kpi-val" id="nf-green">—</div><div class="kpi-sub">Efficient AND growing</div></div>
+    <div class="kpi rd"><div class="kpi-lbl">🚫 Do Not Co-Fund</div><div class="kpi-val" id="nf-count">—</div><div class="kpi-sub">Above campaign CPiO avg AND below campaign growth avg</div></div>
+    <div class="kpi" style="border-left-color:var(--or)"><div class="kpi-lbl">⚠️ Watch List</div><div class="kpi-val" id="nf-watch">—</div><div class="kpi-sub">Pricey vs peers but growing</div></div>
+    <div class="kpi bl"><div class="kpi-lbl">🟡 Monitor</div><div class="kpi-val" id="nf-monitor">—</div><div class="kpi-sub">Cheaper than peers but low growth</div></div>
+    <div class="kpi gr"><div class="kpi-lbl">✅ Co-Fund</div><div class="kpi-val" id="nf-green">—</div><div class="kpi-sub">Efficient vs peers AND growing</div></div>
   </div>
 
   <div class="tbl-card">
@@ -394,12 +394,13 @@ footer{text-align:center;padding:20px;font-size:12px;color:#aaa;border-top:1px s
         <thead><tr>
           <th onclick="sortT('nfTable',0)">Brand</th>
           <th onclick="sortT('nfTable',1)">Campaigns</th>
-          <th onclick="sortT('nfTable',2)" class="sorted">Avg CPiO</th>
-          <th onclick="sortT('nfTable',3)">Avg Growth %</th>
-          <th onclick="sortT('nfTable',4)">CPiO Gap vs 40</th>
-          <th onclick="sortT('nfTable',5)">Growth Gap vs 34%</th>
-          <th onclick="sortT('nfTable',6)">Total Orders</th>
-          <th onclick="sortT('nfTable',7)">Campaign Types</th>
+          <th onclick="sortT('nfTable',2)" class="sorted">Brand Avg CPiO</th>
+          <th onclick="sortT('nfTable',3)">Campaign Avg CPiO</th>
+          <th onclick="sortT('nfTable',4)">CPiO vs Peers</th>
+          <th onclick="sortT('nfTable',5)">Brand Avg Growth</th>
+          <th onclick="sortT('nfTable',6)">Campaign Avg Growth</th>
+          <th onclick="sortT('nfTable',7)">Growth vs Peers</th>
+          <th onclick="sortT('nfTable',8)">Total Orders</th>
           <th>Verdict</th>
         </tr></thead>
         <tbody id="nfBody"></tbody>
@@ -920,75 +921,126 @@ new Chart(document.getElementById('brandScatter'),{type:'bubble',data:{datasets:
 
 // ── NO CO-FUND ────────────────────────────────────────────────────────
 function buildNoFund(){
-  // Aggregate per brand: avg CPiO + avg growth across ALL campaigns
+  // Step 1: build campaign-level averages (median CPiO + avg growth)
+  // so we judge each brand RELATIVE to how that campaign performed overall
+  const campStats = {};
+  CAMP_DATA.forEach(c => { campStats[c.c] = {medCpio: c.med, entries: c.n}; });
+
+  // Compute per-campaign average growth from ENRICHED
+  const campGrowthSum = {}, campGrowthCount = {};
+  ENRICHED.forEach(e => {
+    if(e.growth !== null && Math.abs(e.growth) < 400){
+      campGrowthSum[e.camp]  = (campGrowthSum[e.camp]  || 0) + e.growth;
+      campGrowthCount[e.camp]= (campGrowthCount[e.camp]|| 0) + 1;
+    }
+  });
+  const campAvgGrowth = {};
+  Object.keys(campGrowthSum).forEach(c => {
+    campAvgGrowth[c] = campGrowthSum[c] / campGrowthCount[c];
+  });
+
+  // Step 2: for each brand-campaign entry, compute relative deviation
+  // relativeCpio  = brand_cpio - campaign_median_cpio   (>0 = more expensive than peers)
+  // relativeGrowth= brand_growth - campaign_avg_growth  (<0 = growing less than peers)
   const bmap = {};
   ENRICHED.forEach(e => {
-    if(!bmap[e.brand]) bmap[e.brand] = {brand:e.brand, camps:new Set(), cpios:[], growths:[], orders:0, types:new Set()};
+    if(!bmap[e.brand]) bmap[e.brand] = {
+      brand: e.brand, camps: new Set(), types: new Set(),
+      orders: 0,
+      // raw actuals
+      cpios: [], growths: [],
+      // relative deviations
+      relCpios: [], relGrowths: [],
+      // campaign benchmarks seen
+      campMedCpios: [], campAvgGrowths: []
+    };
     const b = bmap[e.brand];
     b.camps.add(e.camp);
     b.types.add(e.type);
     b.orders += Math.abs(e.signed_orders);
-    if(e.cpio > -300 && e.cpio < 800) b.cpios.push(e.cpio);
-    if(e.growth !== null && Math.abs(e.growth) < 400) b.growths.push(e.growth);
+
+    const campMed = campStats[e.camp]?.medCpio ?? 40;
+    const campGr  = campAvgGrowth[e.camp]  ?? 34;
+
+    if(e.cpio > -300 && e.cpio < 800){
+      b.cpios.push(e.cpio);
+      b.relCpios.push(e.cpio - campMed);  // how much above/below THAT campaign's median
+      b.campMedCpios.push(campMed);
+    }
+    if(e.growth !== null && Math.abs(e.growth) < 400){
+      b.growths.push(e.growth);
+      b.relGrowths.push(e.growth - campGr); // how much above/below THAT campaign's avg growth
+      b.campAvgGrowths.push(campGr);
+    }
   });
 
+  // Step 3: classify
   const brands = Object.values(bmap)
-    .filter(b => b.camps.size >= 2 && b.growths.length >= 1) // need 2+ campaigns & baseline
+    .filter(b => b.camps.size >= 2 && b.relGrowths.length >= 1)
     .map(b => {
-      const avgCpio = b.cpios.length ? +(b.cpios.reduce((a,x)=>a+x,0)/b.cpios.length).toFixed(1) : null;
-      const avgGrowth = b.growths.length ? +(b.growths.reduce((a,x)=>a+x,0)/b.growths.length).toFixed(1) : null;
+      const avg = arr => arr.length ? +(arr.reduce((a,x)=>a+x,0)/arr.length).toFixed(1) : null;
+
+      const avgCpio       = avg(b.cpios);       // brand's own average CPiO
+      const avgGrowth     = avg(b.growths);     // brand's own average growth
+      const avgRelCpio    = avg(b.relCpios);    // +ve = consistently above campaign avg
+      const avgRelGrowth  = avg(b.relGrowths);  // -ve = consistently below campaign avg
+      const avgCampMed    = avg(b.campMedCpios); // what the campaigns they joined typically cost
+      const avgCampGr     = avg(b.campAvgGrowths);
+
+      // Flag: above campaign avg CPiO AND below campaign avg growth
       let verdict = 'green';
-      if(avgCpio !== null && avgGrowth !== null){
-        if(avgCpio > 40 && avgGrowth < 34) verdict = 'red';
-        else if(avgCpio > 40 && avgGrowth >= 34) verdict = 'watch';
-        else if(avgCpio <= 40 && avgGrowth < 34) verdict = 'monitor';
-        else verdict = 'green';
+      if(avgRelCpio !== null && avgRelGrowth !== null){
+        if(avgRelCpio > 0 && avgRelGrowth < 0)       verdict = 'red';     // worse than peers on BOTH
+        else if(avgRelCpio > 0 && avgRelGrowth >= 0)  verdict = 'watch';  // expensive but growing ok
+        else if(avgRelCpio <= 0 && avgRelGrowth < 0)  verdict = 'monitor';// cheap but low growth
+        else                                           verdict = 'green';
       }
-      return { brand:b.brand, camps:b.camps.size, avgCpio, avgGrowth, orders:b.orders,
-               types:[...b.types].join(', '), verdict };
+
+      return {
+        brand: b.brand, camps: b.camps.size,
+        avgCpio, avgGrowth, avgRelCpio, avgRelGrowth,
+        avgCampMed, avgCampGr,
+        orders: b.orders, types: [...b.types].join(', '), verdict
+      };
     });
 
   // KPI counts
-  const r = brands.filter(b=>b.verdict==='red').length;
-  const w = brands.filter(b=>b.verdict==='watch').length;
-  const m = brands.filter(b=>b.verdict==='monitor').length;
-  const g = brands.filter(b=>b.verdict==='green').length;
-  document.getElementById('nf-count').textContent = r;
-  document.getElementById('nf-watch').textContent = w;
-  document.getElementById('nf-monitor').textContent = m;
-  document.getElementById('nf-green').textContent = g;
+  document.getElementById('nf-count').textContent   = brands.filter(b=>b.verdict==='red').length;
+  document.getElementById('nf-watch').textContent   = brands.filter(b=>b.verdict==='watch').length;
+  document.getElementById('nf-monitor').textContent = brands.filter(b=>b.verdict==='monitor').length;
+  document.getElementById('nf-green').textContent   = brands.filter(b=>b.verdict==='green').length;
 
-  // Do Not Co-Fund table — sorted worst first (highest CPiO, lowest growth)
+  const fmt1 = v => v !== null ? (v>0?'+':'')+v : '—';
+  const fmtN = v => v !== null ? v : '—';
+
+  // Do Not Co-Fund — sorted: worst relative CPiO first, then worst relative growth
   const redBrands = brands.filter(b=>b.verdict==='red')
-    .sort((a,b) => (b.avgCpio - a.avgCpio) + (a.avgGrowth - b.avgGrowth));
+    .sort((a,b) => (b.avgRelCpio - a.avgRelCpio)*0.5 + (a.avgRelGrowth - b.avgRelGrowth)*0.5);
 
-  document.getElementById('nfBody').innerHTML = redBrands.map(b => {
-    const cpiGap = b.avgCpio !== null ? +(b.avgCpio - 40).toFixed(1) : '—';
-    const grGap  = b.avgGrowth !== null ? +(b.avgGrowth - 34).toFixed(1) : '—';
-    return `<tr>
-      <td><strong>${b.brand}</strong></td>
-      <td class="num">${b.camps}</td>
-      <td class="num nr">${b.avgCpio !== null ? b.avgCpio : '—'}</td>
-      <td class="num nr">${b.avgGrowth !== null ? b.avgGrowth+'%' : '—'}</td>
-      <td class="num nr">+${cpiGap}</td>
-      <td class="num nr">${grGap}%</td>
-      <td class="num">${b.orders.toLocaleString()}</td>
-      <td style="font-size:11px;color:var(--g6)">${b.types}</td>
-      <td><span class="badge br" style="font-size:11px">🚫 Do Not Co-Fund</span></td>
-    </tr>`;
-  }).join('');
+  document.getElementById('nfBody').innerHTML = redBrands.map(b => `<tr>
+    <td><strong>${b.brand}</strong></td>
+    <td class="num">${b.camps}</td>
+    <td class="num nr">${fmtN(b.avgCpio)}</td>
+    <td class="num" style="color:var(--g6);font-size:11px">${fmtN(b.avgCampMed)} avg</td>
+    <td class="num nr">${fmt1(b.avgRelCpio)}</td>
+    <td class="num nr">${b.avgGrowth !== null ? b.avgGrowth+'%' : '—'}</td>
+    <td class="num" style="color:var(--g6);font-size:11px">${b.avgCampGr !== null ? b.avgCampGr.toFixed(1)+'%' : '—'} avg</td>
+    <td class="num nr">${b.avgRelGrowth !== null ? fmt1(b.avgRelGrowth)+'%' : '—'}</td>
+    <td class="num">${b.orders.toLocaleString()}</td>
+    <td><span class="badge br" style="font-size:11px">🚫 No Co-Fund</span></td>
+  </tr>`).join('');
 
   // Watch table
   const watchBrands = brands.filter(b=>b.verdict==='watch')
-    .sort((a,b) => b.avgGrowth - a.avgGrowth);
+    .sort((a,b) => b.avgRelGrowth - a.avgRelGrowth);
 
   document.getElementById('watchBody').innerHTML = watchBrands.map(b => `<tr>
     <td><strong>${b.brand}</strong></td>
     <td class="num">${b.camps}</td>
-    <td class="num" style="color:var(--or)">${b.avgCpio !== null ? b.avgCpio : '—'}</td>
-    <td class="num ng">${b.avgGrowth !== null ? '+'+b.avgGrowth+'%' : '—'}</td>
+    <td class="num" style="color:var(--or)">${fmtN(b.avgCpio)} <span style="color:var(--g6);font-size:10px">(+${b.avgRelCpio} vs camp)</span></td>
+    <td class="num ng">${b.avgGrowth !== null ? b.avgGrowth+'%' : '—'} <span style="color:var(--g6);font-size:10px">(${fmt1(b.avgRelGrowth)}% vs camp)</span></td>
     <td class="num">${b.orders.toLocaleString()}</td>
-    <td><span class="badge bo" style="font-size:11px">⚠️ Review Efficiency</span></td>
+    <td><span class="badge bo" style="font-size:11px">⚠️ Review</span></td>
   </tr>`).join('');
 }
 
