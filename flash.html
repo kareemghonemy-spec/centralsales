@@ -6,482 +6,428 @@
 <title>Flash Sale Performance Report — Talabat</title>
 <style>
 :root{
-  --or:#FF6300;--pale:#FFF0E6;--dk:#1A1A1A;--g9:#1E1E1E;
-  --g1:#F7F7F7;--g2:#E8E8E8;--g6:#666;--wh:#fff;
+  --or:#FF6300;--pale:#FFF0E6;--dk:#111827;--g9:#1E1E1E;
+  --g1:#F9FAFB;--g2:#E5E7EB;--g6:#6B7280;--wh:#fff;
   --gr:#16A34A;--gr-pale:#DCFCE7;
   --rd:#DC2626;--rd-pale:#FEE2E2;
   --bl:#2563EB;--bl-pale:#DBEAFE;
   --pu:#7C3AED;--pu-pale:#EDE9FE;
-  --r:12px;--sh:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06)
+  --r:12px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.05)
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g1);color:var(--dk);min-height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--g1);color:var(--dk)}
 
-/* HEADER */
-header{background:var(--g9);padding:0 36px;height:62px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--or)}
+header{background:var(--g9);height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 36px;border-bottom:3px solid var(--or)}
 .logo{display:flex;align-items:center;gap:11px}
 .lm{width:34px;height:34px;background:var(--or);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:17px}
 .lt{color:#fff;font-size:17px;font-weight:700;letter-spacing:-.3px}.lt span{color:var(--or)}
 .hd{color:#888;font-size:12px;text-align:right;line-height:1.6}
 
-main{max-width:1100px;margin:32px auto;padding:0 24px 48px}
+main{max-width:1080px;margin:32px auto;padding:0 24px 56px}
 
-/* SECTION LABEL */
+/* ── SECTION LABELS ── */
 .slabel{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:32px}
-.slabel:first-child{margin-top:0}
-.snum{width:28px;height:28px;border-radius:50%;background:var(--or);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.stitle{font-size:17px;font-weight:800;color:var(--dk)}
+.slabel:first-of-type{margin-top:0}
+.snum{min-width:28px;height:28px;border-radius:50%;background:var(--or);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.stitle{font-size:17px;font-weight:800}
 
-/* CARD */
-.card{background:var(--wh);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px}
-.card-head{padding:16px 22px 0;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--g6)}
+/* ── SUMMARY CHIPS ── */
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:28px}
+.chip{background:var(--wh);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);border-top:3px solid var(--or)}
+.chip.gr{border-top-color:var(--gr)}.chip.bl{border-top-color:var(--bl)}.chip.rd{border-top-color:var(--rd)}.chip.pu{border-top-color:var(--pu)}
+.chip-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:4px}
+.chip-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--g6)}
 
-/* PERFORMANCE COMPARISON */
-.perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--g2)}
-.perf-col{background:var(--wh);padding:20px 22px}
-.perf-col.highlight{background:#FFFBF5}
-.col-period{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g6);margin-bottom:4px}
-.col-date{font-size:14px;font-weight:800;color:var(--dk);margin-bottom:18px}
+/* ── CARDS ── */
+.card{background:var(--wh);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+.card-head{padding:14px 22px;border-bottom:1px solid var(--g2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-title{font-size:14px;font-weight:800}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.tag-or{background:var(--pale);color:var(--or)}.tag-gr{background:var(--gr-pale);color:var(--gr)}.tag-bl{background:var(--bl-pale);color:var(--bl)}.tag-pu{background:var(--pu-pale);color:var(--pu)}
 
+/* ── COMPARISON GRID ── */
+.cmp{display:grid;gap:1px;background:var(--g2)}
+.cmp-2{grid-template-columns:1fr 1fr}
+.cmp-3{grid-template-columns:1fr 44px 1fr}
+.cmp-col{background:var(--wh);padding:22px}
+.cmp-col.tinted{background:#FFFBF5}
+.cmp-period{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+.may-col .cmp-period{color:var(--bl)}.jun-col .cmp-period{color:var(--or)}
+.cmp-date{font-size:14px;font-weight:800;margin-bottom:18px;color:var(--dk)}
 .metric-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--g2)}
 .metric-row:last-child{border-bottom:none}
-.metric-name{font-size:13px;color:var(--g6);font-weight:500}
-.metric-val{font-size:18px;font-weight:800;color:var(--dk)}
+.metric-name{font-size:13px;color:var(--g6)}
+.metric-val{font-size:18px;font-weight:800}
+.delta{font-size:11px;font-weight:700;margin-top:2px}
+.d-gr{color:var(--gr)}.d-rd{color:var(--rd)}
+.vs-col{display:flex;align-items:center;justify-content:center;background:var(--wh)}
+.vs-badge{width:36px;height:36px;background:var(--or);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
 
-/* UPLIFT BADGE */
-.uplift{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:13px;font-weight:700}
-.up-good{background:var(--gr-pale);color:var(--gr)}
-.up-great{background:#D1FAE5;color:#065F46}
-.up-neutral{background:var(--bl-pale);color:var(--bl)}
+/* ── UPLIFT PILLS ── */
+.uplift{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:700}
+.up-hi{background:#D1FAE5;color:#065F46}.up-md{background:var(--gr-pale);color:var(--gr)}.up-bl{background:var(--bl-pale);color:var(--bl)}.up-pu{background:var(--pu-pale);color:var(--pu)}
 
-/* VS DIVIDER */
-.vs-col{background:var(--wh);display:flex;align-items:center;justify-content:center;padding:0 8px}
-.vs-badge{width:36px;height:36px;border-radius:50%;background:var(--or);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+/* ── BAR CHARTS ── */
+.bar-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--g2)}
+.bar-row:last-child{border-bottom:none}
+.bar-label{font-size:12px;color:var(--dk);min-width:160px}
+.bar-track{flex:1;height:8px;background:var(--g2);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-val{font-size:12px;font-weight:700;min-width:60px;text-align:right}
 
-/* FLASH COMPARISON */
-.flash-compare{display:grid;grid-template-columns:1fr 36px 1fr;gap:0;background:var(--g2)}
-.flash-col{background:var(--wh);padding:22px}
-.flash-col.may{border-right:1px solid var(--g2)}
-.flash-col.jun{background:#FFFBF5}
-.flash-period{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
-.may .flash-period{color:var(--bl)}
-.jun .flash-period{color:var(--or)}
-.flash-date{font-size:15px;font-weight:800;color:var(--dk);margin-bottom:16px}
-.flash-metric{margin-bottom:14px}
-.fm-label{font-size:11px;color:var(--g6);margin-bottom:3px}
-.fm-val{font-size:22px;font-weight:900;color:var(--dk)}
-.fm-sub{font-size:12px;color:var(--g6);margin-top:1px}
+/* ── FLOW ── */
+.flow{display:flex;align-items:stretch;gap:0;margin:4px 0 16px}
+.fb{flex:1;background:var(--wh);border-radius:var(--r);padding:18px 16px;box-shadow:var(--sh);text-align:center}
+.fb-icon{font-size:22px;margin-bottom:8px}
+.fb-val{font-size:26px;font-weight:900;line-height:1;margin-bottom:3px}
+.fb-lbl{font-size:11px;color:var(--g6);font-weight:600;margin-bottom:2px}
+.fb-sub{font-size:10px;color:var(--g6)}
+.fa{display:flex;align-items:center;padding:0 8px;color:var(--g6);font-size:20px;font-weight:300}
 
-/* PARTICIPATION */
-.part-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--g2)}
-.part-cell{background:var(--wh);padding:20px 22px}
-.pc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g6);margin-bottom:6px}
-.pc-val{font-size:28px;font-weight:900;color:var(--dk);margin-bottom:3px}
-.pc-sub{font-size:12px;color:var(--g6)}
-.pc-growth{display:inline-flex;align-items:center;gap:4px;background:var(--gr-pale);color:var(--gr);padding:3px 9px;border-radius:20px;font-size:12px;font-weight:700;margin-top:6px}
+/* ── RETENTION CARDS ── */
+.ret-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.ret-card{border-radius:10px;padding:18px}
+.ret-card.ok{background:var(--gr-pale);border:1.5px solid #86EFAC}
+.ret-card.warn{background:var(--rd-pale);border:1.5px solid #FCA5A5}
+.ret-card.info{background:var(--bl-pale);border:1.5px solid #93C5FD}
+.ret-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.ok .ret-lbl{color:var(--gr)}.warn .ret-lbl{color:var(--rd)}.info .ret-lbl{color:var(--bl)}
+.ret-val{font-size:36px;font-weight:900;line-height:1;margin-bottom:3px}
+.ok .ret-val{color:var(--gr)}.warn .ret-val{color:var(--rd)}.info .ret-val{color:var(--bl)}
+.ret-sub{font-size:12px;color:var(--g6)}
+.prog{height:6px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden;margin-top:10px}
+.prog-fill{height:100%;border-radius:3px}
 
-/* BAR PROGRESS */
-.bar-wrap{margin-top:10px}
-.bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--g6);margin-bottom:4px}
-.bar-track{height:8px;background:var(--g2);border-radius:4px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
-.bar-or{background:var(--or)}
-.bar-bl{background:var(--bl)}
-.bar-gr{background:var(--gr)}
-
-/* RETENTION / CHURN */
-.rc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.rc-card{border-radius:10px;padding:20px}
-.rc-card.retain{background:var(--gr-pale);border:1.5px solid #86EFAC}
-.rc-card.churn{background:var(--rd-pale);border:1.5px solid #FCA5A5}
-.rc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
-.retain .rc-label{color:var(--gr)}
-.churn .rc-label{color:var(--rd)}
-.rc-val{font-size:40px;font-weight:900;line-height:1;margin-bottom:4px}
-.retain .rc-val{color:var(--gr)}
-.churn .rc-val{color:var(--rd)}
-.rc-sub{font-size:12px;color:var(--g6)}
-
-/* COHORT TABLE */
-.cohort-table{width:100%;border-collapse:collapse}
-.cohort-table th{background:var(--g1);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--g6);border-bottom:2px solid var(--g2)}
-.cohort-table td{padding:13px 16px;border-bottom:1px solid var(--g2);font-size:13px;vertical-align:middle}
-.cohort-table tr:last-child td{border-bottom:none}
-.cohort-table tr:hover td{background:#FAFAFA}
-.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.tag-may{background:var(--bl-pale);color:var(--bl)}
-.tag-jun{background:var(--pale);color:var(--or)}
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:var(--g1);padding:10px 16px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g6);border-bottom:2px solid var(--g2);white-space:nowrap}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--g2)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#FAFAFA}
 .num{font-variant-numeric:tabular-nums;font-weight:600}
-.gr-txt{color:var(--gr);font-weight:700}
-.rd-txt{color:var(--rd);font-weight:700}
-.or-txt{color:var(--or);font-weight:700}
+.gr-txt{color:var(--gr);font-weight:700}.rd-txt{color:var(--rd);font-weight:700}.or-txt{color:var(--or);font-weight:700}
 
-/* FLOW DIAGRAM */
-.flow{display:flex;align-items:stretch;gap:0;margin-bottom:20px}
-.flow-box{flex:1;background:var(--wh);border-radius:var(--r);padding:20px;box-shadow:var(--sh);text-align:center}
-.flow-arrow{display:flex;align-items:center;padding:0 8px;color:var(--g6);font-size:20px}
-.fb-icon{font-size:24px;margin-bottom:8px}
-.fb-val{font-size:28px;font-weight:900;margin-bottom:3px}
-.fb-label{font-size:11px;color:var(--g6);font-weight:600}
-.fb-sub{font-size:10px;color:var(--g6);margin-top:3px}
+/* ── TAKEAWAYS ── */
+.tways{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+.tw{border-radius:10px;padding:16px}
+.tw.ok{background:var(--gr-pale);border:1.5px solid #86EFAC}
+.tw.warn{background:var(--rd-pale);border:1.5px solid #FCA5A5}
+.tw-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.ok .tw-lbl{color:var(--gr)}.warn .tw-lbl{color:var(--rd)}
+ul.tw-list{padding-left:16px;font-size:13px;line-height:1.9}
+.ok .tw-list{color:#14532D}.warn .tw-list{color:#7F1D1D}
 
-/* SUMMARY ROW */
-.summary-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
-.sr-box{background:var(--wh);border-radius:10px;padding:16px;box-shadow:var(--sh);border-top:3px solid var(--g2)}
-.sr-box.or{border-top-color:var(--or)}
-.sr-box.gr{border-top-color:var(--gr)}
-.sr-box.bl{border-top-color:var(--bl)}
-.sr-box.rd{border-top-color:var(--rd)}
-.sr-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--g6);margin-bottom:6px}
-.sr-val{font-size:22px;font-weight:900;color:var(--dk)}
-.sr-sub{font-size:11px;color:var(--g6);margin-top:3px}
-
-@media(max-width:700px){
-  .perf-grid,.flash-compare,.part-grid,.rc-grid{grid-template-columns:1fr}
-  .vs-col,.vs-col+*{display:none}
-  .flow{flex-direction:column}.flow-arrow{display:none}
-  main{padding:0 14px 32px}
+@media(max-width:680px){
+  .cmp-3{grid-template-columns:1fr}.vs-col,.fa{display:none}
+  .ret-2,.tways{grid-template-columns:1fr}
+  .flow{flex-direction:column}
+  main{padding:0 12px 32px}
+  header{padding:0 16px}
+  .chips{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
-    <div class="lm">t</div>
-    <div class="lt">talabat <span>analytics</span></div>
-  </div>
-  <div class="hd">Flash Sale Performance Report<br>May 14 vs June 10, 2026</div>
+  <div class="logo"><div class="lm">t</div><div class="lt">talabat <span>analytics</span></div></div>
+  <div class="hd">Sponsored Deals — Flash Sale Report<br>May 14 vs June 10, 2026</div>
 </header>
 
 <main>
 
-  <!-- SECTION 1: KEY SUMMARY -->
-  <div class="slabel"><div class="snum">✦</div><div class="stitle">At a Glance</div></div>
-  <div class="summary-row">
-    <div class="sr-box or">
-      <div class="sr-label">Jun 10 Orders</div>
-      <div class="sr-val">25,376</div>
-      <div class="sr-sub">+51.6% vs May 14 flash</div>
+<!-- SUMMARY CHIPS -->
+<div class="chips">
+  <div class="chip gr"><div class="chip-val">25,376</div><div class="chip-lbl">Jun 10 Orders</div></div>
+  <div class="chip gr"><div class="chip-val">AED 204K</div><div class="chip-lbl">Jun 10 Revenue</div></div>
+  <div class="chip"><div class="chip-val">189%</div><div class="chip-lbl">Jun Flash Uplift</div></div>
+  <div class="chip"><div class="chip-val" style="color:var(--or)">+52%</div><div class="chip-lbl">Jun vs May Flash</div></div>
+  <div class="chip bl"><div class="chip-val">1,552</div><div class="chip-lbl">Jun Vendors (+20%)</div></div>
+  <div class="chip bl"><div class="chip-val">868</div><div class="chip-lbl">Flash Deal Opt-in (+80%)</div></div>
+  <div class="chip rd"><div class="chip-val">39%</div><div class="chip-lbl">May Cohort Churn</div></div>
+  <div class="chip pu"><div class="chip-val">28%</div><div class="chip-lbl">Flash Sale Retention</div></div>
+</div>
+
+<!-- SECTION 1: PERFORMANCE -->
+<div class="slabel"><div class="snum">1</div><div class="stitle">Flash Sale vs Normal Days — Performance</div></div>
+
+<div class="card" style="margin-bottom:12px">
+  <div class="card-head">
+    <div class="card-title" style="color:var(--bl)">May 14th Flash vs Normal Period (May 1–13)</div>
+    <span class="uplift up-md">↑ 97.8% Flash Day Uplift</span>
+  </div>
+  <div class="cmp cmp-3">
+    <div class="cmp-col may-col">
+      <div class="cmp-period">Normal Period</div>
+      <div class="cmp-date">May 1–13 · Daily Average</div>
+      <div class="metric-row"><span class="metric-name">Avg Daily Orders</span><div class="text-right"><div class="metric-val">8,465</div></div></div>
+      <div class="metric-row"><span class="metric-name">Avg Daily Revenue</span><div class="text-right"><div class="metric-val">AED 68,285</div></div></div>
     </div>
-    <div class="sr-box or">
-      <div class="sr-label">Jun 10 Revenue</div>
-      <div class="sr-val">AED 204K</div>
-      <div class="sr-sub">+51.4% vs May 14 flash</div>
-    </div>
-    <div class="sr-box gr">
-      <div class="sr-label">Flash Day Uplift (Jun)</div>
-      <div class="sr-val">189%</div>
-      <div class="sr-sub">vs normal days Jun 1–9</div>
-    </div>
-    <div class="sr-box bl">
-      <div class="sr-label">Vendor Participation</div>
-      <div class="sr-val">+19.6%</div>
-      <div class="sr-sub">1,298 → 1,552 vendors</div>
-    </div>
-    <div class="sr-box bl">
-      <div class="sr-label">Flash Deal Opt-in</div>
-      <div class="sr-val">+79.7%</div>
-      <div class="sr-sub">483 → 868 vendors</div>
-    </div>
-    <div class="sr-box rd">
-      <div class="sr-label">May → Jun Churn</div>
-      <div class="sr-val">39.1%</div>
-      <div class="sr-sub">508 of 1,298 did not return</div>
+    <div class="vs-col"><div class="vs-badge">VS</div></div>
+    <div class="cmp-col jun-col tinted">
+      <div class="cmp-period" style="color:var(--bl)">Flash Sale Day</div>
+      <div class="cmp-date">May 14th</div>
+      <div class="metric-row"><span class="metric-name">Orders</span><div style="text-align:right"><div class="metric-val" style="color:var(--bl)">16,740</div><div class="delta d-gr">+8,275 orders (+97.8%)</div></div></div>
+      <div class="metric-row"><span class="metric-name">Revenue</span><div style="text-align:right"><div class="metric-val" style="color:var(--bl)">AED 134,888</div><div class="delta d-gr">+AED 66,603 (+97.5%)</div></div></div>
     </div>
   </div>
+</div>
 
-  <!-- SECTION 1: PERFORMANCE -->
-  <div class="slabel"><div class="snum">1</div><div class="stitle">Flash Sale vs Normal Days</div></div>
-
-  <!-- MAY section -->
-  <div class="card" style="margin-bottom:12px">
-    <div class="card-head" style="padding:16px 22px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--g2)">
-      <span style="color:var(--bl)">MAY FLASH — May 14th vs Normal (May 1–13 avg)</span>
-      <span class="uplift up-good">↑ 97.8% Flash Day Uplift</span>
+<div class="card" style="margin-bottom:12px">
+  <div class="card-head">
+    <div class="card-title" style="color:var(--or)">June 10th Flash vs Normal Period (Jun 1–9)</div>
+    <span class="uplift up-hi">↑ 189.2% Flash Day Uplift</span>
+  </div>
+  <div class="cmp cmp-3">
+    <div class="cmp-col may-col">
+      <div class="cmp-period">Normal Period</div>
+      <div class="cmp-date">Jun 1–9 · Daily Average</div>
+      <div class="metric-row"><span class="metric-name">Avg Daily Orders</span><div class="text-right"><div class="metric-val">8,773</div></div></div>
+      <div class="metric-row"><span class="metric-name">Avg Daily Revenue</span><div class="text-right"><div class="metric-val">AED 70,788</div></div></div>
     </div>
-    <div class="perf-grid">
-      <div class="perf-col">
-        <div class="col-period">Normal Period</div>
-        <div class="col-date">May 1–13 · Daily Average</div>
-        <div class="metric-row">
-          <span class="metric-name">Avg Daily Orders</span>
-          <span class="metric-val">8,465</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-name">Avg Daily Revenue</span>
-          <span class="metric-val">AED 68,285</span>
-        </div>
-      </div>
-      <div class="perf-col highlight">
-        <div class="col-period" style="color:var(--bl)">Flash Sale Day</div>
-        <div class="col-date">May 14th</div>
-        <div class="metric-row">
-          <span class="metric-name">Orders</span>
-          <div style="text-align:right">
-            <div class="metric-val" style="color:var(--bl)">16,740</div>
-            <div style="font-size:12px;color:var(--gr);font-weight:700;margin-top:2px">+8,275 orders</div>
+    <div class="vs-col"><div class="vs-badge">VS</div></div>
+    <div class="cmp-col jun-col tinted">
+      <div class="cmp-period" style="color:var(--or)">Flash Sale Day</div>
+      <div class="cmp-date">June 10th</div>
+      <div class="metric-row"><span class="metric-name">Orders</span><div style="text-align:right"><div class="metric-val" style="color:var(--or)">25,376</div><div class="delta d-gr">+16,603 orders (+189.2%)</div></div></div>
+      <div class="metric-row"><span class="metric-name">Revenue</span><div style="text-align:right"><div class="metric-val" style="color:var(--or)">AED 204,248</div><div class="delta d-gr">+AED 133,460 (+188.5%)</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">Flash-over-Flash Growth — May 14 vs June 10</div>
+    <span class="uplift up-pu" style="background:var(--pu-pale);color:var(--pu)">↑ 51.6% MoM Flash Growth</span>
+  </div>
+  <div class="cmp cmp-3">
+    <div class="cmp-col may-col">
+      <div class="cmp-period">May Flash</div>
+      <div class="cmp-date">May 14th</div>
+      <div class="metric-row"><span class="metric-name">Orders</span><div class="metric-val" style="color:var(--bl)">16,740</div></div>
+      <div class="metric-row"><span class="metric-name">Revenue</span><div class="metric-val" style="color:var(--bl)">AED 134,888</div></div>
+      <div class="metric-row"><span class="metric-name">vs Normal Uplift</span><div style="font-size:18px;font-weight:800;color:var(--bl)">+97.8%</div></div>
+    </div>
+    <div class="vs-col"><div class="vs-badge">VS</div></div>
+    <div class="cmp-col jun-col tinted">
+      <div class="cmp-period" style="color:var(--or)">June Flash</div>
+      <div class="cmp-date">June 10th</div>
+      <div class="metric-row"><span class="metric-name">Orders</span><div style="text-align:right"><div class="metric-val" style="color:var(--or)">25,376</div><div class="delta d-gr">↑ 51.6% vs May</div></div></div>
+      <div class="metric-row"><span class="metric-name">Revenue</span><div style="text-align:right"><div class="metric-val" style="color:var(--or)">AED 204,248</div><div class="delta d-gr">↑ 51.4% vs May</div></div></div>
+      <div class="metric-row"><span class="metric-name">vs Normal Uplift</span><div style="font-size:18px;font-weight:800;color:var(--or)">+189.2%</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: VENDOR PARTICIPATION -->
+<div class="slabel"><div class="snum">2</div><div class="stitle">Vendor Participation</div></div>
+
+<div class="card">
+  <div class="cmp cmp-2">
+    <div class="cmp-col">
+      <div class="cmp-period" style="color:var(--g6)">Total Non-Boosted SD Vendors</div>
+      <div style="font-size:28px;font-weight:900;margin:8px 0 2px">1,298 <span style="color:var(--or);font-size:20px">→</span> 1,552</div>
+      <div class="tag tag-gr" style="margin-bottom:12px">↑ +19.6% MoM</div>
+      <div class="bar-row"><span class="bar-label">May 14th</span><div class="bar-track"><div class="bar-fill" style="width:83.7%;background:var(--bl)"></div></div><span class="bar-val" style="color:var(--bl)">1,298</span></div>
+      <div class="bar-row"><span class="bar-label">Jun 10th</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--or)"></div></div><span class="bar-val" style="color:var(--or)">1,552</span></div>
+    </div>
+    <div class="cmp-col" style="border-left:1px solid var(--g2)">
+      <div class="cmp-period" style="color:var(--g6)">Opted into Flash Sale Deal</div>
+      <div style="font-size:28px;font-weight:900;margin:8px 0 2px">483 <span style="color:var(--or);font-size:20px">→</span> 868</div>
+      <div class="tag tag-or" style="margin-bottom:12px">↑ +79.7% MoM</div>
+      <div class="bar-row"><span class="bar-label">May 14th</span><div class="bar-track"><div class="bar-fill" style="width:55.6%;background:var(--bl)"></div></div><span class="bar-val" style="color:var(--bl)">483</span></div>
+      <div class="bar-row"><span class="bar-label">Jun 10th</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--or)"></div></div><span class="bar-val" style="color:var(--or)">868</span></div>
+    </div>
+  </div>
+  <div style="padding:16px 22px;background:var(--g1);border-top:1px solid var(--g2)">
+    <div style="font-size:12px;font-weight:700;color:var(--g6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Source of May 14th Vendors</div>
+    <div class="bar-row"><span class="bar-label">From Normal Period (May 1–13)</span><div class="bar-track"><div class="bar-fill" style="width:79.5%;background:var(--gr)"></div></div><span class="bar-val gr-txt">1,032 · 79.5%</span></div>
+    <div class="bar-row"><span class="bar-label">New on Flash Day only</span><div class="bar-track"><div class="bar-fill" style="width:20.5%;background:var(--or)"></div></div><span class="bar-val or-txt">266 · 20.5%</span></div>
+  </div>
+</div>
+
+<!-- SECTION 3: JUNE 10th BREAKDOWN -->
+<div class="slabel"><div class="snum">3</div><div class="stitle">June 10th — Vendor & Order Breakdown</div></div>
+
+<div class="flow">
+  <div class="fb" style="border-top:3px solid var(--bl)">
+    <div class="fb-icon">📅</div>
+    <div class="fb-val" style="color:var(--bl)">1,298</div>
+    <div class="fb-lbl">May 14th Vendors</div>
+    <div class="fb-sub">Original cohort</div>
+  </div>
+  <div class="fa">→</div>
+  <div class="fb" style="border-top:3px solid var(--gr)">
+    <div class="fb-icon">✅</div>
+    <div class="fb-val" style="color:var(--gr)">790</div>
+    <div class="fb-lbl">Returned Jun 10th</div>
+    <div class="fb-sub">60.9% retention</div>
+  </div>
+  <div class="fa">+</div>
+  <div class="fb" style="border-top:3px solid var(--or)">
+    <div class="fb-icon">🆕</div>
+    <div class="fb-val" style="color:var(--or)">762</div>
+    <div class="fb-lbl">New Jun 10th</div>
+    <div class="fb-sub">Not on May 14th</div>
+  </div>
+  <div class="fa">=</div>
+  <div class="fb" style="border-top:3px solid var(--pu);background:#FAFAFF">
+    <div class="fb-icon">⚡</div>
+    <div class="fb-val" style="color:var(--pu)">1,552</div>
+    <div class="fb-lbl">Total Jun 10th</div>
+    <div class="fb-sub">25,376 orders · AED 204K</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-head"><div class="card-title">June 10th Orders & Revenue by Vendor Source</div></div>
+  <div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Vendor Source</th><th>Vendors</th><th>Orders</th><th>Revenue (AED)</th><th>Avg Orders/Vendor</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--gr)">Retained from May 14th</strong></td><td class="num">790</td><td class="num gr-txt">10,571</td><td class="num gr-txt">85,116</td><td class="num">13.4</td></tr>
+      <tr><td><strong style="color:var(--or)">New on Jun 10th</strong></td><td class="num">762</td><td class="num or-txt">14,805</td><td class="num or-txt">119,132</td><td class="num">19.4</td></tr>
+      <tr style="background:var(--g1);font-weight:700"><td><strong>Total Jun 10th</strong></td><td class="num">1,552</td><td class="num">25,376</td><td class="num">204,248</td><td class="num">16.4</td></tr>
+    </tbody>
+  </table></div>
+  <div style="padding:12px 22px;font-size:12px;color:var(--g6)">Retention Rate: <strong>60.9%</strong> — 790 of 1,298 SD vendors from May 14th returned on Jun 10th</div>
+</div>
+
+<!-- SECTION 4: ALL RETENTION VIEWS -->
+<div class="slabel"><div class="snum">4</div><div class="stitle">Vendor Retention — Three Views</div></div>
+
+<!-- View A: SD Normal Period retention -->
+<div class="card" style="margin-bottom:12px">
+  <div class="card-head">
+    <div class="card-title">A · SD Retention: Normal Period (Jun 1–9) → Jun 10th Flash</div>
+    <span class="tag tag-gr">61.7% Retention</span>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Vendor Source</th><th>Vendors</th><th>Orders</th><th>Revenue (AED)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Already on Non-Boosted SD (Jun 1–9)</strong></td><td class="num">963</td><td class="num">9,968</td><td class="num">80,360</td></tr>
+      <tr><td><strong style="color:var(--or)">New Brands on Jun 10th</strong></td><td class="num">589</td><td class="num">15,408</td><td class="num">123,888</td></tr>
+      <tr style="background:var(--g1);font-weight:700"><td>Total Jun 10th</td><td class="num">1,552</td><td class="num">25,376</td><td class="num">204,248</td></tr>
+    </tbody>
+  </table></div>
+  <div style="padding:12px 22px;font-size:12px;color:var(--g6)">Retention Rate: <strong>61.7%</strong> — 963 of 1,560 SD vendors from Jun 1–9 participated on Jun 10th</div>
+</div>
+
+<!-- View B: Flash Sale campaign retention -->
+<div class="card" style="margin-bottom:12px">
+  <div class="card-head">
+    <div class="card-title">B · Flash Sale Campaign Retention: May 14th → Jun 10th</div>
+    <span class="tag" style="background:var(--rd-pale);color:var(--rd)">28.4% Retention</span>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Vendor Source</th><th>Vendors</th><th>SD Orders</th><th>SD Revenue (AED)</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--gr)">Retained from May Flash Sale</strong></td><td class="num gr-txt">137</td><td class="num gr-txt">1,429</td><td class="num gr-txt">11,488</td></tr>
+      <tr><td><strong style="color:var(--or)">New in June Flash Sale</strong></td><td class="num or-txt">731</td><td class="num or-txt">14,178</td><td class="num or-txt">114,008</td></tr>
+      <tr style="background:var(--g1);font-weight:700"><td>Total June Flash Sale</td><td class="num">868</td><td class="num">15,607</td><td class="num">125,496</td></tr>
+    </tbody>
+  </table></div>
+  <div style="padding:12px 22px;font-size:12px;color:var(--g6)">Retention Rate: <strong>28.4%</strong> — 137 of 483 May Flash Sale vendors returned for June Flash Sale</div>
+</div>
+
+<!-- View C: Churned flash vendors -->
+<div class="card">
+  <div class="card-head">
+    <div class="card-title">C · Churned Flash Sale Vendors — Opportunity Lost</div>
+    <span class="tag" style="background:var(--rd-pale);color:var(--rd)">346 vendors did not return</span>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Metric</th><th>Value</th><th>Context</th></tr></thead>
+    <tbody>
+      <tr><td><strong class="rd-txt">Vendors churned from Flash Sale</strong></td><td class="num rd-txt">346</td><td style="font-size:12px;color:var(--g6)">71.6% of May Flash Sale vendors didn't return</td></tr>
+      <tr><td><strong>SD Orders on May 14th (churned group)</strong></td><td class="num">6,849</td><td style="font-size:12px;color:var(--g6)">Orders generated by these vendors on May 14th</td></tr>
+      <tr><td><strong>SD Revenue on May 14th (churned group)</strong></td><td class="num">AED 55,200</td><td style="font-size:12px;color:var(--g6)">Revenue generated by these vendors on May 14th</td></tr>
+    </tbody>
+  </table></div>
+  <div style="padding:12px 22px;font-size:12px;background:#FEF9F9;color:var(--rd);font-weight:600">⚠️ Win-back campaign needed for 346 churned vendors before next Flash Sale — they collectively drove 6,849 orders in May.</div>
+</div>
+
+<!-- SECTION 5: COHORT TABLE -->
+<div class="slabel"><div class="snum">5</div><div class="stitle">Vendor Churn Cohort Summary</div></div>
+
+<div class="card">
+  <div class="ret-2">
+    <div class="ret-card ok">
+      <div class="ret-lbl">✅ Retained (SD Vendors — May → Jun)</div>
+      <div class="ret-val">60.9%</div>
+      <div class="ret-sub" style="margin-bottom:10px">790 of 1,298 returned on Jun 10th</div>
+      <div class="prog"><div class="prog-fill" style="width:60.9%;background:var(--gr)"></div></div>
+      <div style="margin-top:10px;font-size:12px;color:#166534">Generated <strong>10,571 orders</strong> and <strong>AED 85,116</strong> revenue</div>
+    </div>
+    <div class="ret-card warn">
+      <div class="ret-lbl">❌ Churned (SD Vendors — May → Jun)</div>
+      <div class="ret-val">39.1%</div>
+      <div class="ret-sub" style="margin-bottom:10px">508 of 1,298 did not return</div>
+      <div class="prog"><div class="prog-fill" style="width:39.1%;background:var(--rd)"></div></div>
+      <div style="margin-top:10px;font-size:12px;color:#7F1D1D">Win-back opportunity before next Flash Sale</div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Cohort</th><th># Vendors</th><th>Churned</th><th>Churn %</th><th>Retained</th><th>Retention %</th><th>MoM Growth</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="tag tag-bl">1st Flash · May 14th</span></td>
+        <td class="num">1,298</td>
+        <td class="num rd-txt">508</td>
+        <td class="num rd-txt">39.1%</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td rowspan="2" style="text-align:center;vertical-align:middle">
+          <div class="tag tag-gr">↑ +16.4% MoM</div>
+          <div style="font-size:11px;color:var(--g6);margin-top:6px">1,298 → 1,552</div>
+        </td>
+      </tr>
+      <tr>
+        <td><span class="tag tag-or">2nd Flash · Jun 10th</span></td>
+        <td class="num">1,552</td>
+        <td class="num">—</td>
+        <td class="num">—</td>
+        <td class="num gr-txt">790</td>
+        <td class="num gr-txt">60.9%</td>
+      </tr>
+      <tr style="background:var(--g1)">
+        <td colspan="7" style="padding:12px 16px">
+          <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:12px">
+            <span><span style="color:var(--g6)">Flash Sale campaign retention (483 → 868):</span> <strong class="rd-txt">28.4%</strong> (137 returned)</span>
+            <span><span style="color:var(--g6)">Flash Sale vendors churned:</span> <strong class="rd-txt">346</strong> of 483 (71.6%)</span>
+            <span><span style="color:var(--g6)">New in Jun Flash Sale:</span> <strong class="or-txt">731</strong> first-timers</span>
           </div>
-        </div>
-        <div class="metric-row">
-          <span class="metric-name">Revenue</span>
-          <div style="text-align:right">
-            <div class="metric-val" style="color:var(--bl)">AED 134,888</div>
-            <div style="font-size:12px;color:var(--gr);font-weight:700;margin-top:2px">+AED 66,603</div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </td>
+      </tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- TAKEAWAYS -->
+<div class="slabel"><div class="snum">★</div><div class="stitle">Key Takeaways</div></div>
+<div class="tways">
+  <div class="tw ok">
+    <div class="tw-lbl">✅ What's Working</div>
+    <ul class="tw-list">
+      <li>Jun 10th Flash generated <strong>2x</strong> the orders vs May 14th</li>
+      <li>Flash day uplift jumped: <strong>97.8% (May) → 189.2% (June)</strong></li>
+      <li>Total SD vendor base grew <strong>+19.6%</strong> MoM</li>
+      <li>Flash Sale opt-in grew <strong>+79.7%</strong> — strong adoption</li>
+      <li>Overall SD retention healthy at <strong>60.9%</strong></li>
+    </ul>
   </div>
-
-  <!-- JUNE section -->
-  <div class="card" style="margin-bottom:12px">
-    <div class="card-head" style="padding:16px 22px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--g2)">
-      <span style="color:var(--or)">JUNE FLASH — June 10th vs Normal (Jun 1–9 avg)</span>
-      <span class="uplift up-great">↑ 189.2% Flash Day Uplift</span>
-    </div>
-    <div class="perf-grid">
-      <div class="perf-col">
-        <div class="col-period">Normal Period</div>
-        <div class="col-date">Jun 1–9 · Daily Average</div>
-        <div class="metric-row">
-          <span class="metric-name">Avg Daily Orders</span>
-          <span class="metric-val">8,773</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-name">Avg Daily Revenue</span>
-          <span class="metric-val">AED 70,788</span>
-        </div>
-      </div>
-      <div class="perf-col highlight">
-        <div class="col-period" style="color:var(--or)">Flash Sale Day</div>
-        <div class="col-date">June 10th</div>
-        <div class="metric-row">
-          <span class="metric-name">Orders</span>
-          <div style="text-align:right">
-            <div class="metric-val" style="color:var(--or)">25,376</div>
-            <div style="font-size:12px;color:var(--gr);font-weight:700;margin-top:2px">+16,603 orders</div>
-          </div>
-        </div>
-        <div class="metric-row">
-          <span class="metric-name">Revenue</span>
-          <div style="text-align:right">
-            <div class="metric-val" style="color:var(--or)">AED 204,248</div>
-            <div style="font-size:12px;color:var(--gr);font-weight:700;margin-top:2px">+AED 133,460</div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="tw warn">
+    <div class="tw-lbl">⚠️ Needs Attention</div>
+    <ul class="tw-list">
+      <li>Flash Sale campaign retention is only <strong>28.4%</strong> (137 of 483)</li>
+      <li><strong>346 churned Flash vendors</strong> = 6,849 orders lost on May 14th</li>
+      <li>Win-back campaign needed <strong>before next Flash Sale</strong></li>
+      <li>71.6% of May Flash Sale vendors didn't opt back in June</li>
+    </ul>
   </div>
-
-  <!-- FLASH vs FLASH comparison -->
-  <div class="card">
-    <div class="card-head" style="padding:16px 22px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--g2)">
-      <span>Jun 10 Flash vs May 14 Flash</span>
-      <span class="uplift" style="background:var(--pu-pale);color:var(--pu)">↑ 51.6% Flash-over-Flash Growth</span>
-    </div>
-    <div class="flash-compare">
-      <div class="flash-col may">
-        <div class="flash-period">May Flash</div>
-        <div class="flash-date">May 14th</div>
-        <div class="flash-metric">
-          <div class="fm-label">Orders</div>
-          <div class="fm-val" style="color:var(--bl)">16,740</div>
-        </div>
-        <div class="flash-metric">
-          <div class="fm-label">Revenue</div>
-          <div class="fm-val" style="color:var(--bl)">AED 134,888</div>
-        </div>
-        <div class="flash-metric">
-          <div class="fm-label">Uplift vs Normal</div>
-          <div style="font-size:18px;font-weight:800;color:var(--bl)">+97.8%</div>
-        </div>
-      </div>
-      <div class="vs-col"><div class="vs-badge">VS</div></div>
-      <div class="flash-col jun">
-        <div class="flash-period">June Flash</div>
-        <div class="flash-date">June 10th</div>
-        <div class="flash-metric">
-          <div class="fm-label">Orders</div>
-          <div class="fm-val" style="color:var(--or)">25,376 <span style="font-size:13px;color:var(--gr)">↑51.6%</span></div>
-        </div>
-        <div class="flash-metric">
-          <div class="fm-label">Revenue</div>
-          <div class="fm-val" style="color:var(--or)">AED 204,248 <span style="font-size:13px;color:var(--gr)">↑51.4%</span></div>
-        </div>
-        <div class="flash-metric">
-          <div class="fm-label">Uplift vs Normal</div>
-          <div style="font-size:18px;font-weight:800;color:var(--or)">+189.2%</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECTION 2: VENDOR PARTICIPATION -->
-  <div class="slabel"><div class="snum">2</div><div class="stitle">Vendor Participation</div></div>
-
-  <div class="card">
-    <div class="part-grid">
-      <div class="part-cell">
-        <div class="pc-label">Total Non-Boosted SD Vendors</div>
-        <div class="pc-val">1,298 <span style="color:var(--or);font-size:18px">→</span> 1,552</div>
-        <div class="pc-sub">May 14th to Jun 10th</div>
-        <div class="pc-growth">↑ 19.6% MoM</div>
-        <div class="bar-wrap">
-          <div class="bar-label"><span>May 14</span><span>Jun 10</span></div>
-          <div class="bar-track"><div class="bar-fill bar-or" style="width:84%"></div></div>
-        </div>
-      </div>
-      <div class="part-cell" style="border-left:1px solid var(--g2)">
-        <div class="pc-label">Opted into Flash Sale Deal</div>
-        <div class="pc-val">483 <span style="color:var(--or);font-size:18px">→</span> 868</div>
-        <div class="pc-sub">May 14th to Jun 10th</div>
-        <div class="pc-growth">↑ 79.7% MoM</div>
-        <div class="bar-wrap">
-          <div class="bar-label"><span>May 14</span><span>Jun 10</span></div>
-          <div class="bar-track"><div class="bar-fill bar-or" style="width:56%"></div></div>
-        </div>
-      </div>
-      <div class="part-cell" style="border-left:1px solid var(--g2)">
-        <div class="pc-label">May 14th Source Breakdown</div>
-        <div style="margin-top:10px">
-          <div class="bar-label"><span>From Normal Period (May 1–13)</span><span class="num gr-txt">1,032</span></div>
-          <div class="bar-track" style="margin-bottom:8px"><div class="bar-fill bar-gr" style="width:79.5%"></div></div>
-          <div style="font-size:11px;color:var(--g6);margin-bottom:12px">79.5% of total</div>
-          <div class="bar-label"><span>New on Flash Day Only</span><span class="num or-txt">266</span></div>
-          <div class="bar-track"><div class="bar-fill bar-or" style="width:20.5%"></div></div>
-          <div style="font-size:11px;color:var(--g6);margin-top:4px">20.5% of total</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SECTION 3: RETENTION FLOW -->
-  <div class="slabel"><div class="snum">3</div><div class="stitle">Vendor Retention — Jun 10th Flash Breakdown</div></div>
-
-  <div class="flow" style="margin-bottom:16px">
-    <div class="flow-box" style="border-top:3px solid var(--bl)">
-      <div class="fb-icon">🏪</div>
-      <div class="fb-val" style="color:var(--bl)">1,298</div>
-      <div class="fb-label">May 14th Vendors</div>
-      <div class="fb-sub">Original cohort</div>
-    </div>
-    <div class="flow-arrow">→</div>
-    <div class="flow-box" style="border-top:3px solid var(--gr)">
-      <div class="fb-icon">✅</div>
-      <div class="fb-val" style="color:var(--gr)">790</div>
-      <div class="fb-label">Returned Jun 10th</div>
-      <div class="fb-sub">60.9% retention rate</div>
-    </div>
-    <div class="flow-arrow">+</div>
-    <div class="flow-box" style="border-top:3px solid var(--or)">
-      <div class="fb-icon">🆕</div>
-      <div class="fb-val" style="color:var(--or)">762</div>
-      <div class="fb-label">New on Jun 10th</div>
-      <div class="fb-sub">Not on May 14th</div>
-    </div>
-    <div class="flow-arrow">=</div>
-    <div class="flow-box" style="border-top:3px solid var(--pu);background:#FAFAFF">
-      <div class="fb-icon">⚡</div>
-      <div class="fb-val" style="color:var(--pu)">1,552</div>
-      <div class="fb-label">Total Jun 10th</div>
-      <div class="fb-sub">25,376 orders · AED 204K</div>
-    </div>
-  </div>
-
-  <div class="rc-grid">
-    <div class="rc-card retain">
-      <div class="rc-label">✅ Retained from May 14th</div>
-      <div class="rc-val">790</div>
-      <div class="rc-sub" style="margin-bottom:12px">60.9% retention rate of May cohort</div>
-      <div class="bar-track"><div class="bar-fill bar-gr" style="width:60.9%"></div></div>
-      <div style="margin-top:10px;font-size:12px;color:var(--g6)">
-        Generated <strong>10,571 orders</strong> and <strong>AED 85,116</strong> revenue on Jun 10th
-      </div>
-    </div>
-    <div class="rc-card churn">
-      <div class="rc-label">❌ Churned after May 14th</div>
-      <div class="rc-val">508</div>
-      <div class="rc-sub" style="margin-bottom:12px">39.1% did not return to any SD in June</div>
-      <div class="bar-track"><div class="bar-fill" style="width:39.1%;background:var(--rd)"></div></div>
-      <div style="margin-top:10px;font-size:12px;color:var(--g6)">
-        Opportunity: Win back these 508 vendors for the next Flash Sale
-      </div>
-    </div>
-  </div>
-
-  <!-- SECTION 4: COHORT TABLE -->
-  <div class="slabel"><div class="snum">4</div><div class="stitle">Vendor Churn Cohort Analysis</div></div>
-
-  <div class="card">
-    <table class="cohort-table">
-      <thead>
-        <tr>
-          <th>Cohort</th>
-          <th># Vendors</th>
-          <th>Churned</th>
-          <th>Churn %</th>
-          <th>Retained</th>
-          <th>Retention %</th>
-          <th>MoM Vendor Growth</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><span class="tag tag-may">1st Flash · May 14th</span></td>
-          <td class="num">1,298</td>
-          <td class="num rd-txt">508</td>
-          <td class="num rd-txt">39.1%</td>
-          <td class="num">—</td>
-          <td class="num">—</td>
-          <td rowspan="2" style="text-align:center;vertical-align:middle">
-            <div class="pc-growth" style="justify-content:center">↑ 16.4% MoM</div>
-            <div style="font-size:11px;color:var(--g6);margin-top:6px">1,298 → 1,552</div>
-          </td>
-        </tr>
-        <tr>
-          <td><span class="tag tag-jun">2nd Flash · Jun 10th</span></td>
-          <td class="num">1,552</td>
-          <td class="num rd-txt">131</td>
-          <td class="num rd-txt" style="font-size:11px;color:var(--g6)">(same-day churn)</td>
-          <td class="num gr-txt">790</td>
-          <td class="num gr-txt">60.9%</td>
-        </tr>
-        <tr style="background:var(--g1)">
-          <td colspan="7" style="padding:12px 16px">
-            <div style="display:flex;gap:24px;flex-wrap:wrap">
-              <div style="font-size:12px"><span style="color:var(--g6)">New vendors Jun 10th not on May 14th:</span> <strong class="or-txt">762</strong></div>
-              <div style="font-size:12px"><span style="color:var(--g6)">Net new orders Jun 10th from retained vendors:</span> <strong class="gr-txt">10,571</strong></div>
-              <div style="font-size:12px"><span style="color:var(--g6)">Net new orders Jun 10th from new vendors:</span> <strong class="or-txt">14,805</strong></div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- TAKEAWAYS -->
-  <div class="slabel"><div class="snum">★</div><div class="stitle">Key Takeaways</div></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-    <div style="background:var(--gr-pale);border:1.5px solid #86EFAC;border-radius:10px;padding:16px">
-      <div style="font-size:12px;font-weight:700;color:var(--gr);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">✅ What's Working</div>
-      <ul style="font-size:13px;color:#166534;line-height:1.9;padding-left:16px">
-        <li>Jun 10th Flash doubled May 14th in both orders and revenue</li>
-        <li>Flash day uplift improved: <strong>97.8%</strong> (May) → <strong>189.2%</strong> (June)</li>
-        <li>Flash deal opt-in grew <strong>+79.7%</strong> — strong vendor adoption</li>
-        <li>New vendor additions healthy at <strong>762 net-new</strong> on Jun 10th</li>
-      </ul>
-    </div>
-    <div style="background:var(--rd-pale);border:1.5px solid #FCA5A5;border-radius:10px;padding:16px">
-      <div style="font-size:12px;font-weight:700;color:var(--rd);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">⚠️ Needs Attention</div>
-      <ul style="font-size:13px;color:#7F1D1D;line-height:1.9;padding-left:16px">
-        <li><strong>39.1%</strong> of May 14th vendors did not return for June</li>
-        <li>508 churned vendors = lost opportunity for next Flash Sale</li>
-        <li>Win-back campaign needed before next Flash Sale</li>
-        <li>Monitor same-day churn (131 vendors) on Jun 10th</li>
-      </ul>
-    </div>
-  </div>
+</div>
 
 </main>
 </body>
