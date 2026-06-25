@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAM Ads Dashboard — Q2 2026</title>
+<style>
+  :root {
+    --orange: #FF6B00;
+    --dark: #1A1A2E;
+    --card-bg: #FFFFFF;
+    --bg: #F4F6F9;
+    --border: #E2E8F0;
+    --green: #22C55E;
+    --red: #EF4444;
+    --yellow: #F59E0B;
+    --blue: #3B82F6;
+    --text: #1E293B;
+    --muted: #64748B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+  /* Header */
+  .header { background: var(--dark); padding: 24px 40px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon { width: 40px; height: 40px; background: var(--orange); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; font-size: 18px; }
+  .logo-text { color: #fff; font-size: 22px; font-weight: 700; }
+  .logo-sub { color: #94A3B8; font-size: 13px; }
+  .header-meta { text-align: right; color: #94A3B8; font-size: 13px; }
+  .header-meta strong { color: var(--orange); display: block; font-size: 15px; }
+
+  /* Layout */
+  .container { max-width: 1280px; margin: 0 auto; padding: 32px 24px; }
+  .section { margin-bottom: 40px; }
+  .section-title { font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 16px; padding-left: 12px; border-left: 4px solid var(--orange); display: flex; align-items: center; gap: 8px; }
+  .section-num { background: var(--orange); color: #fff; border-radius: 50%; width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .card { background: var(--card-bg); border-radius: 12px; padding: 20px 24px; border: 1px solid var(--border); }
+  .card-grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* KPI Cards */
+  .kpi { background: var(--card-bg); border-radius: 12px; padding: 18px 20px; border: 1px solid var(--border); }
+  .kpi-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .kpi-value { font-size: 28px; font-weight: 800; color: var(--dark); margin: 6px 0 4px; }
+  .kpi-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+  .badge-up { background: #D1FAE5; color: #065F46; }
+  .badge-down { background: #FEE2E2; color: #991B1B; }
+  .badge-neutral { background: #E0F2FE; color: #0369A1; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  /* Tables */
+  .tbl-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead { background: var(--dark); color: #fff; }
+  thead th { padding: 10px 14px; text-align: left; font-weight: 600; font-size: 12px; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) { background: #F8FAFC; }
+  tbody tr:hover { background: #EFF6FF; }
+  td { padding: 9px 14px; vertical-align: middle; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .center { text-align: center; }
+
+  /* Status badges */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .over { background: #D1FAE5; color: #065F46; }
+  .meeting { background: #DBEAFE; color: #1E40AF; }
+  .under { background: #FEE2E2; color: #991B1B; }
+  .na { background: #F1F5F9; color: #64748B; }
+
+  /* Growth cells */
+  .pos { color: #16A34A; font-weight: 700; }
+  .neg { color: #DC2626; font-weight: 700; }
+  .flat { color: #6B7280; }
+
+  /* Bar chart */
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-label { width: 130px; font-size: 12px; color: var(--muted); text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; background: #E2E8F0; border-radius: 4px; height: 14px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+  .bar-val { width: 70px; font-size: 12px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+
+  /* Donut-like breakdown */
+  .breakdown-row { display: flex; align-items: center; margin-bottom: 12px; }
+  .bk-color { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; margin-right: 10px; }
+  .bk-label { flex: 1; font-size: 13px; color: var(--text); }
+  .bk-val { font-size: 14px; font-weight: 700; color: var(--dark); text-align: right; }
+  .bk-pct { font-size: 12px; color: var(--muted); margin-left: 6px; width: 40px; text-align: right; }
+  .progress-bar { height: 24px; border-radius: 6px; overflow: hidden; display: flex; margin-bottom: 12px; }
+  .progress-seg { height: 100%; }
+
+  /* MoM Chart */
+  .mom-chart { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 12px; }
+  .mom-month { text-align: center; }
+  .mom-bar-wrap { height: 80px; display: flex; align-items: flex-end; justify-content: center; gap: 4px; }
+  .mom-bar { width: 18px; border-radius: 3px 3px 0 0; }
+  .mom-label { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .mom-val { font-size: 10px; font-weight: 600; }
+
+  /* Recs */
+  .rec-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .rec-card { background: var(--card-bg); border-radius: 10px; padding: 18px 20px; border: 1px solid var(--border); border-left: 4px solid var(--orange); }
+  .rec-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .rec-brand { font-weight: 700; font-size: 14px; color: var(--dark); }
+  .rec-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .tag-high { background: #FEE2E2; color: #991B1B; }
+  .tag-med { background: #FEF3C7; color: #92400E; }
+  .tag-low { background: #D1FAE5; color: #065F46; }
+  .rec-list { list-style: none; padding: 0; }
+  .rec-list li { font-size: 13px; color: var(--muted); padding: 3px 0; padding-left: 14px; position: relative; }
+  .rec-list li::before { content: "→"; position: absolute; left: 0; color: var(--orange); font-weight: 700; }
+  .rec-gmv { font-size: 11px; color: var(--blue); font-weight: 600; margin-top: 8px; }
+
+  /* Trend indicators */
+  .arrow-up::before { content: "▲ "; }
+  .arrow-down::before { content: "▼ "; }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+  /* Summary callout */
+  .callout { background: linear-gradient(135deg, #FFF7ED, #FEF3C7); border: 1px solid #FDE68A; border-radius: 10px; padding: 16px 20px; margin-bottom: 16px; }
+  .callout-title { font-weight: 700; color: #92400E; margin-bottom: 6px; font-size: 14px; }
+  .callout p { font-size: 13px; color: #78350F; line-height: 1.6; }
+
+  .insight-box { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 10px; padding: 14px 18px; margin-top: 12px; }
+  .insight-box p { font-size: 13px; color: #1E40AF; line-height: 1.6; }
+  .insight-box strong { color: #1D4ED8; }
+
+  @media (max-width: 900px) {
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .rec-grid { grid-template-columns: 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">t</div>
+    <div>
+      <div class="logo-text">talabat</div>
+      <div class="logo-sub">KAM Ads Performance Dashboard</div>
+    </div>
+  </div>
+  <div class="header-meta">
+    <strong>Q2 2026 Review</strong>
+    Apr '26 — Jun '26 &nbsp;|&nbsp; Prepared: June 25, 2026
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SECTION 1: GMV vs Ads (NCR) MoM Growth -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">1</span>
+      GMV Growth MoM vs Ads Revenue (NCR) MoM
+    </div>
+
+    <!-- Top KPIs -->
+    <div class="card-grid grid-4" style="margin-bottom:16px;">
+      <div class="kpi">
+        <div class="kpi-label">Q2'26 Total GMV</div>
+        <div class="kpi-value">940.8M</div>
+        <div><span class="kpi-badge badge-up">▲ +21.2% QoQ</span></div>
+        <div class="kpi-sub">vs Q1'26: 776.5M AED</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Q2'26 Total NCR (Ads)</div>
+        <div class="kpi-value">19.8M</div>
+        <div><span class="kpi-badge badge-up">▲ +25.4% QoQ</span></div>
+        <div class="kpi-sub">vs Q1'26: 15.8M AED</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">NCR / GMV Ratio</div>
+        <div class="kpi-value">2.10%</div>
+        <div><span class="kpi-badge badge-up">▲ +7bps vs Q1</span></div>
+        <div class="kpi-sub">Q1'26: 2.03% &nbsp;|&nbsp; Q2'25: 1.75%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">NCR vs GMV Growth</div>
+        <div class="kpi-value">+4.2pp</div>
+        <div><span class="kpi-badge badge-up">Ads outpacing GMV</span></div>
+        <div class="kpi-sub">NCR +25.4% vs GMV +21.2%</div>
+      </div>
+    </div>
+
+    <!-- MoM Detail Table -->
+    <div class="card">
+      <div style="font-weight:700; font-size:14px; margin-bottom:14px; color:var(--dark);">Monthly Breakdown — GMV & NCR with MoM Growth Rates</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th class="num">GMV (AED)</th>
+              <th class="num">GMV MoM</th>
+              <th class="num">NCR / Ads (AED)</th>
+              <th class="num">NCR MoM</th>
+              <th class="num">NCR / GMV %</th>
+              <th class="center">Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Q1'26 Avg</strong> <span style="font-size:11px;color:var(--muted)">(Jan–Mar)</span></td>
+              <td class="num">258,826,529</td>
+              <td class="num flat">—</td>
+              <td class="num">5,265,717</td>
+              <td class="num flat">—</td>
+              <td class="num">2.03%</td>
+              <td class="center">—</td>
+            </tr>
+            <tr style="background:#FFFBEB;">
+              <td><strong>Q1→Q2 QoQ</strong></td>
+              <td class="num"><span class="pos">+21.2%</span></td>
+              <td class="num"></td>
+              <td class="num"><span class="pos">+25.4%</span></td>
+              <td class="num"></td>
+              <td class="num"><span class="pos">+7bps</span></td>
+              <td class="center"><span class="kpi-badge badge-up" style="font-size:11px;">NCR leads GMV</span></td>
+            </tr>
+            <tr>
+              <td><strong>Apr '26</strong></td>
+              <td class="num">301,446,976</td>
+              <td class="num flat">—</td>
+              <td class="num">6,477,016</td>
+              <td class="num pos">+28.2%</td>
+              <td class="num">2.15%</td>
+              <td class="center"><span class="kpi-badge badge-up" style="font-size:11px;">NCR leads</span></td>
+            </tr>
+            <tr>
+              <td><strong>May '26</strong></td>
+              <td class="num">325,271,398</td>
+              <td class="num pos">+7.9%</td>
+              <td class="num">6,698,335</td>
+              <td class="num pos">+3.4%</td>
+              <td class="num">2.06%</td>
+              <td class="center"><span class="kpi-badge badge-neutral" style="font-size:11px;">GMV leads</span></td>
+            </tr>
+            <tr>
+              <td><strong>Jun '26</strong></td>
+              <td class="num">314,109,220</td>
+              <td class="num neg">−3.4%</td>
+              <td class="num">6,627,411</td>
+              <td class="num neg">−1.1%</td>
+              <td class="num">2.11%</td>
+              <td class="center"><span class="kpi-badge badge-up" style="font-size:11px;">NCR more resilient</span></td>
+            </tr>
+            <tr style="background:#F0FDF4; font-weight:700;">
+              <td><strong>Q2 Total</strong></td>
+              <td class="num">940,827,594</td>
+              <td class="num pos">+21.2% QoQ</td>
+              <td class="num">19,802,763</td>
+              <td class="num pos">+25.4% QoQ</td>
+              <td class="num">2.10%</td>
+              <td class="center"><span class="kpi-badge badge-up" style="font-size:11px;">✓ Both growing</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="insight-box" style="margin-top:14px;">
+        <p>
+          <strong>Key Insight:</strong> Ads revenue (NCR) is outperforming GMV growth at the quarterly level (+25.4% vs +21.2%),
+          meaning the ads monetization rate is improving. The NCR/GMV ratio expanded from <strong>2.03% → 2.10%</strong> QoQ
+          and from just <strong>1.75%</strong> a year ago in Q2'25 — a significant +35bps YoY improvement.
+          However, within Q2, May saw GMV grow faster (+7.9%) than NCR (+3.4%), while June showed NCR declined less than GMV
+          (−1.1% vs −3.4%), suggesting ads revenue is becoming more sticky and less volatile than GMV.
+        </p>
+      </div>
+
+      <!-- Historical context -->
+      <div style="margin-top:16px;">
+        <div style="font-weight:700; font-size:13px; color:var(--muted); margin-bottom:10px;">Historical NCR/GMV Ratio Trend</div>
+        <div>
+          <div class="bar-row"><div class="bar-label">Q2'25</div><div class="bar-track"><div class="bar-fill" style="width:83%;background:#94A3B8;"></div></div><div class="bar-val">1.75%</div></div>
+          <div class="bar-row"><div class="bar-label">Q3'25</div><div class="bar-track"><div class="bar-fill" style="width:89%;background:#94A3B8;"></div></div><div class="bar-val">1.87%</div></div>
+          <div class="bar-row"><div class="bar-label">Q4'25</div><div class="bar-track"><div class="bar-fill" style="width:88%;background:#94A3B8;"></div></div><div class="bar-val">1.85%</div></div>
+          <div class="bar-row"><div class="bar-label">Q1'26</div><div class="bar-track"><div class="bar-fill" style="width:97%;background:#F59E0B;"></div></div><div class="bar-val">2.03%</div></div>
+          <div class="bar-row"><div class="bar-label">Q2'26</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#FF6B00;"></div></div><div class="bar-val"><strong>2.10%</strong></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SECTION 2: Brand Commitment Tracker -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">2</span>
+      Brand Commitment Tracker — Q2 2026
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">📋 Commitment Structure</div>
+      <p>Brands with <strong>% rate commitments</strong> (Americana, McDonald's, Olayan, Kitopi, etc.) are measured as actual NCR vs <em>rate × Q2 GMV</em>.
+      Brands with <strong>fixed monthly commitments</strong> (Cravia 90K/mo, Gazebo 590K/mo, Tim Hortons 50K/mo, Donaza 8K/mo) are measured vs <em>monthly amount × 3</em>.</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Brand</th>
+            <th>Commitment Type</th>
+            <th class="num">Q2 GMV (AED)</th>
+            <th class="num">Commitment Target</th>
+            <th class="num">Q2 Actual NCR</th>
+            <th class="num">Variance</th>
+            <th class="num">Variance %</th>
+            <th class="center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- OVERSPEND/MEETING -->
+          <tr>
+            <td><strong>Americana</strong> <div style="font-size:11px;color:var(--muted)">KFC, Hardee's, Pizza Hut, Malak, KK, Wimpy</div></td>
+            <td>1% of GMV</td>
+            <td class="num">208,588,407</td>
+            <td class="num">2,085,884</td>
+            <td class="num"><strong>2,802,886</strong></td>
+            <td class="num pos">+717,002</td>
+            <td class="num pos">+34.4%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>McDonald's</strong> <div style="font-size:11px;color:var(--muted)">Started Apr'26</div></td>
+            <td>1% of GMV</td>
+            <td class="num">147,057,940</td>
+            <td class="num">1,470,579</td>
+            <td class="num"><strong>1,549,938</strong></td>
+            <td class="num pos">+79,359</td>
+            <td class="num pos">+5.4%</td>
+            <td class="center"><span class="status meeting">≈ Meeting</span></td>
+          </tr>
+          <tr>
+            <td><strong>Kitopi</strong> <div style="font-size:11px;color:var(--muted)">30+ ghost kitchen brands</div></td>
+            <td>2.75% of GMV</td>
+            <td class="num">66,254,379</td>
+            <td class="num">1,821,995</td>
+            <td class="num"><strong>2,199,344</strong></td>
+            <td class="num pos">+377,349</td>
+            <td class="num pos">+20.7%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Gazebo Group</strong> <div style="font-size:11px;color:var(--muted)">Gazebo, Kamat, Aqaya</div></td>
+            <td>590K/month fixed</td>
+            <td class="num">19,146,477</td>
+            <td class="num">1,770,000</td>
+            <td class="num"><strong>1,925,885</strong></td>
+            <td class="num pos">+155,885</td>
+            <td class="num pos">+8.8%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Olayan</strong> <div style="font-size:11px;color:var(--muted)">Burger King, Texas Chicken, BWW</div></td>
+            <td>1.5% of GMV</td>
+            <td class="num">37,419,986</td>
+            <td class="num">561,300</td>
+            <td class="num"><strong>919,140</strong></td>
+            <td class="num pos">+357,840</td>
+            <td class="num pos">+63.8%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Cravia</strong> <div style="font-size:11px;color:var(--muted)">Zaatar W Zeit, Cinnabon</div></td>
+            <td>90K/month fixed</td>
+            <td class="num">20,836,405</td>
+            <td class="num">270,000</td>
+            <td class="num"><strong>849,036</strong></td>
+            <td class="num pos">+579,036</td>
+            <td class="num pos">+214.5%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dunkin</strong></td>
+            <td>2% of GMV</td>
+            <td class="num">11,363,669</td>
+            <td class="num">227,273</td>
+            <td class="num"><strong>399,470</strong></td>
+            <td class="num pos">+172,197</td>
+            <td class="num pos">+75.8%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Eathos</strong> <div style="font-size:11px;color:var(--muted)">Tortilla, Sushi Art, Alien Burger, Rosa's Thai</div></td>
+            <td>4% of GMV</td>
+            <td class="num">8,038,296</td>
+            <td class="num">321,532</td>
+            <td class="num"><strong>453,021</strong></td>
+            <td class="num pos">+131,489</td>
+            <td class="num pos">+40.9%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dodo Pizza</strong></td>
+            <td>4% of GMV</td>
+            <td class="num">1,164,758</td>
+            <td class="num">46,590</td>
+            <td class="num"><strong>192,589</strong></td>
+            <td class="num pos">+146,000</td>
+            <td class="num pos">+313.4%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Wendy's</strong></td>
+            <td>1% of GMV</td>
+            <td class="num">3,716,549</td>
+            <td class="num">37,165</td>
+            <td class="num"><strong>98,799</strong></td>
+            <td class="num pos">+61,634</td>
+            <td class="num pos">+165.8%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <tr>
+            <td><strong>Tim Hortons</strong></td>
+            <td>50K/month fixed</td>
+            <td class="num">4,121,796</td>
+            <td class="num">150,000</td>
+            <td class="num"><strong>160,820</strong></td>
+            <td class="num pos">+10,820</td>
+            <td class="num pos">+7.2%</td>
+            <td class="center"><span class="status meeting">≈ Meeting</span></td>
+          </tr>
+          <tr>
+            <td><strong>On The Wood</strong></td>
+            <td>3% of GMV</td>
+            <td class="num">7,655,508</td>
+            <td class="num">229,665</td>
+            <td class="num"><strong>232,444</strong></td>
+            <td class="num pos">+2,779</td>
+            <td class="num pos">+1.2%</td>
+            <td class="center"><span class="status meeting">≈ Meeting</span></td>
+          </tr>
+          <tr>
+            <td><strong>Yolk Brands</strong> <div style="font-size:11px;color:var(--muted)">Pickl, Bonbird</div></td>
+            <td>2% of GMV</td>
+            <td class="num">5,400,457</td>
+            <td class="num">108,009</td>
+            <td class="num"><strong>113,535</strong></td>
+            <td class="num pos">+5,526</td>
+            <td class="num pos">+5.1%</td>
+            <td class="center"><span class="status meeting">≈ Meeting</span></td>
+          </tr>
+          <tr>
+            <td><strong>Papa Johns Pizza</strong></td>
+            <td>No formal rate</td>
+            <td class="num">20,887,093</td>
+            <td class="num">—</td>
+            <td class="num"><strong>466,053</strong></td>
+            <td class="num flat">—</td>
+            <td class="num flat">(~2.23% effective)</td>
+            <td class="center"><span class="status na">No commit</span></td>
+          </tr>
+          <tr>
+            <td><strong>Subway</strong></td>
+            <td>No formal rate</td>
+            <td class="num">21,906,436</td>
+            <td class="num">—</td>
+            <td class="num"><strong>440,840</strong></td>
+            <td class="num flat">—</td>
+            <td class="num flat">(~2.01% effective)</td>
+            <td class="center"><span class="status na">No commit</span></td>
+          </tr>
+          <tr>
+            <td><strong>Donaza</strong></td>
+            <td>8K/month fixed</td>
+            <td class="num">1,119,414</td>
+            <td class="num">24,000</td>
+            <td class="num"><strong>97,814</strong></td>
+            <td class="num pos">+73,814</td>
+            <td class="num pos">+307.6%</td>
+            <td class="center"><span class="status over">✓ Over</span></td>
+          </tr>
+          <!-- UNDERSPEND -->
+          <tr style="background:#FFF5F5;">
+            <td><strong style="color:#DC2626;">Epik — Tier A</strong> <div style="font-size:11px;color:var(--muted)">10 brands</div></td>
+            <td>10% of GMV</td>
+            <td class="num">6,789,782</td>
+            <td class="num">678,978</td>
+            <td class="num"><strong>334,543</strong></td>
+            <td class="num neg">−344,435</td>
+            <td class="num neg">−50.7%</td>
+            <td class="center"><span class="status under">✗ Under</span></td>
+          </tr>
+          <tr style="background:#FFF5F5;">
+            <td><strong style="color:#DC2626;">Epik — Tier B</strong> <div style="font-size:11px;color:var(--muted)">Shawarma&Co, Keto&Co, Avo&Co</div></td>
+            <td>10% of GMV</td>
+            <td class="num">1,816,894</td>
+            <td class="num">181,689</td>
+            <td class="num"><strong>52,069</strong></td>
+            <td class="num neg">−129,620</td>
+            <td class="num neg">−71.3%</td>
+            <td class="center"><span class="status under">✗ Under</span></td>
+          </tr>
+          <tr style="background:#FFF5F5;">
+            <td><strong style="color:#DC2626;">Epik — KPP +1</strong> <div style="font-size:11px;color:var(--muted)">Affordabowls, Gorilla Burger</div></td>
+            <td>10% of GMV</td>
+            <td class="num">1,095,576</td>
+            <td class="num">109,558</td>
+            <td class="num"><strong>73,855</strong></td>
+            <td class="num neg">−35,703</td>
+            <td class="num neg">−32.6%</td>
+            <td class="center"><span class="status under">✗ Under</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SECTION 3: Overspend vs Underspend Summary -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">3</span>
+      Overspend vs Underspend — Brand Summary
+    </div>
+
+    <div class="card-grid grid-2">
+
+      <!-- Overspend brands -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <span style="background:#D1FAE5;color:#065F46;padding:4px 12px;border-radius:20px;font-weight:700;font-size:13px;">✓ Overspend / Meeting (13 brands)</span>
+        </div>
+        <div>
+          <div class="bar-row"><div class="bar-label">Cravia</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#22C55E;"></div></div><div class="bar-val pos">+214.5%</div></div>
+          <div class="bar-row"><div class="bar-label">Donaza</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#22C55E;"></div></div><div class="bar-val pos">+307.6%</div></div>
+          <div class="bar-row"><div class="bar-label">Dodo Pizza</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#22C55E;"></div></div><div class="bar-val pos">+313.4%</div></div>
+          <div class="bar-row"><div class="bar-label">Wendy's</div><div class="bar-track"><div class="bar-fill" style="width:69%;background:#22C55E;"></div></div><div class="bar-val pos">+165.8%</div></div>
+          <div class="bar-row"><div class="bar-label">Dunkin</div><div class="bar-track"><div class="bar-fill" style="width:40%;background:#22C55E;"></div></div><div class="bar-val pos">+75.8%</div></div>
+          <div class="bar-row"><div class="bar-label">Olayan</div><div class="bar-track"><div class="bar-fill" style="width:35%;background:#22C55E;"></div></div><div class="bar-val pos">+63.8%</div></div>
+          <div class="bar-row"><div class="bar-label">Eathos</div><div class="bar-track"><div class="bar-fill" style="width:22%;background:#86EFAC;"></div></div><div class="bar-val pos">+40.9%</div></div>
+          <div class="bar-row"><div class="bar-label">Americana</div><div class="bar-track"><div class="bar-fill" style="width:18%;background:#86EFAC;"></div></div><div class="bar-val pos">+34.4%</div></div>
+          <div class="bar-row"><div class="bar-label">Kitopi</div><div class="bar-track"><div class="bar-fill" style="width:11%;background:#86EFAC;"></div></div><div class="bar-val pos">+20.7%</div></div>
+          <div class="bar-row"><div class="bar-label">Gazebo Group</div><div class="bar-track"><div class="bar-fill" style="width:5%;background:#86EFAC;"></div></div><div class="bar-val pos">+8.8%</div></div>
+          <div class="bar-row"><div class="bar-label">McDonald's</div><div class="bar-track"><div class="bar-fill" style="width:3%;background:#60A5FA;"></div></div><div class="bar-val pos">+5.4%</div></div>
+          <div class="bar-row"><div class="bar-label">Tim Hortons</div><div class="bar-track"><div class="bar-fill" style="width:4%;background:#60A5FA;"></div></div><div class="bar-val pos">+7.2%</div></div>
+          <div class="bar-row"><div class="bar-label">On The Wood</div><div class="bar-track"><div class="bar-fill" style="width:1%;background:#60A5FA;"></div></div><div class="bar-val pos">+1.2%</div></div>
+        </div>
+        <div style="margin-top:12px;padding:10px 12px;background:#F0FDF4;border-radius:8px;font-size:12px;color:#166534;">
+          <strong>💰 Total Q2 Overspend vs Commitment:</strong><br>
+          Actual NCR: <strong>10,506,559</strong> vs Target: <strong>7,501,960</strong> → <strong>+3,004,599 AED surplus (+40%)</strong>
+        </div>
+      </div>
+
+      <!-- Underspend brands -->
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <span style="background:#FEE2E2;color:#991B1B;padding:4px 12px;border-radius:20px;font-weight:700;font-size:13px;">✗ Underspend — Action Required (3 brands)</span>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <div class="bar-row"><div class="bar-label">Epik Tier B</div><div class="bar-track"><div class="bar-fill" style="width:71%;background:#EF4444;"></div></div><div class="bar-val neg">−71.3%</div></div>
+          <div class="bar-row"><div class="bar-label">Epik Tier A</div><div class="bar-track"><div class="bar-fill" style="width:51%;background:#EF4444;"></div></div><div class="bar-val neg">−50.7%</div></div>
+          <div class="bar-row"><div class="bar-label">Epik KPP+1</div><div class="bar-track"><div class="bar-fill" style="width:33%;background:#F97316;"></div></div><div class="bar-val neg">−32.6%</div></div>
+        </div>
+
+        <div style="padding:12px;background:#FFF5F5;border-radius:8px;border:1px solid #FECACA;margin-bottom:12px;">
+          <div style="font-weight:700;color:#DC2626;margin-bottom:6px;font-size:13px;">⚠️ Total Q2 Underspend Gap (Epik)</div>
+          <table style="width:100%;font-size:12px;">
+            <tr><td style="color:#64748B;">Epik Tier A</td><td style="text-align:right;color:#DC2626;font-weight:600;">−344,435 AED</td></tr>
+            <tr><td style="color:#64748B;">Epik Tier B</td><td style="text-align:right;color:#DC2626;font-weight:600;">−129,620 AED</td></tr>
+            <tr><td style="color:#64748B;">Epik KPP+1</td><td style="text-align:right;color:#DC2626;font-weight:600;">−35,703 AED</td></tr>
+            <tr style="border-top:1px solid #FECACA;"><td style="font-weight:700;color:#991B1B;padding-top:6px;">Total Gap</td><td style="text-align:right;font-weight:700;color:#991B1B;padding-top:6px;">−509,758 AED</td></tr>
+          </table>
+        </div>
+
+        <div style="padding:12px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A;font-size:12px;color:#92400E;">
+          <strong>Root Cause:</strong> Epik brands at 10% NCR rate are consistently underdelivering.
+          Their actual ad rates (3–5% effective) suggest either the 10% commitment was over-contracted
+          relative to budget capacity, or spend activation is failing at restaurant level.
+          Immediate QBR with Epik management is recommended.
+        </div>
+
+        <!-- No commitment brands -->
+        <div style="margin-top:16px;padding:12px;background:#F8FAFC;border-radius:8px;border:1px solid #E2E8F0;font-size:12px;color:#475569;">
+          <strong>📌 No Commitment (2 brands):</strong><br>
+          <span style="color:#3B82F6;font-weight:600;">Papa Johns</span> — Q2 NCR: 466,053 | Effective rate: 2.23%<br>
+          <span style="color:#3B82F6;font-weight:600;">Subway</span> — Q2 NCR: 440,840 | Effective rate: 2.01%<br>
+          <em>Opportunity: Formalize % commitment with both (suggest 2–2.5%)</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SECTION 4: NCR Revenue Breakdown — Upsell vs Retain -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">4</span>
+      NCR Revenue Breakdown — Upsell vs Retain (Q2 2026)
+    </div>
+
+    <div class="card-grid grid-2">
+      <div class="card">
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Q2 Total NCR: <span style="color:var(--orange)">19,802,763 AED</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Segmented by revenue type across KAM brands + platform</div>
+
+        <!-- Stacked bar -->
+        <div class="progress-bar" style="margin-bottom:6px;">
+          <div class="progress-seg" style="width:61.9%;background:#22C55E;" title="Contractual Retain"></div>
+          <div class="progress-seg" style="width:16.2%;background:#FF6B00;" title="Upsell above contract"></div>
+          <div class="progress-seg" style="width:8.3%;background:#F59E0B;" title="Non-Contractual KAM"></div>
+          <div class="progress-seg" style="width:13.6%;background:#94A3B8;" title="Non-KAM"></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+          <span style="font-size:11px;color:#22C55E;font-weight:600;">■ Retain 61.9%</span>
+          <span style="font-size:11px;color:#FF6B00;font-weight:600;">■ Upsell 16.2%</span>
+          <span style="font-size:11px;color:#F59E0B;font-weight:600;">■ Non-Contract KAM 8.3%</span>
+          <span style="font-size:11px;color:#94A3B8;font-weight:600;">■ Non-KAM 13.6%</span>
+        </div>
+
+        <!-- Breakdown rows -->
+        <div class="breakdown-row">
+          <div class="bk-color" style="background:#22C55E;"></div>
+          <div class="bk-label"><strong>Retain (Contractual Baseline)</strong><br><span style="font-size:11px;color:var(--muted)">Minimum committed ad spend from contracts</span></div>
+          <div class="bk-val">12,257,783</div>
+          <div class="bk-pct">61.9%</div>
+        </div>
+        <div class="breakdown-row">
+          <div class="bk-color" style="background:#FF6B00;"></div>
+          <div class="bk-label"><strong>Upsell (Above-Contract Incremental)</strong><br><span style="font-size:11px;color:var(--muted)">Revenue unlocked above contractual floor</span></div>
+          <div class="bk-val">3,217,097</div>
+          <div class="bk-pct">16.2%</div>
+        </div>
+        <div class="breakdown-row">
+          <div class="bk-color" style="background:#F59E0B;"></div>
+          <div class="bk-label"><strong>Non-Contractual KAM Ads</strong><br><span style="font-size:11px;color:var(--muted)">One-off / campaign-based from KAM brands</span></div>
+          <div class="bk-val">1,637,300</div>
+          <div class="bk-pct">8.3%</div>
+        </div>
+        <div class="breakdown-row">
+          <div class="bk-color" style="background:#94A3B8;"></div>
+          <div class="bk-label"><strong>Non-KAM / Platform Revenue</strong><br><span style="font-size:11px;color:var(--muted)">SMB & self-serve brands outside KAM</span></div>
+          <div class="bk-val">2,690,583</div>
+          <div class="bk-pct">13.6%</div>
+        </div>
+      </div>
+
+      <!-- Monthly trend of upsell vs retain -->
+      <div class="card">
+        <div style="font-weight:700;font-size:14px;margin-bottom:14px;">Monthly Upsell vs Retain Trend</div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th class="num">Retain (Contract)</th>
+                <th class="num">Upsell (Above)</th>
+                <th class="num">Non-Contract</th>
+                <th class="num">Upsell %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Jan</strong></td>
+                <td class="num">4,020,455</td>
+                <td class="num">195,823</td>
+                <td class="num">1,174,687</td>
+                <td class="num">3.6%</td>
+              </tr>
+              <tr>
+                <td><strong>Feb</strong></td>
+                <td class="num">3,966,037</td>
+                <td class="num neg">−104,622</td>
+                <td class="num">1,113,547</td>
+                <td class="num neg">—</td>
+              </tr>
+              <tr>
+                <td><strong>Mar</strong></td>
+                <td class="num">3,484,297</td>
+                <td class="num">275,905</td>
+                <td class="num">1,292,944</td>
+                <td class="num">5.5%</td>
+              </tr>
+              <tr style="background:#FFFBEB;">
+                <td><strong>Q1 Total</strong></td>
+                <td class="num"><strong>11,470,790</strong></td>
+                <td class="num pos"><strong>367,106</strong></td>
+                <td class="num"><strong>3,581,178</strong></td>
+                <td class="num">2.4%</td>
+              </tr>
+              <tr>
+                <td><strong>Apr</strong></td>
+                <td class="num">3,931,520</td>
+                <td class="num pos">1,107,987</td>
+                <td class="num">771,915</td>
+                <td class="num pos">18.7%</td>
+              </tr>
+              <tr>
+                <td><strong>May</strong></td>
+                <td class="num">3,959,440</td>
+                <td class="num pos">1,374,614</td>
+                <td class="num">392,776</td>
+                <td class="num pos">20.5%</td>
+              </tr>
+              <tr>
+                <td><strong>Jun</strong></td>
+                <td class="num">4,366,823</td>
+                <td class="num pos">734,496</td>
+                <td class="num">472,609</td>
+                <td class="num pos">11.1%</td>
+              </tr>
+              <tr style="background:#F0FDF4;font-weight:700;">
+                <td><strong>Q2 Total</strong></td>
+                <td class="num">12,257,783</td>
+                <td class="num pos">3,217,097</td>
+                <td class="num">1,637,300</td>
+                <td class="num pos">16.2%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="insight-box" style="margin-top:12px;">
+          <p><strong>Upsell breakthrough in Q2:</strong> Upsell (above-contract incremental) surged from
+          just <strong>2.4%</strong> of KAM NCR in Q1 to <strong>16.2%</strong> in Q2 — a 7× increase.
+          May was the strongest month at 20.5%. This is driven primarily by McDonald's activation
+          and increased discretionary spend from Americana and Kitopi. June softened (+734K) suggesting
+          upsell is still largely campaign-dependent rather than always-on.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- SECTION 5: Recommendations to Grow Upsell -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="section-num">5</span>
+      Recommendations Plan — Growing Upsell Across All Brands
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">🎯 Strategic Objective</div>
+      <p>Grow upsell (above-contract + non-contractual NCR) from <strong>24.5% to 35%+</strong> of total KAM NCR by Q3'26, targeting an additional
+      <strong>+2.5M AED/quarter</strong> in incremental revenue. Focus: always-on campaigns, CPC/CPM upsells, and closing the Epik commitment gap.</p>
+    </div>
+
+    <div class="rec-grid">
+
+      <!-- Americana -->
+      <div class="rec-card">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand">Americana Group</div>
+            <div style="font-size:11px;color:var(--muted)">KFC, Pizza Hut, Hardee's | Q2 GMV: 208M AED | Rate: 1%</div>
+          </div>
+          <span class="rec-tag tag-high">High Priority</span>
+        </div>
+        <ul class="rec-list">
+          <li>Propose <strong>Sponsored Collections</strong> for Ramadan/National Day with incremental CPC budgets (target +0.3% rate uplift)</li>
+          <li>Upsell <strong>Performance Guarantee Banners</strong> — only pay if GMV uplift proven (reduces risk objection)</li>
+          <li>KFC is top revenue driver — offer dedicated <strong>Push Notification Blast</strong> package (~25K AED/campaign)</li>
+          <li>Wimpy saw 3× growth Jun vs Apr — propose follow-up expansion campaign</li>
+          <li>Target effective rate: <strong>1.3% → 1.5%</strong> by Q3'26</li>
+        </ul>
+        <div class="rec-gmv">📈 Potential Q3 upsell uplift: +300,000–500,000 AED</div>
+      </div>
+
+      <!-- McDonald's -->
+      <div class="rec-card">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand">McDonald's</div>
+            <div style="font-size:11px;color:var(--muted)">New partner from Apr'26 | Q2 GMV: 147M AED | Rate: 1%</div>
+          </div>
+          <span class="rec-tag tag-high">High Priority</span>
+        </div>
+        <ul class="rec-list">
+          <li>Currently at 1% contractual minimum — propose <strong>full-funnel digital package</strong>: Homepage Banner + CPC + Sponsored Search</li>
+          <li>Pitch <strong>McDonald's Exclusive Meal Promotions</strong> on talabat with co-funded ad budget (media JBP)</li>
+          <li>Set a <strong>Q3 stretch target of 1.5%</strong> rate with quarterly reviews and upsell unlocks tied to GMV milestones</li>
+          <li>Partner on <strong>Always-On CPC</strong> campaigns — McDonald's has highest GMV per brand, every 0.1% uplift = +147K NCR</li>
+          <li>Establish a <strong>McDonald's Brand Day</strong> monthly (high-impact promotion) with ad spend attached</li>
+        </ul>
+        <div class="rec-gmv">📈 Potential Q3 upsell uplift: +500,000–800,000 AED (largest single opportunity)</div>
+      </div>
+
+      <!-- Epik -->
+      <div class="rec-card" style="border-left-color:#EF4444;">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand" style="color:#DC2626;">Epik — All Tiers (URGENT)</div>
+            <div style="font-size:11px;color:var(--muted)">Tier A + B + KPP | Q2 Gap: −509,758 AED</div>
+          </div>
+          <span class="rec-tag tag-high">Urgent Fix</span>
+        </div>
+        <ul class="rec-list">
+          <li><strong>Immediate QBR</strong> with Epik management — review 10% commitment feasibility vs brand GMV size</li>
+          <li>Offer <strong>CPC performance packages</strong> with ROI reporting dashboards to prove value before spend</li>
+          <li>Renegotiate: Consider <strong>tiered rate structure</strong> (e.g. 5% base + 5% performance-based) instead of flat 10%</li>
+          <li>Identify top 3 Epik restaurants (Egg Bun, Training Day, Poke & Co) and design <strong>spotlight campaigns</strong> to demonstrate ROI</li>
+          <li>Flag to account team: if Epik misses Q3 commitment, contractual review clause may apply</li>
+        </ul>
+        <div class="rec-gmv">🚨 Recovery target: Close 50% of gap (+255K AED) in Q3'26 through activation</div>
+      </div>
+
+      <!-- Kitopi -->
+      <div class="rec-card">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand">Kitopi Ghost Kitchens</div>
+            <div style="font-size:11px;color:var(--muted)">30+ brands | Q2 GMV: 66M AED | Rate: 2.75%</div>
+          </div>
+          <span class="rec-tag tag-med">Medium Priority</span>
+        </div>
+        <ul class="rec-list">
+          <li>Propose <strong>Cross-Brand Collection Sponsorships</strong> (e.g. "Kitopi Kitchen Picks" carousel)</li>
+          <li>Operation Falafel & Chin Chin are top performers — upsell <strong>Sponsored Top Results</strong> in relevant search queries</li>
+          <li>SushiDo saw 54% GMV growth May→Jun — <strong>capitalize with a growth campaign</strong> while momentum is high</li>
+          <li>Bundle <strong>new brand launch packages</strong> for Circle Cafe, Wokkong (recently activated) — 3-month onboarding ad spend</li>
+          <li>Offer Kitopi HQ a <strong>portfolio dashboard</strong> view to make cross-brand ad investment decisions easier</li>
+        </ul>
+        <div class="rec-gmv">📈 Potential Q3 upsell uplift: +150,000–250,000 AED</div>
+      </div>
+
+      <!-- Papa Johns + Subway -->
+      <div class="rec-card">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand">Papa Johns & Subway</div>
+            <div style="font-size:11px;color:var(--muted)">No formal commitment | Q2 GMV: ~42.8M combined</div>
+          </div>
+          <span class="rec-tag tag-med">Contract Upsell</span>
+        </div>
+        <ul class="rec-list">
+          <li><strong>Formalize % commitment</strong> — both currently at 2%+ effective rate organically. Lock in at <strong>2–2.5%</strong> contractual</li>
+          <li>Subway GMV grew significantly in Jun (+9.5% MoM) — use momentum to negotiate Q3/Q4 commitment</li>
+          <li>Papa Johns consistent at ~7M GMV/month — propose <strong>premium placement in pizza category</strong></li>
+          <li>Bundle both into a <strong>QSR Challenger Pack</strong> with shared creative assets across Sponsored + Banner</li>
+          <li>Formalizing Papa Johns at 2% = <strong>~417K AED committed annual NCR</strong> vs current ad-hoc</li>
+        </ul>
+        <div class="rec-gmv">📈 Potential Q3 contracted NCR uplift from formalization: +200,000–300,000 AED</div>
+      </div>
+
+      <!-- Olayan + Cravia -->
+      <div class="rec-card">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand">Olayan (BK) & Cravia (ZWZ)</div>
+            <div style="font-size:11px;color:var(--muted)">Both significantly over commitment</div>
+          </div>
+          <span class="rec-tag tag-low">Deepen Engagement</span>
+        </div>
+        <ul class="rec-list">
+          <li>Both brands are already well above commitment, proving strong ROI — time to <strong>upgrade contract tiers</strong></li>
+          <li>Olayan (BK) at +64% — pitch <strong>BK Family Meal Sponsorship</strong> package and dedicated app homepage slot</li>
+          <li>Cravia at +214% — propose a <strong>Zaatar W Zeit Brand Page</strong> and exclusive Cinnabon limited edition campaigns</li>
+          <li>Use these as <strong>case studies for other brands</strong> — Olayan and Cravia can serve as proof of ROI for uncommitted brands</li>
+          <li>Propose <strong>annual media investment plan</strong> to replace quarterly reactive spending</li>
+        </ul>
+        <div class="rec-gmv">📈 Potential Q3 incremental uplift: +100,000–150,000 AED from rate upgrades</div>
+      </div>
+
+      <!-- Dunkin + Eathos + SMB -->
+      <div class="rec-card">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand">Dunkin, Eathos & Growing SME Brands</div>
+            <div style="font-size:11px;color:var(--muted)">High effective rates, growth trend</div>
+          </div>
+          <span class="rec-tag tag-low">Scale Up</span>
+        </div>
+        <ul class="rec-list">
+          <li>Dunkin has <strong>tripled its NCR</strong> from Jan (68K) to May (152K) — lock in higher formal commitment for H2</li>
+          <li>Eathos multi-brand model shows 4% is working — <strong>add new brands to the Eathos portfolio</strong> to grow share</li>
+          <li>Non-KAM platform revenue at 2.69M Q2 — <strong>develop a self-serve SMB campaign builder</strong> to grow this segment</li>
+          <li>Donaza at +307% above commitment despite tiny brand — <strong>replicate success model</strong> for other emerging brands</li>
+          <li>Tim Hortons at breakeven (+7%) — upsell a <strong>coffee day / seasonal campaign</strong> (back-to-school, winter)</li>
+        </ul>
+        <div class="rec-gmv">📈 Potential Q3 combined uplift: +120,000–180,000 AED</div>
+      </div>
+
+      <!-- Platform-level -->
+      <div class="rec-card" style="border-left-color:#3B82F6;">
+        <div class="rec-header">
+          <div>
+            <div class="rec-brand" style="color:#1D4ED8;">Platform-Level Upsell Enablers</div>
+            <div style="font-size:11px;color:var(--muted)">Structural recommendations to systematically grow NCR</div>
+          </div>
+          <span class="rec-tag" style="background:#DBEAFE;color:#1E40AF;">Strategic</span>
+        </div>
+        <ul class="rec-list">
+          <li>Launch <strong>Always-On CPC products</strong> for major brands — remove campaign seasonality dependency (June dip is avoidable)</li>
+          <li>Introduce <strong>Programmatic Performance Tiers</strong>: Bronze/Silver/Gold with committed spend levels and guaranteed outcomes</li>
+          <li>Build <strong>Real-Time ROI Dashboard</strong> for KAM partners — brands with visibility into ROAS spend more</li>
+          <li>Create a <strong>Seasonal Campaign Calendar</strong> (Eid, DSF, Back-to-School, National Days) with pre-booked inventory to prevent drop-off months</li>
+          <li>Introduce <strong>Upsell Unlocks</strong>: contractual brands earn access to premium placements when they exceed commitment by 20%+</li>
+        </ul>
+        <div class="rec-gmv">📈 Platform-wide Q3 upsell NCR target: 4.5–5M AED (up from 3.2M in Q2)</div>
+      </div>
+
+    </div>
+
+    <!-- Summary KPIs -->
+    <div style="margin-top:24px;" class="card">
+      <div style="font-weight:700;font-size:15px;margin-bottom:16px;color:var(--dark);">Q3 2026 — Upsell Growth Target Summary</div>
+      <div class="card-grid grid-4">
+        <div style="text-align:center;padding:12px;background:#F0FDF4;border-radius:8px;border:1px solid #BBF7D0;">
+          <div style="font-size:22px;font-weight:800;color:#15803D;">4.5–5M</div>
+          <div style="font-size:11px;color:#166534;font-weight:600;margin-top:4px;">Target Q3 Upsell AED</div>
+          <div style="font-size:10px;color:#15803D;">(vs 3.2M in Q2)</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:#FFF7ED;border-radius:8px;border:1px solid #FED7AA;">
+          <div style="font-size:22px;font-weight:800;color:#C2410C;">35%+</div>
+          <div style="font-size:11px;color:#9A3412;font-weight:600;margin-top:4px;">Upsell % of Total NCR</div>
+          <div style="font-size:10px;color:#C2410C;">(vs 24.5% in Q2)</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:#EFF6FF;border-radius:8px;border:1px solid #BFDBFE;">
+          <div style="font-size:22px;font-weight:800;color:#1D4ED8;">3 brands</div>
+          <div style="font-size:11px;color:#1E40AF;font-weight:600;margin-top:4px;">New Formal Commitments</div>
+          <div style="font-size:10px;color:#2563EB;">(Papa Johns, Subway + 1)</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:#FFF5F5;border-radius:8px;border:1px solid #FECACA;">
+          <div style="font-size:22px;font-weight:800;color:#DC2626;">−509K</div>
+          <div style="font-size:11px;color:#991B1B;font-weight:600;margin-top:4px;">Epik Gap to Close</div>
+          <div style="font-size:10px;color:#DC2626;">(Target: 50% recovery)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:24px;">
+    talabat KAM Ads Dashboard — Q2 2026 &nbsp;|&nbsp; Data source: Tracker & Commitment Sheet &nbsp;|&nbsp;
+    Prepared for: kareem.ghonemy@talabat.com &nbsp;|&nbsp; All figures in AED
+  </div>
+
+</div>
+</body>
+</html>
