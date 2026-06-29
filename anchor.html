@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anchor Brands — July 2026</title>
+<style>
+:root {
+  --orange: #FF6300;
+  --dark: #1E1E1E;
+  --bg: #F4F6F9;
+  --card: #fff;
+  --border: #E2E8F0;
+  --text: #1E293B;
+  --muted: #64748B;
+  --green: #16A34A;
+  --green-bg: #F0FDF4;
+  --red: #DC2626;
+  --red-bg: #FFF5F5;
+  --blue: #1D4ED8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 13px; }
+
+/* HEADER */
+.header { background: var(--dark); padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; }
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-mark { width: 38px; height: 38px; background: var(--orange); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; font-size: 18px; }
+.logo-text { color: #fff; font-size: 18px; font-weight: 700; }
+.logo-sub { color: #94A3B8; font-size: 11px; }
+.header-right { color: #94A3B8; font-size: 12px; text-align: right; }
+.header-right strong { color: var(--orange); display: block; font-size: 14px; }
+
+/* TOOLBAR */
+.toolbar {
+  background: #1E293B; padding: 10px 32px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  border-bottom: 2px solid var(--orange);
+}
+.toolbar select, .toolbar input[type=text] {
+  padding: 5px 10px; border-radius: 8px; border: 1px solid #334155;
+  background: #334155; color: #E2E8F0; font-size: 12px; outline: none;
+}
+.toolbar select:focus, .toolbar input[type=text]:focus { border-color: var(--orange); }
+.btn {
+  padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: none; transition: all 0.15s;
+}
+.btn-orange { background: var(--orange); color: #fff; }
+.btn-orange:hover { background: #e55a00; }
+.btn-dark { background: #334155; color: #94A3B8; }
+.btn-dark:hover { background: #475569; color: #fff; }
+.btn-green { background: #15803D; color: #fff; }
+.btn-green:hover { background: #166534; }
+.toolbar-sep { color: #475569; }
+.saved-msg { color: #22C55E; font-size: 11px; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
+.saved-msg.show { opacity: 1; }
+
+/* KPI ROW */
+.kpi-row { display: flex; gap: 12px; padding: 16px 32px; flex-wrap: wrap; }
+.kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; min-width: 140px; }
+.kpi-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.kpi-val { font-size: 22px; font-weight: 800; color: var(--dark); margin-top: 2px; }
+.kpi-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* TABLE WRAP */
+.tbl-outer { padding: 0 32px 32px; overflow-x: auto; }
+.tbl-wrap { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+
+table { width: 100%; border-collapse: collapse; min-width: 1400px; }
+thead th {
+  background: var(--dark); color: #E2E8F0; font-size: 11px; font-weight: 600;
+  padding: 10px 8px; text-align: center; white-space: nowrap; border-right: 1px solid #334155;
+  position: sticky; top: 0; z-index: 10;
+}
+thead th:first-child { text-align: left; padding-left: 14px; min-width: 180px; position: sticky; left: 0; z-index: 20; background: var(--dark); }
+thead th.campaign-hdr { background: #1a2d1a; color: #86EFAC; cursor: default; }
+thead tr.sub-hdr th { background: #0F172A; font-size: 10px; color: #64748B; padding: 4px 8px; font-weight: 500; }
+thead tr.sub-hdr th:first-child { background: #0F172A; }
+
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+tbody tr:hover { background: #F8FAFC; }
+tbody tr.kpp-row { background: #FFF7ED; }
+tbody tr.kpp-row:hover { background: #FEF3C7; }
+tbody tr.hidden { display: none; }
+
+td {
+  padding: 8px 8px; border-right: 1px solid var(--border); vertical-align: middle;
+  font-size: 12px;
+}
+td:first-child { padding-left: 14px; font-weight: 600; position: sticky; left: 0; background: inherit; z-index: 5; }
+tbody tr.kpp-row td:first-child { background: #FFF7ED; }
+tbody tr:hover td:first-child { background: #F8FAFC; }
+
+.cell-edit {
+  outline: none; border-radius: 4px;
+  min-width: 60px; display: inline-block;
+}
+.edit-mode .cell-edit {
+  background: #FFFBF7; box-shadow: 0 0 0 1.5px #FF630070;
+  cursor: text; padding: 1px 4px; border-radius: 3px;
+}
+.edit-mode .cell-edit:focus { box-shadow: 0 0 0 2px var(--orange); background: #FFF7ED; }
+
+/* CHECKBOXES */
+.check-cell { text-align: center; }
+.camp-check {
+  width: 18px; height: 18px; cursor: pointer; accent-color: var(--orange);
+  border-radius: 4px;
+}
+.edit-mode .camp-check { accent-color: var(--orange); }
+
+/* KPP badge */
+.kpp-badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+.kpp-yes { background: #D1FAE5; color: #065F46; }
+.kpp-no  { background: #F1F5F9; color: #64748B; }
+
+/* cuisine chip */
+.cuisine-chip { display: inline-block; padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 600; background: #EFF6FF; color: #1D4ED8; }
+
+/* participation count */
+.part-count { text-align: center; font-weight: 800; color: var(--dark); }
+.part-high { color: var(--green); }
+.part-zero { color: #CBD5E1; }
+
+/* ADD ROW */
+.add-row td { padding: 8px 14px; }
+.add-brand-btn {
+  display: none; padding: 6px 14px; border-radius: 8px;
+  border: 1.5px dashed var(--border); background: transparent;
+  color: var(--muted); cursor: pointer; font-size: 12px; font-weight: 600;
+  transition: all 0.15s;
+}
+.add-brand-btn:hover { border-color: var(--orange); color: var(--orange); }
+.edit-mode .add-brand-btn { display: inline-block; }
+
+/* campaign column header colors by type */
+.hdr-hic   { background: #1a1a2e !important; color: #A78BFA !important; }
+.hdr-fs    { background: #1a2020 !important; color: #34D399 !important; }
+.hdr-kpp   { background: #1a2010 !important; color: #86EFAC !important; }
+.hdr-t100  { background: #201a10 !important; color: #FCD34D !important; }
+.hdr-pro   { background: #1a1010 !important; color: #FCA5A5 !important; }
+.hdr-bs    { background: #10181a !important; color: #7DD3FC !important; }
+.hdr-dhk   { background: #1a1020 !important; color: #F9A8D4 !important; }
+.hdr-other { background: #101010 !important; color: #94A3B8 !important; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+  background: var(--dark); color: #fff; padding: 10px 18px;
+  border-radius: 10px; font-size: 12px; font-weight: 600;
+  border-left: 4px solid var(--orange);
+  transform: translateY(40px); opacity: 0; transition: all 0.25s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* DELETE row btn */
+.del-row-btn {
+  display: none; cursor: pointer; color: var(--red);
+  font-size: 16px; font-weight: 700; padding: 0 4px; line-height: 1;
+  background: none; border: none;
+}
+.edit-mode .del-row-btn { display: inline; }
+
+@media(max-width:768px){
+  .tbl-outer { padding: 0 12px 24px; }
+  .kpi-row { padding: 12px; }
+  .toolbar { padding: 10px 12px; }
+  .header { padding: 16px; flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">t</div>
+    <div>
+      <div class="logo-text">Anchor Brands Tracker</div>
+      <div class="logo-sub">July 2026 · Campaign Participation · UAE</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <strong>July 2026</strong>
+    16 campaigns · 59 brands
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <select id="filterTL" onchange="applyFilters()">
+    <option value="">All TLs</option>
+  </select>
+  <select id="filterCH" onchange="applyFilters()">
+    <option value="">All City Heads</option>
+  </select>
+  <select id="filterCuisine" onchange="applyFilters()">
+    <option value="">All Cuisines</option>
+  </select>
+  <select id="filterKPP" onchange="applyFilters()">
+    <option value="">KPP: All</option>
+    <option value="true">KPP: Yes</option>
+    <option value="false">KPP: No</option>
+  </select>
+  <input type="text" id="searchBrand" placeholder="🔍 Search brand..." oninput="applyFilters()" style="width:160px;">
+  <span class="toolbar-sep">|</span>
+  <button class="btn btn-orange" id="editBtn" onclick="toggleEdit()">✏️ Edit Mode OFF</button>
+  <button class="btn btn-dark" onclick="saveData()">💾 Save</button>
+  <button class="btn btn-dark" onclick="resetData()">↺ Reset</button>
+  <button class="btn btn-green" onclick="exportCSV()">⬇ Export CSV</button>
+  <span class="saved-msg" id="savedMsg">✓ Saved</span>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-row" id="kpiRow">
+  <div class="kpi">
+    <div class="kpi-lbl">Total Brands</div>
+    <div class="kpi-val" id="kpiTotal">59</div>
+    <div class="kpi-note">Anchor brands</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-lbl">KPP Brands</div>
+    <div class="kpi-val" id="kpiKPP">—</div>
+    <div class="kpi-note">Committed KPPs</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-lbl">Total Participations</div>
+    <div class="kpi-val" id="kpiPart">—</div>
+    <div class="kpi-note">Checkboxes ticked</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-lbl">Avg per Brand</div>
+    <div class="kpi-val" id="kpiAvg">—</div>
+    <div class="kpi-note">Campaigns / brand</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-lbl">Most Active</div>
+    <div class="kpi-val" id="kpiTop" style="font-size:14px;">—</div>
+    <div class="kpi-note">Highest participation</div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="tbl-outer">
+  <div class="tbl-wrap">
+    <table id="mainTable">
+      <thead id="tableHead"></thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const STORAGE_KEY = 'anchor_july_v1';
+
+const CAMPAIGNS = [
+  { id:'c01', label:'1-2 Jul', name:'New on talabat × RDF', type:'other' },
+  { id:'c02', label:'3-5 Jul', name:'HIC 50% off / 30-40% FM', type:'hic' },
+  { id:'c03', label:'6 Jul',   name:'SD Flash Sale 30-50%', type:'fs' },
+  { id:'c04', label:'7 Jul',   name:'Pro FS', type:'pro' },
+  { id:'c05', label:'8-9 Jul', name:'DHK Flash Sale 50%+1.99DF', type:'dhk' },
+  { id:'c06', label:'10-12 Jul',name:'KPP & KPP+1 30-50%', type:'kpp' },
+  { id:'c07', label:'13 Jul',  name:'SD Flash Sale 30-50%', type:'fs' },
+  { id:'c08', label:'14 Jul',  name:'Pro Day', type:'pro' },
+  { id:'c09', label:'15-16 Jul',name:'Kitopi 50% off', type:'other' },
+  { id:'c10', label:'17-19 Jul',name:'T100 50% off items', type:'t100' },
+  { id:'c11', label:'20 Jul',  name:'Best Sellers', type:'bs' },
+  { id:'c12', label:'21 Jul',  name:'Super Saver', type:'bs' },
+  { id:'c13', label:'22-24 Jul',name:'Flash Sale 50%+1.99DF', type:'fs' },
+  { id:'c14', label:'25-27 Jul',name:'HIC 50% off / 30-40% FM', type:'hic' },
+  { id:'c15', label:'28 Jul',  name:'Best Sellers', type:'bs' },
+  { id:'c16', label:'29-31 Jul',name:'KPP & KPP+1 30-50%', type:'kpp' },
+];
+
+const DEFAULT_BRANDS = [
+  { name:"McDonald's",      am:"Ghina Ezzeddine",               tl:"TL-X",               ch:"Salma Soueif",    cuisine:"fast food",    kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"KFC",             am:"Seif Eldin Ismail",              tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"fried chicken",kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Starbucks",       am:"Nadine Anderson",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"coffee",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Hardee's",        am:"Seif Eldin Ismail",              tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"american",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Burger King",     am:"Serge Dibeh",                    tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"burgers",      kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Pizza Hut",       am:"Seif Eldin Ismail",              tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"pizza",        kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Subway",          am:"Patricia Borges",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"sandwiches",   kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"ALBAIK",          am:"Serge Dibeh",                    tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"fried chicken",kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Papa Johns Pizza",am:"Noor Alhusan",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"pizza",        kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Texas Chicken",   am:"Serge Dibeh",                    tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"fried chicken",kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Blaban",          am:"Ehab Salah",                     tl:"Hadir Hamdy",        ch:"Alexandr Vrubel", cuisine:"desserts",     kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Jollibee",        am:"Anton Pashkov",                  tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"fried chicken",kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Zaatar W Zeit",   am:"Noor Alhusan",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"arabic",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Baskin Robbins",  am:"Anton Pashkov",                  tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"ice cream",    kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Farooj Abu Al Abed",am:"Ehab Salah",                   tl:"Hadir Hamdy",        ch:"Alexandr Vrubel", cuisine:"grills",       kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Aseer Time",      am:"Ehab Salah",                     tl:"Hadir Hamdy",        ch:"Alexandr Vrubel", cuisine:"desserts",     kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Gulf Pastry",     am:"Kavya R",                        tl:"Sravani Chandra",    ch:"Aseel Katbi",     cuisine:"pastries",     kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Domino's Pizza",  am:"Nadine Anderson",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"pizza",        kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"WingStop",        am:"Patricia Borges",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"fried chicken",kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Laffah",          am:"Omar Essam",                     tl:"Nadin Taha",         ch:"Bashar Sabri",    cuisine:"grills",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Gazebo",          am:"Anton Pashkov",                  tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"indian",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Be Healthy",      am:"Ehab Salah",                     tl:"Hadir Hamdy",        ch:"Alexandr Vrubel", cuisine:"healthy",      kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Seashell",        am:"Delsum Rodrigues",               tl:"Sravani Chandra",    ch:"Aseel Katbi",     cuisine:"burgers",      kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Dunkin",          am:"Noor Alhusan",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"donuts",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Mama'esh",        am:"Ehab Salah",                     tl:"Hadir Hamdy",        ch:"Alexandr Vrubel", cuisine:"arabic",       kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"House Of Tea Cafeteria",am:"Kavya R",                  tl:"Sravani Chandra",    ch:"Aseel Katbi",     cuisine:"cafeteria",    kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Maraheb Express", am:"Pranav Vengali Ramanan",         tl:"Tejasvi Mohan",      ch:"Alexandr Vrubel", cuisine:"arabic",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Everyday Roastery Coffee",am:"Ghina Ezzeddine",        tl:"TL-X",               ch:"Salma Soueif",    cuisine:"coffee",       kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Popeyes",         am:"Mohamed Ibrahim",                tl:"Elda George Pudusseripadi",ch:"Alexandr Vrubel",cuisine:"fried chicken",kpp:false,camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Operation Falafel",am:"Nadine Anderson",               tl:"TL-X",               ch:"Salma Soueif",    cuisine:"lebanese",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Allo Beirut",     am:"Ehab Salah",                     tl:"Hadir Hamdy",        ch:"Alexandr Vrubel", cuisine:"lebanese",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Malak Al Tawouk", am:"Salma Soueif",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"lebanese",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Low Calories",    am:"Delsum Rodrigues",               tl:"Sravani Chandra",    ch:"Aseel Katbi",     cuisine:"healthy",      kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Falafil Al Rabiah Al Khadhra",am:"Omar Essam",         tl:"Nadin Taha",         ch:"Bashar Sabri",    cuisine:"sandwiches",   kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Rashid Ali Hassan Cafeteria",am:"Omar Khamis",         tl:"Mahmoud Abdalla",    ch:"Aseel Katbi",     cuisine:"indian",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Chowking",        am:"Noor Alhusan",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"chinese",      kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Krispy Kreme",    am:"Seif Eldin Ismail",              tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"donuts",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"On The Wood",     am:"Salma Soueif",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"arabic",       kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"VOX Eats",        am:"Pranav Vengali Ramanan",         tl:"Tejasvi Mohan",      ch:"Alexandr Vrubel", cuisine:"snacks",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Manoushe Street", am:"Salma Soueif",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"breakfast",    kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Just Burger",     am:"Mahmoud Essam Mahmoud Abdelmoniem",tl:"Mahmoud Abdalla",  ch:"Aseel Katbi",     cuisine:"burgers",      kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Tim Hortons",     am:"Anton Pashkov",                  tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"cafe",         kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Five Guys",       am:"Noor Alhusan",                   tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"burgers",      kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Halla Shawarma",  am:"Anton Pashkov",                  tl:"Salma Soueif",       ch:"Salma Soueif",    cuisine:"shawarma",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Raising Cane's",  am:"Ghina Ezzeddine",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"fried chicken",kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Wendy's",         am:"Nadine Anderson",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"american",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Il Forno Restaurant",am:"Kavya R",                     tl:"Sravani Chandra",    ch:"Aseel Katbi",     cuisine:"pizza",        kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Pinkberry",       am:"Ghina Ezzeddine",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"desserts",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Chin Chin",       am:"Nadine Anderson",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"chinese",      kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Kabab Al Bastakiah",am:"Ahmed Babikir",                tl:"Hassan Khalifa",     ch:"Bashar Sabri",    cuisine:"grills",       kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"SushiDo",         am:"Nadine Anderson",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"sushi",        kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Shake Shack",     am:"Ghina Ezzeddine",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"burgers",      kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Just Fresh",      am:"Mahmoud Essam Mahmoud Abdelmoniem",tl:"Mahmoud Abdalla",  ch:"Aseel Katbi",     cuisine:"desserts",     kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Bubee Drinks",    am:"Weiwei Li",                      tl:"Hadir Hamdy",        ch:"Alexandr Vrubel", cuisine:"bubble tea",   kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Barbar",          am:"Hammoudeh Albawwab",             tl:"Jad Adada",          ch:"Alexandr Vrubel", cuisine:"arabic",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Chicking",        am:"Pranav Vengali Ramanan",         tl:"Tejasvi Mohan",      ch:"Alexandr Vrubel", cuisine:"fried chicken",kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Biryani Pot",     am:"Nadine Anderson",                tl:"TL-X",               ch:"Salma Soueif",    cuisine:"indian",       kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Al Farooj Al Shami",am:"Suleiman Abdalhadi",           tl:"Nadin Taha",         ch:"Bashar Sabri",    cuisine:"arabic",       kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Zahrat Lebnan",   am:"Salah Mniemneh",                 tl:"Mahmoud Abdalla",    ch:"Aseel Katbi",     cuisine:"lebanese",     kpp:true,  camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+  { name:"Nando's",         am:"",                               tl:"",                   ch:"",                cuisine:"fried chicken",kpp:false, camps:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
+];
+
+let brands = [];
+let editMode = false;
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  brands = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_BRANDS));
+  // ensure all brands have 16 camps
+  brands.forEach(b => { while(b.camps.length < CAMPAIGNS.length) b.camps.push(0); });
+  buildHeader();
+  buildFilters();
+  renderTable();
+  updateKPIs();
+}
+
+function buildHeader() {
+  const thead = document.getElementById('tableHead');
+  // row 1: main headers
+  let r1 = `<tr>
+    <th rowspan="2">Anchor Brand</th>
+    <th rowspan="2">AM Name</th>
+    <th rowspan="2">TL</th>
+    <th rowspan="2">City Head</th>
+    <th rowspan="2">Cuisine</th>
+    <th rowspan="2">KPP</th>
+    <th rowspan="2">Participate #</th>`;
+  CAMPAIGNS.forEach(c => {
+    r1 += `<th class="campaign-hdr hdr-${c.type}" title="${c.name}">${c.label}</th>`;
+  });
+  r1 += '<th rowspan="2"></th></tr>';
+
+  // row 2: sub headers
+  let r2 = '<tr>';
+  CAMPAIGNS.forEach(c => {
+    r2 += `<th class="sub-hdr hdr-${c.type}" style="white-space:normal;max-width:80px;font-size:9px;">${c.name}</th>`;
+  });
+  r2 += '</tr>';
+  thead.innerHTML = r1 + r2;
+}
+
+function buildFilters() {
+  const tls = [...new Set(brands.map(b => b.tl).filter(Boolean))].sort();
+  const chs = [...new Set(brands.map(b => b.ch).filter(Boolean))].sort();
+  const cuisines = [...new Set(brands.map(b => b.cuisine).filter(Boolean))].sort();
+
+  const tlSel = document.getElementById('filterTL');
+  tls.forEach(t => tlSel.add(new Option(t, t)));
+
+  const chSel = document.getElementById('filterCH');
+  chs.forEach(c => chSel.add(new Option(c, c)));
+
+  const cuiSel = document.getElementById('filterCuisine');
+  cuisines.forEach(c => cuiSel.add(new Option(c, c)));
+}
+
+// ══════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  brands.forEach((b, idx) => {
+    const partCount = b.camps.filter(v => v).length;
+    const tr = document.createElement('tr');
+    tr.dataset.idx = idx;
+    if (b.kpp) tr.classList.add('kpp-row');
+
+    let cells = `
+      <td><span class="cell-edit" contenteditable="true" data-field="name" data-idx="${idx}">${b.name}</span></td>
+      <td><span class="cell-edit" contenteditable="true" data-field="am"   data-idx="${idx}">${b.am}</span></td>
+      <td><span class="cell-edit" contenteditable="true" data-field="tl"   data-idx="${idx}">${b.tl}</span></td>
+      <td><span class="cell-edit" contenteditable="true" data-field="ch"   data-idx="${idx}">${b.ch}</span></td>
+      <td><span class="cuisine-chip">${b.cuisine}</span></td>
+      <td class="check-cell">
+        <span class="kpp-badge ${b.kpp ? 'kpp-yes' : 'kpp-no'}" onclick="toggleKPP(${idx})" style="cursor:pointer;" title="Click to toggle KPP">${b.kpp ? 'Yes' : 'No'}</span>
+      </td>
+      <td class="part-count ${partCount >= 8 ? 'part-high' : partCount === 0 ? 'part-zero' : ''}">${partCount}</td>`;
+
+    CAMPAIGNS.forEach((c, ci) => {
+      cells += `<td class="check-cell"><input type="checkbox" class="camp-check" data-idx="${idx}" data-ci="${ci}" ${b.camps[ci] ? 'checked' : ''} onchange="toggleCamp(${idx},${ci},this)"></td>`;
+    });
+    cells += `<td><button class="del-row-btn" onclick="deleteRow(${idx})" title="Delete brand">×</button></td>`;
+
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+
+  // add row
+  const addRow = document.createElement('tr');
+  addRow.className = 'add-row';
+  addRow.innerHTML = `<td colspan="${CAMPAIGNS.length + 8}"><button class="add-brand-btn" onclick="addBrand()">+ Add Anchor Brand</button></td>`;
+  tbody.appendChild(addRow);
+
+  applyFilters();
+  updateKPIs();
+  bindCellEdits();
+}
+
+function bindCellEdits() {
+  document.querySelectorAll('.cell-edit').forEach(el => {
+    el.addEventListener('blur', () => {
+      const idx = +el.dataset.idx;
+      const field = el.dataset.field;
+      brands[idx][field] = el.textContent.trim();
+      autoSave();
+    });
+  });
+}
+
+// ══════════════════════════════════════════
+// INTERACTIONS
+// ══════════════════════════════════════════
+function toggleCamp(idx, ci, cb) {
+  brands[idx].camps[ci] = cb.checked ? 1 : 0;
+  const partCount = brands[idx].camps.filter(v => v).length;
+  const tr = document.querySelector(`tr[data-idx="${idx}"]`);
+  if (tr) {
+    const pc = tr.querySelector('.part-count');
+    pc.textContent = partCount;
+    pc.className = `part-count ${partCount >= 8 ? 'part-high' : partCount === 0 ? 'part-zero' : ''}`;
+  }
+  autoSave();
+  updateKPIs();
+}
+
+function toggleKPP(idx) {
+  if (!editMode) return;
+  brands[idx].kpp = !brands[idx].kpp;
+  renderTable();
+  autoSave();
+}
+
+function addBrand() {
+  brands.push({ name:'New Brand', am:'', tl:'', ch:'', cuisine:'', kpp:false, camps: Array(CAMPAIGNS.length).fill(0) });
+  renderTable();
+  autoSave();
+  showToast('Brand added — click to edit fields');
+}
+
+function deleteRow(idx) {
+  if (!confirm(`Remove "${brands[idx].name}"?`)) return;
+  brands.splice(idx, 1);
+  renderTable();
+  autoSave();
+}
+
+// ══════════════════════════════════════════
+// FILTERS
+// ══════════════════════════════════════════
+function applyFilters() {
+  const tl = document.getElementById('filterTL').value.toLowerCase();
+  const ch = document.getElementById('filterCH').value.toLowerCase();
+  const cui = document.getElementById('filterCuisine').value.toLowerCase();
+  const kpp = document.getElementById('filterKPP').value;
+  const search = document.getElementById('searchBrand').value.toLowerCase();
+
+  let visible = 0;
+  document.querySelectorAll('#tableBody tr[data-idx]').forEach(tr => {
+    const idx = +tr.dataset.idx;
+    const b = brands[idx];
+    const show =
+      (!tl  || b.tl.toLowerCase()===tl) &&
+      (!ch  || b.ch.toLowerCase()===ch) &&
+      (!cui || b.cuisine.toLowerCase()===cui) &&
+      (!kpp || (kpp==='true' ? b.kpp : !b.kpp)) &&
+      (!search || b.name.toLowerCase().includes(search));
+    tr.classList.toggle('hidden', !show);
+    if (show) visible++;
+  });
+  document.getElementById('kpiTotal').textContent = visible;
+}
+
+// ══════════════════════════════════════════
+// KPIs
+// ══════════════════════════════════════════
+function updateKPIs() {
+  const kppCount = brands.filter(b => b.kpp).length;
+  const totalPart = brands.reduce((s, b) => s + b.camps.filter(v=>v).length, 0);
+  const avg = brands.length ? (totalPart / brands.length).toFixed(1) : 0;
+  const top = brands.reduce((best, b) => {
+    const n = b.camps.filter(v=>v).length;
+    return n > (best.n||0) ? {name:b.name, n} : best;
+  }, {});
+
+  document.getElementById('kpiTotal').textContent = brands.length;
+  document.getElementById('kpiKPP').textContent = kppCount;
+  document.getElementById('kpiPart').textContent = totalPart;
+  document.getElementById('kpiAvg').textContent = avg;
+  document.getElementById('kpiTop').textContent = top.name || '—';
+}
+
+// ══════════════════════════════════════════
+// EDIT MODE
+// ══════════════════════════════════════════
+function toggleEdit() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  const btn = document.getElementById('editBtn');
+  btn.textContent = editMode ? '✅ Edit Mode ON' : '✏️ Edit Mode OFF';
+  btn.style.background = editMode ? '#15803D' : '';
+  if (editMode) showToast('Edit mode ON — click any cell to type, checkboxes to tick, × to delete');
+  else { autoSave(); showToast('✓ Saved'); }
+}
+
+// ══════════════════════════════════════════
+// SAVE / LOAD / EXPORT
+// ══════════════════════════════════════════
+function autoSave() { localStorage.setItem(STORAGE_KEY, JSON.stringify(brands)); }
+
+function saveData() {
+  autoSave();
+  const msg = document.getElementById('savedMsg');
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 2000);
+  showToast('✓ Changes saved to browser');
+}
+
+function resetData() {
+  if (!confirm('Reset all data to default? All your edits will be lost.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+function exportCSV() {
+  const header = ['Brand','AM Name','TL','City Head','Cuisine','KPP'].concat(CAMPAIGNS.map(c => c.label + ' / ' + c.name));
+  const rows = brands.map(b => [
+    b.name, b.am, b.tl, b.ch, b.cuisine, b.kpp ? 'Yes' : 'No',
+    ...b.camps.map(v => v ? 'Yes' : 'No')
+  ]);
+  const csv = [header, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'anchor_brands_july_2026.csv';
+  a.click();
+  showToast('CSV downloaded');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>
