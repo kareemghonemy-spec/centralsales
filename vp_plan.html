@@ -48,13 +48,15 @@
   .edit-bar-left { display: flex; align-items: center; gap: 12px; }
   .edit-mode-toggle {
     display: flex; align-items: center; gap: 8px;
-    background: #334155; border-radius: 20px; padding: 6px 14px;
-    cursor: pointer; user-select: none; color: #94A3B8; font-size: 13px; font-weight: 600;
-    transition: all 0.2s;
+    background: #334155; border-radius: 20px; padding: 7px 16px;
+    cursor: pointer; user-select: none; color: #94A3B8; font-size: 13px; font-weight: 700;
+    transition: all 0.2s; border: 2px solid transparent;
   }
-  .edit-mode-toggle.active { background: var(--orange); color: #fff; }
+  .edit-mode-toggle:hover { border-color: var(--orange); }
+  .edit-mode-toggle.active { background: var(--orange); color: #fff; border-color: var(--orange); }
   .edit-mode-toggle .dot { width: 8px; height: 8px; border-radius: 50%; background: #64748B; transition: background 0.2s; }
-  .edit-mode-toggle.active .dot { background: #fff; }
+  .edit-mode-toggle.active .dot { background: #fff; animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .edit-hint { color: #64748B; font-size: 12px; }
   .btn-save, .btn-reset {
     padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 700;
@@ -214,30 +216,64 @@
   .tl-target { margin-top: 12px; padding: 8px 12px; border-radius: 8px; background: var(--green-bg); border: 1px solid var(--green-border); font-size: 12px; font-weight: 700; color: var(--green); }
 
   /* ─── EDITABLE TEXT ─── */
-  [contenteditable="true"] {
-    outline: none; border-bottom: 1.5px dashed transparent; transition: border-color 0.2s;
+  [contenteditable] {
+    outline: none;
+    border-radius: 4px;
+    transition: background 0.15s, box-shadow 0.15s;
     cursor: default;
+    pointer-events: none;
+    user-select: none;
   }
-  .edit-on [contenteditable="true"] {
-    border-bottom-color: var(--orange); cursor: text;
+  /* when edit mode is on — show ALL editable fields with orange outline */
+  .edit-on [contenteditable] {
+    pointer-events: auto;
+    user-select: text;
+    cursor: text;
+    box-shadow: 0 0 0 2px #FF630040;
+    background: #FFFBF7;
   }
-  .edit-on [contenteditable="true"]:hover,
-  .edit-on [contenteditable="true"]:focus {
-    background: #FFF7ED; border-radius: 4px; padding: 1px 4px;
+  .edit-on [contenteditable]:hover {
+    box-shadow: 0 0 0 2px var(--orange);
+    background: #FFF7ED;
   }
+  .edit-on [contenteditable]:focus {
+    box-shadow: 0 0 0 2.5px var(--orange);
+    background: #FFF7ED;
+    cursor: text;
+  }
+
+  /* ─── FLOATING EDIT BUTTON ─── */
+  .fab {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9000;
+    width: 54px; height: 54px; border-radius: 50%;
+    background: var(--dark); border: 3px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    transition: all 0.2s;
+  }
+  .fab:hover { transform: scale(1.1); border-color: var(--orange); }
+  .fab.active { background: var(--orange); border-color: var(--orange); }
+  .fab-label {
+    position: fixed; bottom: 90px; right: 24px; z-index: 9000;
+    background: var(--dark); color: #fff; font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 20px; white-space: nowrap;
+    opacity: 0; transition: opacity 0.2s; pointer-events: none;
+  }
+  .fab:hover + .fab-label, .fab.active + .fab-label { opacity: 1; }
+
+  /* ─── EDIT PULSE on buckets when edit-on ─── */
+  .edit-on .bucket-body { background: #FEFCFA; }
+  .edit-on .bucket { box-shadow: 0 0 0 2px #FF630020; }
 
   /* ─── TOAST ─── */
   .toast {
-    position: fixed; bottom: 24px; right: 24px;
-    background: #1E293B; color: #fff; padding: 10px 20px;
-    border-radius: 10px; font-size: 13px; font-weight: 600;
-    transform: translateY(60px); opacity: 0; transition: all 0.3s;
-    z-index: 9999; border-left: 4px solid var(--orange);
+    position: fixed; bottom: 96px; right: 28px;
+    background: #1E293B; color: #fff; padding: 10px 18px;
+    border-radius: 10px; font-size: 12px; font-weight: 600;
+    transform: translateY(20px); opacity: 0; transition: all 0.25s;
+    z-index: 9999; border-left: 4px solid var(--orange); max-width: 240px;
   }
   .toast.show { transform: translateY(0); opacity: 1; }
-
-  /* edit-on highlight */
-  .edit-on .bucket { outline: 2px dashed transparent; }
 
   .footer { text-align: center; padding: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); }
 
@@ -583,6 +619,10 @@
   talabat KAM Central Sales · Ad-Revenue Growth Plan · Q3 2026 · Prepared by Kareem Ghonemy
 </div>
 
+<!-- floating edit button -->
+<div class="fab" id="fab" onclick="toggleEdit()" title="Toggle edit mode">✏️</div>
+<div class="fab-label" id="fabLabel">Edit Mode OFF</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -597,21 +637,22 @@ function toggleEdit() {
   const toggle = document.getElementById('editToggle');
   const label  = document.getElementById('editLabel');
   const hint   = document.getElementById('editHint');
+  const fab    = document.getElementById('fab');
+  const fabLbl = document.getElementById('fabLabel');
 
   toggle.classList.toggle('active', editMode);
-  label.textContent = editMode ? 'Edit Mode ON' : 'Edit Mode OFF';
-  hint.textContent  = editMode
-    ? 'Click any text to edit · Add/remove brands & actions · Notes auto-save'
-    : 'Click to enable editing';
-
-  // toggle contenteditable on all editable elements
-  document.querySelectorAll('[contenteditable]').forEach(el => {
-    el.contentEditable = editMode ? 'true' : 'false';
-  });
+  fab.classList.toggle('active', editMode);
+  fab.textContent  = editMode ? '✅' : '✏️';
+  fabLbl.textContent = editMode ? 'Edit Mode ON — click any orange box' : 'Edit Mode OFF';
+  label.textContent  = editMode ? '✏️ Edit Mode ON' : 'Edit Mode OFF';
+  hint.textContent   = editMode
+    ? 'Every orange-outlined field is editable — click directly to type'
+    : 'Click ✏️ or the button to enable editing';
 
   document.body.classList.toggle('edit-on', editMode);
 
-  if (editMode) showToast('✏️ Edit mode on — click anything to edit');
+  if (editMode) showToast('✏️ Edit mode ON — click any orange field to edit');
+  else { saveAll(); showToast('✓ Changes saved'); }
 }
 
 // ═══ ADD BRAND ═══
