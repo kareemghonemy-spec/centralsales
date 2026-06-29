@@ -216,30 +216,24 @@
   .tl-target { margin-top: 12px; padding: 8px 12px; border-radius: 8px; background: var(--green-bg); border: 1px solid var(--green-border); font-size: 12px; font-weight: 700; color: var(--green); }
 
   /* ─── EDITABLE TEXT ─── */
-  [contenteditable] {
+  [contenteditable="true"] {
     outline: none;
     border-radius: 4px;
     transition: background 0.15s, box-shadow 0.15s;
-    cursor: default;
-    pointer-events: none;
-    user-select: none;
-  }
-  /* when edit mode is on — show ALL editable fields with orange outline */
-  .edit-on [contenteditable] {
-    pointer-events: auto;
-    user-select: text;
     cursor: text;
-    box-shadow: 0 0 0 2px #FF630040;
+  }
+  /* highlight editable fields only when edit mode is active */
+  .edit-on [contenteditable="true"] {
+    box-shadow: 0 0 0 2px #FF630050;
     background: #FFFBF7;
   }
-  .edit-on [contenteditable]:hover {
+  .edit-on [contenteditable="true"]:hover {
     box-shadow: 0 0 0 2px var(--orange);
     background: #FFF7ED;
   }
-  .edit-on [contenteditable]:focus {
+  .edit-on [contenteditable="true"]:focus {
     box-shadow: 0 0 0 2.5px var(--orange);
     background: #FFF7ED;
-    cursor: text;
   }
 
   /* ─── FLOATING EDIT BUTTON ─── */
@@ -371,31 +365,31 @@
       <div class="bucket-head">
         <div class="bucket-icon">🚀</div>
         <div>
-          <div class="bucket-name" contenteditable="false">New / Unlock</div>
-          <div class="bucket-tag" contenteditable="false">Brands with zero or minimal NCR investment — first-time activation</div>
+          <div class="bucket-name" contenteditable="true">New / Unlock</div>
+          <div class="bucket-tag" contenteditable="true">Brands with zero or minimal NCR investment — first-time activation</div>
         </div>
       </div>
       <div class="bucket-body">
-        <div class="def-row" contenteditable="false">
+        <div class="def-row" contenteditable="true">
           <strong>Who they are:</strong> Large-GMV partners not yet in any NCR program, or brands
           spending less than 0.5% of GMV on ads. They represent pure greenfield revenue.
         </div>
         <div class="brand-list" data-list="new">
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍗 Nando's</span><span class="pill-flag"> No NCR</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🥪 Subway</span><span class="pill-flag"> No commit</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍕 Papa Johns</span><span class="pill-flag"> No commit</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">+ New onboards Q3</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍗 Nando's</span><span class="pill-flag"> No NCR</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🥪 Subway</span><span class="pill-flag"> No commit</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍕 Papa Johns</span><span class="pill-flag"> No commit</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">+ New onboards Q3</span><span class="pill-del" onclick="delPill(this)">×</span></div>
           <button class="add-brand-btn" onclick="addBrand(this)">+ Add brand</button>
         </div>
         <ul class="action-list" data-actions="new">
-          <li><span class="action-text" contenteditable="false">Develop a <strong>first-ad package</strong>: low-barrier entry (flat 5K/mo or 1% trial rate) with guaranteed impressions to remove risk perception</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Run <strong>pre-campaign ROI assessment</strong> (need Kedar) showing projected incremental orders before they commit</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Formalize <strong>Subway & Papa Johns</strong> commitments — both at ~2% effective rate already, easy uplift to 2.5–3%</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Nando's pitch: anchor on <strong>new customer acquisition</strong> data — strong brand but low talabat digital share</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Target: sign <strong>2 new NCR commitments</strong> by end of July 2026</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Develop a <strong>first-ad package</strong>: low-barrier entry (flat 5K/mo or 1% trial rate) with guaranteed impressions to remove risk perception</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Run <strong>pre-campaign ROI assessment</strong> (need Kedar) showing projected incremental orders before they commit</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Formalize <strong>Subway & Papa Johns</strong> commitments — both at ~2% effective rate already, easy uplift to 2.5–3%</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Nando's pitch: anchor on <strong>new customer acquisition</strong> data — strong brand but low talabat digital share</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Target: sign <strong>2 new NCR commitments</strong> by end of July 2026</span><span class="action-del" onclick="delAction(this)">×</span></li>
         </ul>
         <button class="add-action-btn" onclick="addAction(this)">+ Add action item</button>
-        <div class="bucket-revenue rev-blue" contenteditable="false">💰 Revenue unlock potential: +800K–1.2M AED/quarter</div>
+        <div class="bucket-revenue rev-blue" contenteditable="true">💰 Revenue unlock potential: +800K–1.2M AED/quarter</div>
         <div class="notes-area">
           <div class="notes-lbl">Notes</div>
           <textarea class="notes-textarea" placeholder="Add your notes here..." data-notes="new"></textarea>
@@ -408,31 +402,31 @@
       <div class="bucket-head">
         <div class="bucket-icon">🛡️</div>
         <div>
-          <div class="bucket-name" contenteditable="false">Retain</div>
-          <div class="bucket-tag" contenteditable="false">NCR budget growing but GMV & order performance is declining</div>
+          <div class="bucket-name" contenteditable="true">Retain</div>
+          <div class="bucket-tag" contenteditable="true">NCR budget growing but GMV & order performance is declining</div>
         </div>
       </div>
       <div class="bucket-body">
-        <div class="def-row" contenteditable="false">
+        <div class="def-row" contenteditable="true">
           <strong>Who they are:</strong> Brands actively investing in ads but seeing diminishing returns —
           NCR spend is rising while GMV or order volume is flat or negative. At risk of pulling budget.
         </div>
         <div class="brand-list" data-list="retain">
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍕 Epik Tier A</span><span class="pill-flag"> −50.7% commitment</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🌯 Epik Tier B</span><span class="pill-flag"> −71.3% commitment</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍔 Epik KPP+1</span><span class="pill-flag"> −32.6% commitment</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">⏱ On The Wood</span><span class="pill-flag"> +1.2% only</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍕 Epik Tier A</span><span class="pill-flag"> −50.7% commitment</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🌯 Epik Tier B</span><span class="pill-flag"> −71.3% commitment</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍔 Epik KPP+1</span><span class="pill-flag"> −32.6% commitment</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">⏱ On The Wood</span><span class="pill-flag"> +1.2% only</span><span class="pill-del" onclick="delPill(this)">×</span></div>
           <button class="add-brand-btn" onclick="addBrand(this)">+ Add brand</button>
         </div>
         <ul class="action-list" data-actions="retain">
-          <li><span class="action-text" contenteditable="false">Immediate <strong>QBR with Epik management</strong> — 509K AED underspend gap; renegotiate rate or restructure to achievable commitment</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Request <strong>CTR & search query reports</strong> from Kedar team to show Epik their ads are generating traffic even if conversion is soft</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Provide <strong>retention/upsell workstream</strong> framework — show path from current performance to what "healthy" looks like</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Build a <strong>custom attribution story</strong> (awareness → order) to justify continued investment</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">On The Wood: introduce <strong>Sponsored Collections</strong> to drive volume, not just awareness</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Immediate <strong>QBR with Epik management</strong> — 509K AED underspend gap; renegotiate rate or restructure to achievable commitment</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Request <strong>CTR & search query reports</strong> from Kedar team to show Epik their ads are generating traffic even if conversion is soft</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Provide <strong>retention/upsell workstream</strong> framework — show path from current performance to what "healthy" looks like</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Build a <strong>custom attribution story</strong> (awareness → order) to justify continued investment</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">On The Wood: introduce <strong>Sponsored Collections</strong> to drive volume, not just awareness</span><span class="action-del" onclick="delAction(this)">×</span></li>
         </ul>
         <button class="add-action-btn" onclick="addAction(this)">+ Add action item</button>
-        <div class="bucket-revenue rev-amber" contenteditable="false">⚠️ At-risk NCR to protect: ~600K AED/quarter (Epik gap + On The Wood)</div>
+        <div class="bucket-revenue rev-amber" contenteditable="true">⚠️ At-risk NCR to protect: ~600K AED/quarter (Epik gap + On The Wood)</div>
         <div class="notes-area">
           <div class="notes-lbl">Notes</div>
           <textarea class="notes-textarea" placeholder="Add your notes here..." data-notes="retain"></textarea>
@@ -445,35 +439,35 @@
       <div class="bucket-head">
         <div class="bucket-icon">📈</div>
         <div>
-          <div class="bucket-name" contenteditable="false">Upsell</div>
-          <div class="bucket-tag" contenteditable="false">Investing but room to introduce new tools or increase NCR/GMV %</div>
+          <div class="bucket-name" contenteditable="true">Upsell</div>
+          <div class="bucket-tag" contenteditable="true">Investing but room to introduce new tools or increase NCR/GMV %</div>
         </div>
       </div>
       <div class="bucket-body">
-        <div class="def-row" contenteditable="false">
+        <div class="def-row" contenteditable="true">
           <strong>Who they are:</strong> Brands meeting or exceeding base commitment with healthy GMV.
           They're comfortable with ads but haven't explored the full product suite. Best candidates for
           incremental NCR above contract floor.
         </div>
         <div class="brand-list" data-list="upsell">
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍟 McDonald's</span><span class="pill-flag"> 1% → 1.5%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍗 Americana</span><span class="pill-flag"> 1% → 1.3–1.5%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">☕ Tim Hortons</span><span class="pill-flag"> Fixed → % GMV</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍳 Yolk Brands</span><span class="pill-flag"> 2% → CPC add-on</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍔 Wendy's</span><span class="pill-flag"> +165% over</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍕 Dodo Pizza</span><span class="pill-flag"> +313% → lock rate</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🌯 Donaza</span><span class="pill-flag"> Fixed → scale</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍟 McDonald's</span><span class="pill-flag"> 1% → 1.5%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍗 Americana</span><span class="pill-flag"> 1% → 1.3–1.5%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">☕ Tim Hortons</span><span class="pill-flag"> Fixed → % GMV</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍳 Yolk Brands</span><span class="pill-flag"> 2% → CPC add-on</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍔 Wendy's</span><span class="pill-flag"> +165% over</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍕 Dodo Pizza</span><span class="pill-flag"> +313% → lock rate</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🌯 Donaza</span><span class="pill-flag"> Fixed → scale</span><span class="pill-del" onclick="delPill(this)">×</span></div>
           <button class="add-brand-btn" onclick="addBrand(this)">+ Add brand</button>
         </div>
         <ul class="action-list" data-actions="upsell">
-          <li><span class="action-text" contenteditable="false"><strong>McDonald's</strong>: introduce full-funnel package — Homepage Banner + CPC + Sponsored Search; every 0.1% rate uplift = +147K AED NCR</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false"><strong>Americana</strong>: KFC Sponsored Collections for Ramadan/National Day + push notification blast (25K/campaign)</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false"><strong>Tim Hortons</strong>: migrate from flat 50K/mo to 1.5% GMV — currently underpriced given 4.1M GMV</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false"><strong>Wendy's & Dodo</strong>: formalize higher % rate contracts — both massively overspending flat rates already</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Introduce <strong>new ad tools</strong> (Display, SD, Keywords) across brands currently on CPC-only</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true"><strong>McDonald's</strong>: introduce full-funnel package — Homepage Banner + CPC + Sponsored Search; every 0.1% rate uplift = +147K AED NCR</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true"><strong>Americana</strong>: KFC Sponsored Collections for Ramadan/National Day + push notification blast (25K/campaign)</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true"><strong>Tim Hortons</strong>: migrate from flat 50K/mo to 1.5% GMV — currently underpriced given 4.1M GMV</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true"><strong>Wendy's & Dodo</strong>: formalize higher % rate contracts — both massively overspending flat rates already</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Introduce <strong>new ad tools</strong> (Display, SD, Keywords) across brands currently on CPC-only</span><span class="action-del" onclick="delAction(this)">×</span></li>
         </ul>
         <button class="add-action-btn" onclick="addAction(this)">+ Add action item</button>
-        <div class="bucket-revenue rev-orange" contenteditable="false">📈 Upsell NCR opportunity: +2.0–2.5M AED/quarter (largest bucket)</div>
+        <div class="bucket-revenue rev-orange" contenteditable="true">📈 Upsell NCR opportunity: +2.0–2.5M AED/quarter (largest bucket)</div>
         <div class="notes-area">
           <div class="notes-lbl">Notes</div>
           <textarea class="notes-textarea" placeholder="Add your notes here..." data-notes="upsell"></textarea>
@@ -486,34 +480,34 @@
       <div class="bucket-head">
         <div class="bucket-icon">✅</div>
         <div>
-          <div class="bucket-name" contenteditable="false">Maintain</div>
-          <div class="bucket-tag" contenteditable="false">High NCR/GMV % and healthy growth — protect and benchmark</div>
+          <div class="bucket-name" contenteditable="true">Maintain</div>
+          <div class="bucket-tag" contenteditable="true">High NCR/GMV % and healthy growth — protect and benchmark</div>
         </div>
       </div>
       <div class="bucket-body">
-        <div class="def-row" contenteditable="false">
+        <div class="def-row" contenteditable="true">
           <strong>Who they are:</strong> Brands with strong commitment rates, consistent overspend vs target,
           and growing GMV. Focus is on sustaining performance and using them as <em>proof points</em> when
           pitching other buckets.
         </div>
         <div class="brand-list" data-list="maintain">
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍟 Kitopi</span><span class="pill-flag"> 2.75% · +20.7%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍩 Dunkin</span><span class="pill-flag"> 2% · +75.8%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍔 Olayan</span><span class="pill-flag"> 1.5% · +63.8%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🥐 Cravia</span><span class="pill-flag"> Fixed · +214%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🍽️ Gazebo Group</span><span class="pill-flag"> Fixed · +8.8%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
-          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="false">🌯 Eathos</span><span class="pill-flag"> 4% · +40.9%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍟 Kitopi</span><span class="pill-flag"> 2.75% · +20.7%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍩 Dunkin</span><span class="pill-flag"> 2% · +75.8%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍔 Olayan</span><span class="pill-flag"> 1.5% · +63.8%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🥐 Cravia</span><span class="pill-flag"> Fixed · +214%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🍽️ Gazebo Group</span><span class="pill-flag"> Fixed · +8.8%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
+          <div class="brand-pill" data-pill><span class="pill-name" contenteditable="true">🌯 Eathos</span><span class="pill-flag"> 4% · +40.9%</span><span class="pill-del" onclick="delPill(this)">×</span></div>
           <button class="add-brand-btn" onclick="addBrand(this)">+ Add brand</button>
         </div>
         <ul class="action-list" data-actions="maintain">
-          <li><span class="action-text" contenteditable="false">Quarterly <strong>co-branded performance reports</strong> — keep brands engaged and feeling the ROI value</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Use as <strong>case study brands</strong> in pitch decks for New/Unlock bucket (Dunkin +75%, Cravia +214%)</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Propose <strong>annual commitment upgrades</strong> at renewal — lock in higher rates before Q4 peak season</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Ensure <strong>always-on campaigns</strong> are running (not just campaign spikes) for consistent NCR floor</span><span class="action-del" onclick="delAction(this)">×</span></li>
-          <li><span class="action-text" contenteditable="false">Kitopi: explore brand-level breakdown for top 5 ghost kitchens to maximize individual tool ROI</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Quarterly <strong>co-branded performance reports</strong> — keep brands engaged and feeling the ROI value</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Use as <strong>case study brands</strong> in pitch decks for New/Unlock bucket (Dunkin +75%, Cravia +214%)</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Propose <strong>annual commitment upgrades</strong> at renewal — lock in higher rates before Q4 peak season</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Ensure <strong>always-on campaigns</strong> are running (not just campaign spikes) for consistent NCR floor</span><span class="action-del" onclick="delAction(this)">×</span></li>
+          <li><span class="action-text" contenteditable="true">Kitopi: explore brand-level breakdown for top 5 ghost kitchens to maximize individual tool ROI</span><span class="action-del" onclick="delAction(this)">×</span></li>
         </ul>
         <button class="add-action-btn" onclick="addAction(this)">+ Add action item</button>
-        <div class="bucket-revenue rev-green" contenteditable="false">✅ NCR protected: ~12M AED/quarter · Focus: retention + renewal uplift</div>
+        <div class="bucket-revenue rev-green" contenteditable="true">✅ NCR protected: ~12M AED/quarter · Focus: retention + renewal uplift</div>
         <div class="notes-area">
           <div class="notes-lbl">Notes</div>
           <textarea class="notes-textarea" placeholder="Add your notes here..." data-notes="maintain"></textarea>
@@ -535,39 +529,39 @@
     <div class="support-grid">
       <div class="support-item">
         <div class="si-icon">🔍</div>
-        <div class="si-title" contenteditable="false">Pre-Campaign Assessment</div>
-        <div class="si-why" contenteditable="false">Before brands commit NCR budgets, they want to know the expected ROI. We need Kedar's team to provide a <strong>pre-campaign model</strong>: projected impressions, estimated incremental orders, and CPiO benchmarks for the brand's category — delivered as a 1-pager to KAMs before pitching.</div>
-        <div class="si-impact" contenteditable="false">Bucket: New/Unlock + Retain</div>
+        <div class="si-title" contenteditable="true">Pre-Campaign Assessment</div>
+        <div class="si-why" contenteditable="true">Before brands commit NCR budgets, they want to know the expected ROI. We need Kedar's team to provide a <strong>pre-campaign model</strong>: projected impressions, estimated incremental orders, and CPiO benchmarks for the brand's category — delivered as a 1-pager to KAMs before pitching.</div>
+        <div class="si-impact" contenteditable="true">Bucket: New/Unlock + Retain</div>
       </div>
       <div class="support-item">
         <div class="si-icon">📊</div>
-        <div class="si-title" contenteditable="false">How to Sell the Results</div>
-        <div class="si-why" contenteditable="false">KAMs need a <strong>post-campaign playbook</strong> — a standardized way to present results back to brand partners. What metrics matter, how to frame CPiO vs growth, and how to use performance data to renew or upsell commitments. Kedar's team to build a reusable results deck template.</div>
-        <div class="si-impact" contenteditable="false">Bucket: Maintain + Upsell</div>
+        <div class="si-title" contenteditable="true">How to Sell the Results</div>
+        <div class="si-why" contenteditable="true">KAMs need a <strong>post-campaign playbook</strong> — a standardized way to present results back to brand partners. What metrics matter, how to frame CPiO vs growth, and how to use performance data to renew or upsell commitments. Kedar's team to build a reusable results deck template.</div>
+        <div class="si-impact" contenteditable="true">Bucket: Maintain + Upsell</div>
       </div>
       <div class="support-item">
         <div class="si-icon">🔄</div>
-        <div class="si-title" contenteditable="false">Retention / Upsell Workstream</div>
-        <div class="si-why" contenteditable="false">A structured <strong>quarterly workstream</strong> between KAM and Ads to identify: (1) brands at risk of churning budget, (2) brands ready for upsell, and (3) brands to push into new ad tools. Monthly syncs with data shared 2 weeks before QBRs so KAMs can walk in prepared.</div>
-        <div class="si-impact" contenteditable="false">Bucket: Retain + Upsell</div>
+        <div class="si-title" contenteditable="true">Retention / Upsell Workstream</div>
+        <div class="si-why" contenteditable="true">A structured <strong>quarterly workstream</strong> between KAM and Ads to identify: (1) brands at risk of churning budget, (2) brands ready for upsell, and (3) brands to push into new ad tools. Monthly syncs with data shared 2 weeks before QBRs so KAMs can walk in prepared.</div>
+        <div class="si-impact" contenteditable="true">Bucket: Retain + Upsell</div>
       </div>
       <div class="support-item">
         <div class="si-icon">🔑</div>
-        <div class="si-title" contenteditable="false">Keyword & CTR Search Query Reports</div>
-        <div class="si-why" contenteditable="false">For brands questioning their ad ROI (especially Epik), we need <strong>keyword-level and search query reports</strong> — which queries triggered their ads, CTR by keyword, and impression share vs competitors. This gives tangible proof of visibility even when conversion is soft.</div>
-        <div class="si-impact" contenteditable="false">Bucket: Retain (Epik focus)</div>
+        <div class="si-title" contenteditable="true">Keyword & CTR Search Query Reports</div>
+        <div class="si-why" contenteditable="true">For brands questioning their ad ROI (especially Epik), we need <strong>keyword-level and search query reports</strong> — which queries triggered their ads, CTR by keyword, and impression share vs competitors. This gives tangible proof of visibility even when conversion is soft.</div>
+        <div class="si-impact" contenteditable="true">Bucket: Retain (Epik focus)</div>
       </div>
       <div class="support-item">
         <div class="si-icon">🎯</div>
-        <div class="si-title" contenteditable="false">Ad Strategy — New Customer Acquisition</div>
-        <div class="si-why" contenteditable="false">Brands like Nando's and Subway need to see ads driving <strong>net new customers</strong>, not just re-ordering regulars. Kedar's team to provide a "new customer" targeting strategy per brand — audience segments, optimal ad formats, and estimated new customer CPO by category.</div>
-        <div class="si-impact" contenteditable="false">Bucket: New/Unlock</div>
+        <div class="si-title" contenteditable="true">Ad Strategy — New Customer Acquisition</div>
+        <div class="si-why" contenteditable="true">Brands like Nando's and Subway need to see ads driving <strong>net new customers</strong>, not just re-ordering regulars. Kedar's team to provide a "new customer" targeting strategy per brand — audience segments, optimal ad formats, and estimated new customer CPO by category.</div>
+        <div class="si-impact" contenteditable="true">Bucket: New/Unlock</div>
       </div>
       <div class="support-item">
         <div class="si-icon">📡</div>
-        <div class="si-title" contenteditable="false">Traffic Data + Better Reporting</div>
-        <div class="si-why" contenteditable="false">KAMs currently lack <strong>traffic attribution data</strong> — how many page views, search appearances, and click-throughs brands receive from their ad spend. We need a shared reporting dashboard (weekly refresh) with GMV, orders, CTR, impressions, and CPiO per brand — visible to both KAM and the brand.</div>
-        <div class="si-impact" contenteditable="false">Bucket: All buckets</div>
+        <div class="si-title" contenteditable="true">Traffic Data + Better Reporting</div>
+        <div class="si-why" contenteditable="true">KAMs currently lack <strong>traffic attribution data</strong> — how many page views, search appearances, and click-throughs brands receive from their ad spend. We need a shared reporting dashboard (weekly refresh) with GMV, orders, CTR, impressions, and CPiO per brand — visible to both KAM and the brand.</div>
+        <div class="si-impact" contenteditable="true">Bucket: All buckets</div>
       </div>
     </div>
   </div>
@@ -789,7 +783,7 @@ function loadSaved() {
       const pill = document.createElement('div');
       pill.className = 'brand-pill';
       pill.setAttribute('data-pill', '');
-      pill.innerHTML = `<span class="pill-name" contenteditable="false">${p.name}</span>${p.flag ? `<span class="pill-flag">${p.flag}</span>` : ''}<span class="pill-del" onclick="delPill(this)">×</span>`;
+      pill.innerHTML = `<span class="pill-name" contenteditable="true">${p.name}</span>${p.flag ? `<span class="pill-flag">${p.flag}</span>` : ''}<span class="pill-del" onclick="delPill(this)">×</span>`;
       list.insertBefore(pill, addBtn);
     });
   });
@@ -803,7 +797,7 @@ function loadSaved() {
     ul.innerHTML = '';
     actions.forEach(a => {
       const li = document.createElement('li');
-      li.innerHTML = `<span class="action-text" contenteditable="false">${a}</span><span class="action-del" onclick="delAction(this)">×</span>`;
+      li.innerHTML = `<span class="action-text" contenteditable="true">${a}</span><span class="action-del" onclick="delAction(this)">×</span>`;
       ul.appendChild(li);
     });
   });
