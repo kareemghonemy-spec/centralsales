@@ -649,9 +649,14 @@ function toggleEdit() {
     ? 'Every orange-outlined field is editable — click directly to type'
     : 'Click ✏️ or the button to enable editing';
 
+  // actually enable/disable browser editing on every field
+  document.querySelectorAll('[contenteditable]').forEach(el => {
+    el.contentEditable = editMode ? 'true' : 'false';
+  });
+
   document.body.classList.toggle('edit-on', editMode);
 
-  if (editMode) showToast('✏️ Edit mode ON — click any orange field to edit');
+  if (editMode) showToast('✏️ Edit mode ON — click any orange field to type');
   else { saveAll(); showToast('✓ Changes saved'); }
 }
 
