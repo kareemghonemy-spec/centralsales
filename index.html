@@ -841,15 +841,21 @@ function buildCoFundTab(){
     if(e.cpio<=34&&e.growth>=40)byBrand[e.brand].above++;
   });
   const rows=Object.entries(byBrand).map(([brand,d])=>({brand,total:d.total,above:d.above,pct:d.total>0?Math.round(d.above/d.total*100):0}));
-  rows.sort((a,b)=>b.pct-a.pct);
-  const tier1=rows.filter(r=>r.pct>=80);
-  const tier2=rows.filter(r=>r.pct>=50&&r.pct<80);
-  const tier3=rows.filter(r=>r.pct<20);
+  // Tiers: Co-Fund = always above (100%), Monitor = inconsistent (1–99%), Do Not Fund = never above (0%)
+  const tier1=rows.filter(r=>r.pct===100);
+  const tier2=rows.filter(r=>r.pct>0&&r.pct<100);
+  const tier3=rows.filter(r=>r.pct===0);
+  // Sort: Co-Fund first (by name), Monitor second (by pct desc), Do Not Fund last (by name)
+  const sorted=[
+    ...tier1.sort((a,b)=>a.brand.localeCompare(b.brand)),
+    ...tier2.sort((a,b)=>b.pct-a.pct),
+    ...tier3.sort((a,b)=>a.brand.localeCompare(b.brand))
+  ];
   const sumEl=document.getElementById('cofundSummary');
   sumEl.innerHTML=[
-    {label:'Co-Fund ✅',sub:'≥80% campaigns above benchmark',count:tier1.length,bg:'#EDFAF3',border:'#27AE60',col:'#27AE60'},
-    {label:'Maybe 🟡',sub:'50–79% campaigns above benchmark',count:tier2.length,bg:'#FFFBEA',border:'#F39C12',col:'#F39C12'},
-    {label:'Do Not Co-Fund ❌',sub:'<20% campaigns above benchmark',count:tier3.length,bg:'#FEF0F0',border:'#E74C3C',col:'#E74C3C'}
+    {label:'Co-Fund ✅',sub:'Always above CPiO & Growth benchmark (100%)',count:tier1.length,bg:'#EDFAF3',border:'#27AE60',col:'#27AE60'},
+    {label:'Monitor 🔍',sub:'Inconsistent — varies across campaigns',count:tier2.length,bg:'#EBF2FF',border:'#2980B9',col:'#2980B9'},
+    {label:'Do Not Fund ❌',sub:'Never above CPiO or Growth benchmark (0%)',count:tier3.length,bg:'#FEF0F0',border:'#E74C3C',col:'#E74C3C'}
   ].map(t=>`<div style="background:${t.bg};border:2px solid ${t.border};border-radius:12px;padding:20px 24px">
     <div style="font-size:18px;font-weight:800;color:${t.col}">${t.label}</div>
     <div style="font-size:13px;color:#666;margin:4px 0 12px">${t.sub}</div>
@@ -857,13 +863,12 @@ function buildCoFundTab(){
     <div style="font-size:12px;color:#999">brands</div>
   </div>`).join('');
   const badge=r=>{
-    if(r.pct>=80)return'<span style="background:#EDFAF3;color:#27AE60;border:1px solid #27AE60;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Co-Fund ✅</span>';
-    if(r.pct>=50)return'<span style="background:#FFFBEA;color:#F39C12;border:1px solid #F39C12;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Maybe 🟡</span>';
-    if(r.pct<20)return'<span style="background:#FEF0F0;color:#E74C3C;border:1px solid #E74C3C;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Do Not Co-Fund ❌</span>';
-    return'<span style="background:#F5F5F5;color:#999;border:1px solid #ddd;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Neutral</span>';
+    if(r.pct===100)return'<span style="background:#EDFAF3;color:#27AE60;border:1px solid #27AE60;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Co-Fund ✅</span>';
+    if(r.pct===0)return'<span style="background:#FEF0F0;color:#E74C3C;border:1px solid #E74C3C;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Do Not Fund ❌</span>';
+    return'<span style="background:#EBF2FF;color:#2980B9;border:1px solid #2980B9;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Monitor 🔍</span>';
   };
-  const pctBar=pct=>`<div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:#eee;border-radius:4px;height:8px"><div style="width:${pct}%;background:${pct>=80?'#27AE60':pct>=50?'#F39C12':'#E74C3C'};height:8px;border-radius:4px"></div></div><span class="num">${pct}%</span></div>`;
-  document.getElementById('cofundTbody').innerHTML=rows.map(r=>`<tr>
+  const pctBar=pct=>`<div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:#eee;border-radius:4px;height:8px"><div style="width:${pct}%;background:${pct===100?'#27AE60':pct===0?'#E74C3C':'#2980B9'};height:8px;border-radius:4px"></div></div><span class="num">${pct}%</span></div>`;
+  document.getElementById('cofundTbody').innerHTML=sorted.map(r=>`<tr>
     <td>${r.brand}</td>
     <td class="num">${r.total}</td>
     <td class="num">${r.above}</td>
