@@ -135,6 +135,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:#aaa;border-top:1px s
   <div class="tab" onclick="show('monthly',this)">Monthly</div>
   <div class="tab" onclick="show('types',this)">Types</div>
   <div class="tab" onclick="show('brands',this)">Brands</div>
+  <div class="tab" onclick="show('cofund',this)">Co-Fund 💰</div>
   <div class="tab" onclick="show('raw',this)">Raw Data</div>
 </div>
 
@@ -344,6 +345,26 @@ footer{text-align:center;padding:20px;font-size:12px;color:#aaa;border-top:1px s
 </div>
 
 <!-- RAW DATA -->
+<div class="sec" id="cofund">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px" id="cofundSummary"></div>
+  <div class="tbl-card">
+    <div class="tbl-hdr">
+      <div><div class="tbl-title">Brand Co-Funding Recommendations</div><div class="tbl-sub">Based on % of campaigns above CPiO ≤ 34 &amp; Growth ≥ 40% benchmark</div></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="cofundTbl">
+        <thead><tr>
+          <th>Brand</th>
+          <th>Campaigns</th>
+          <th>Above Benchmark</th>
+          <th>% Above BM</th>
+          <th>Recommendation</th>
+        </tr></thead>
+        <tbody id="cofundTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <div class="sec" id="raw">
   <div class="tbl-card">
     <div class="tbl-hdr">
@@ -811,6 +832,46 @@ const bScatterData=BRANDS.filter(b=>b.campaigns>=2&&b.avgCpio>-100&&b.avgCpio<30
 new Chart(document.getElementById('brandScatter'),{type:'bubble',data:{datasets:[{label:'Brands',data:bScatterData.map(b=>({x:b.avgCpio,y:b.totalOrd,r:Math.max(4,Math.min(18,Math.sqrt(b.baseline||100)*0.5)),brand:b.brand,camps:b.campaigns})),backgroundColor:bScatterData.map(b=>b.negRuns===0?GR+'99':b.negRuns>1?RD+'99':OR+'99'),borderColor:bScatterData.map(b=>b.negRuns===0?GR:b.negRuns>1?RD:OR)}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false},tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;return[`${d.brand}`,`Avg CPiO: ${d.x} · Orders: ${d.y.toLocaleString()}`,`${d.camps} campaigns`];}}}},scales:{x:{title:{display:true,text:'Avg CPiO'},grid:{color:'#f5f5f5'}},y:{title:{display:true,text:'Total Incremental Orders'},ticks:{callback:v=>v>=1000?(v/1000).toFixed(0)+'k':v},grid:{color:'#f5f5f5'}}}}});
 
 // ── INIT ──────────────────────────────────────────────────────────────
+function buildCoFundTab(){
+  const byBrand={};
+  ENRICHED.forEach(e=>{
+    if(e.growth===null)return;
+    if(!byBrand[e.brand])byBrand[e.brand]={total:0,above:0};
+    byBrand[e.brand].total++;
+    if(e.cpio<=34&&e.growth>=40)byBrand[e.brand].above++;
+  });
+  const rows=Object.entries(byBrand).map(([brand,d])=>({brand,total:d.total,above:d.above,pct:d.total>0?Math.round(d.above/d.total*100):0}));
+  rows.sort((a,b)=>b.pct-a.pct);
+  const tier1=rows.filter(r=>r.pct>=80);
+  const tier2=rows.filter(r=>r.pct>=50&&r.pct<80);
+  const tier3=rows.filter(r=>r.pct<20);
+  const sumEl=document.getElementById('cofundSummary');
+  sumEl.innerHTML=[
+    {label:'Co-Fund ✅',sub:'≥80% campaigns above benchmark',count:tier1.length,bg:'#EDFAF3',border:'#27AE60',col:'#27AE60'},
+    {label:'Maybe 🟡',sub:'50–79% campaigns above benchmark',count:tier2.length,bg:'#FFFBEA',border:'#F39C12',col:'#F39C12'},
+    {label:'Do Not Co-Fund ❌',sub:'<20% campaigns above benchmark',count:tier3.length,bg:'#FEF0F0',border:'#E74C3C',col:'#E74C3C'}
+  ].map(t=>`<div style="background:${t.bg};border:2px solid ${t.border};border-radius:12px;padding:20px 24px">
+    <div style="font-size:18px;font-weight:800;color:${t.col}">${t.label}</div>
+    <div style="font-size:13px;color:#666;margin:4px 0 12px">${t.sub}</div>
+    <div style="font-size:36px;font-weight:900;color:${t.col}">${t.count}</div>
+    <div style="font-size:12px;color:#999">brands</div>
+  </div>`).join('');
+  const badge=r=>{
+    if(r.pct>=80)return'<span style="background:#EDFAF3;color:#27AE60;border:1px solid #27AE60;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Co-Fund ✅</span>';
+    if(r.pct>=50)return'<span style="background:#FFFBEA;color:#F39C12;border:1px solid #F39C12;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Maybe 🟡</span>';
+    if(r.pct<20)return'<span style="background:#FEF0F0;color:#E74C3C;border:1px solid #E74C3C;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Do Not Co-Fund ❌</span>';
+    return'<span style="background:#F5F5F5;color:#999;border:1px solid #ddd;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">Neutral</span>';
+  };
+  const pctBar=pct=>`<div style="display:flex;align-items:center;gap:8px"><div style="flex:1;background:#eee;border-radius:4px;height:8px"><div style="width:${pct}%;background:${pct>=80?'#27AE60':pct>=50?'#F39C12':'#E74C3C'};height:8px;border-radius:4px"></div></div><span class="num">${pct}%</span></div>`;
+  document.getElementById('cofundTbody').innerHTML=rows.map(r=>`<tr>
+    <td>${r.brand}</td>
+    <td class="num">${r.total}</td>
+    <td class="num">${r.above}</td>
+    <td>${pctBar(r.pct)}</td>
+    <td>${badge(r)}</td>
+  </tr>`).join('');
+}
+
 populateBrandDropdown();
 buildCampTable();
 buildTypeTable();
@@ -818,6 +879,7 @@ buildGrowthTable(GRW);
 buildBrandTableFiltered();
 buildRawTable(ENRICHED);
 buildRecsGrid();
+buildCoFundTab();
 document.getElementById('ov-orders').textContent=(R.reduce((a,r)=>a+r[6],0)/1000).toFixed(0)+'k';
 </script>
 </body>
